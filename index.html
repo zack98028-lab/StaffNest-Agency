@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StaffNest Agency — Hire Reliable Virtual Assistants at $6/hr</title>
+  <style>
+    /* ─── RESET & BASE ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #1e293b;
+      background: #fff;
+      line-height: 1.6;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* ─── COLOURS ───────────────────────────────────────────────── */
+    :root {
+      --navy:   #052e16;
+      --blue:   #14532d;
+      --sky:    #16a34a;
+      --teal:   #22c55e;
+      --gold:   #f59e0b;
+      --light:  #f0fdf4;
+      --mid:    #bbf7d0;
+      --text:   #1a1a1a;
+      --muted:  #6b7280;
+      --white:  #ffffff;
+    }
+
+    /* ─── UTILITY ───────────────────────────────────────────────── */
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .btn {
+      display: inline-block; padding: 13px 30px; border-radius: 8px;
+      font-weight: 700; font-size: 0.95rem; cursor: pointer;
+      transition: transform .15s, box-shadow .15s, background .15s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.18); }
+    .btn-primary   { background: var(--white);  color: var(--navy); }
+    .btn-primary:hover { background: #e8f5e9; }
+    .btn-secondary { background: var(--blue);  color: var(--white); }
+    .btn-outline   { background: transparent; color: var(--white); border: 2px solid var(--white); }
+    .btn-outline:hover { background: var(--white); color: var(--blue); }
+    .btn-teal      { background: var(--teal); color: var(--navy); }
+    .section-label {
+      display: inline-block; font-size: .78rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--sky); margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+      font-weight: 800; line-height: 1.2; color: var(--navy);
+    }
+    .section-sub { color: var(--muted); font-size: 1.05rem; margin-top: 12px; max-width: 600px; }
+
+    /* ─── TOP BAR ───────────────────────────────────────────────── */
+    .top-bar {
+      background: var(--navy);
+      color: rgba(255,255,255,.9);
+      font-size: .85rem;
+      padding: 9px 0;
+      text-align: center;
+    }
+    .top-bar a { color: var(--teal); font-weight: 700; }
+    .top-bar span { margin: 0 10px; opacity: .4; }
+
+    /* ─── NAV ───────────────────────────────────────────────────── */
+    header {
+      position: sticky; top: 0; z-index: 999;
+      background: var(--navy);
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    nav {
+      display: flex; align-items: center; gap: 6px;
+      padding: 12px 0; flex-wrap: wrap;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.3rem; font-weight: 900; color: white;
+      letter-spacing: -.5px; flex-shrink: 0; margin-right: 12px;
+    }
+    .logo span { color: var(--teal); }
+    .logo-icon { width: 36px; height: 36px; flex-shrink: 0; }
+    .logo-img {
+      width: 52px; height: 52px; flex-shrink: 0;
+      object-fit: contain;
+      border-radius: 50%;
+      background: white;
+      padding: 5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .logo-text-wrap { display: flex; flex-direction: column; line-height: 1; }
+    .logo-slogan { font-size: .56rem; font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+    /* NAV TABS — always visible */
+    .nav-links {
+      display: flex; gap: 2px; list-style: none; flex-wrap: wrap;
+    }
+    .nav-links a {
+      display: block; padding: 8px 15px; border-radius: 6px;
+      color: rgba(255,255,255,.75); font-weight: 600; font-size: .88rem;
+      transition: background .15s, color .15s; white-space: nowrap;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,.12); color: white; }
+    .nav-ctas { display: flex; gap: 10px; margin-left: auto; flex-shrink: 0; }
+    .btn-login {
+      background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.25);
+      color: white; padding: 8px 18px; border-radius: 7px;
+      font-weight: 700; font-size: .85rem; cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-login:hover { background: rgba(255,255,255,.22); }
+    /* No hamburger — nav always shows */
+    .hamburger { display: none !important; }
+    .mobile-menu { display: none !important; }
+
+    /* ─── HERO ──────────────────────────────────────────────────── */
+    .hero {
+      background: linear-gradient(135deg, #052e16 0%, #14532d 55%, #166534 100%);
+      color: var(--white); padding: 90px 0 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center; position: relative;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+      padding: 7px 16px; border-radius: 30px; font-size: .82rem;
+      font-weight: 600; color: var(--teal); margin-bottom: 20px;
+    }
+    .hero-badge::before { content: '✦'; }
+    .hero h1 {
+      font-size: clamp(2rem, 4.5vw, 3.2rem);
+      font-weight: 900; line-height: 1.15; margin-bottom: 20px;
+    }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero p {
+      font-size: 1.1rem; color: rgba(255,255,255,.8);
+      max-width: 480px; margin-bottom: 32px; line-height: 1.7;
+    }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-trust {
+      margin-top: 40px; display: flex; align-items: center; gap: 20px;
+    }
+    .hero-trust .avatars { display: flex; }
+    .hero-trust .avatars span {
+      width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--white);
+      background: linear-gradient(135deg, var(--teal), var(--sky));
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; color: white;
+      margin-left: -10px;
+    }
+    .hero-trust .avatars span:first-child { margin-left: 0; }
+    .hero-trust p { font-size: .85rem; color: rgba(255,255,255,.7); line-height: 1.4; }
+    .hero-trust strong { color: var(--white); }
+
+    /* Hero visual */
+    .hero-visual { display: flex; flex-direction: column; gap: 16px; }
+    .va-card {
+      background: rgba(255,255,255,.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 14px; padding: 18px 22px;
+      display: flex; align-items: center; gap: 16px;
+      transition: transform .2s;
+    }
+    .va-card:hover { transform: translateX(4px); }
+    .savings-badge {
+      background: var(--gold); color: var(--navy);
+      border-radius: 12px; padding: 16px 22px;
+      display: flex; align-items: center; gap: 12px;
+      font-weight: 700;
+    }
+    .savings-badge .icon { font-size: 1.8rem; }
+    .savings-badge .text p { font-size: .8rem; opacity: .75; }
+    .savings-badge .text strong { font-size: 1.1rem; display: block; }
+
+    /* ─── STATS BAR ─────────────────────────────────────────────── */
+    .stats-bar {
+      background: var(--blue); color: var(--white);
+      padding: 28px 0;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      text-align: center; gap: 16px;
+    }
+    .stat-item strong {
+      display: block; font-size: 2.2rem; font-weight: 900;
+      color: var(--teal);
+    }
+    .stat-item span { font-size: .85rem; color: rgba(255,255,255,.7); }
+    .stat-item + .stat-item { border-left: 1px solid rgba(255,255,255,.15); }
+
+    /* ─── HOW IT WORKS ──────────────────────────────────────────── */
+    .how-it-works { padding: 90px 0; background: var(--white); }
+    .section-header { margin-bottom: 56px; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    .step-card {
+      background: var(--white);
+      border-radius: 16px; padding: 36px 28px; position: relative;
+      border: 1.5px solid var(--mid);
+      box-shadow: 0 2px 12px rgba(5,46,22,.07);
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+    }
+    .step-card:hover {
+      border-color: var(--sky); transform: translateY(-3px);
+      box-shadow: 0 10px 32px rgba(5,46,22,.13);
+    }
+    .step-number {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--blue); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 900; margin-bottom: 20px;
+    }
+    .step-card h3 { font-size: 1.15rem; font-weight: 800; margin-bottom: 10px; color: var(--navy); }
+    .step-card p { color: var(--muted); font-size: .95rem; }
+    .step-icon { font-size: 2rem; margin-bottom: 14px; }
+
+    /* ─── CATEGORIES ────────────────────────────────────────────── */
+    .categories { padding: 80px 0; background: var(--light); }
+    .cat-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 20px;
+      margin-top: 44px;
+    }
+    .cat-card {
+      background: white; border-radius: 14px; padding: 28px 22px;
+      border: 1.5px solid var(--mid); text-align: center;
+      box-shadow: 0 2px 10px rgba(5,46,22,.06);
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      cursor: pointer;
+    }
+    .cat-card:hover {
+      transform: translateY(-5px); border-color: var(--sky);
+      box-shadow: 0 12px 36px rgba(5,46,22,.14);
+    }
+    .cat-icon { font-size: 2.2rem; margin-bottom: 12px; }
+    .cat-card h4 { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .cat-card p { font-size: .82rem; color: var(--muted); }
+
+    /* ─── WHY US ────────────────────────────────────────────────── */
+    .why-us { padding: 90px 0; background: white; }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .why-features { display: flex; flex-direction: column; gap: 28px; margin-top: 32px; }
+    .why-item { display: flex; gap: 18px; align-items: flex-start; }
+    .why-item-icon {
+      width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--teal), var(--sky));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; color: white;
+    }
+    .why-item h4 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .why-item p { color: var(--muted); font-size: .9rem; }
+    .why-visual {
+      background: linear-gradient(135deg, #166534, #16a34a);
+      border-radius: 20px; padding: 36px; color: white;
+      position: relative; overflow: hidden;
+    }
+    .why-visual::after {
+      content: ''; position: absolute; bottom: -40px; right: -40px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: rgba(255,255,255,.05);
+    }
+    .comparison-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+    .comparison-table th {
+      padding: 12px; text-align: center; font-size: .82rem;
+      font-weight: 700; background: rgba(255,255,255,.1); border-radius: 8px;
+    }
+    .comparison-table td {
+      padding: 12px; text-align: center; font-size: .88rem;
+      border-bottom: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.85);
+    }
+    .comparison-table .check { color: var(--teal); font-size: 1.1rem; }
+    .comparison-table .cross { color: #ff6b6b; font-size: 1.1rem; }
+    .comparison-table .highlight td { color: white; font-weight: 600; }
+    .why-visual h3 { font-size: 1.15rem; font-weight: 800; }
+    .why-visual p { font-size: .85rem; opacity: .75; margin-top: 4px; }
+
+    /* ─── PRICING ───────────────────────────────────────────────── */
+    .pricing { padding: 90px 0; background: var(--light); }
+    @media (max-width:760px){
+      .pricing-hours-grid { grid-template-columns: repeat(2,1fr) !important; }
+    }
+
+    /* ─── TESTIMONIALS ──────────────────────────────────────────── */
+    .testimonials { padding: 90px 0; background: white; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+    .testi-card {
+      background: var(--white); border-radius: 16px; padding: 28px;
+      border: 1.5px solid var(--mid);
+      box-shadow: 0 2px 14px rgba(5,46,22,.08);
+    }
+    .stars { color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 14px; }
+    .testi-card blockquote {
+      font-size: .93rem; color: var(--text); line-height: 1.65;
+      font-style: italic; margin-bottom: 20px;
+    }
+    .testi-author { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: .85rem; color: white; flex-shrink: 0;
+    }
+    .testi-author strong { font-size: .9rem; color: var(--navy); display: block; }
+    .testi-author span { font-size: .8rem; color: var(--muted); }
+
+    /* ─── VA APPLY ──────────────────────────────────────────────── */
+    .va-apply {
+      padding: 90px 0;
+      background: linear-gradient(135deg, #052e16 0%, #14532d 50%, #166534 100%);
+      color: white;
+    }
+    .va-apply-inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start; }
+    .va-apply .section-title { color: white; }
+    .va-apply .section-sub { color: rgba(255,255,255,.7); }
+    .va-benefits { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
+    .va-benefit-item { display: flex; align-items: flex-start; gap: 14px; }
+    .va-benefit-item .check-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--teal); display: flex; align-items: center;
+      justify-content: center; font-size: .75rem; flex-shrink: 0; color: var(--navy);
+    }
+    .va-benefit-item div h5 { font-size: .92rem; font-weight: 700; margin-bottom: 2px; color: white; }
+    .va-benefit-item div p { font-size: .82rem; color: rgba(255,255,255,.65); }
+
+    /* Application Form */
+    .apply-form { background: white; border-radius: 20px; padding: 36px; color: var(--text); }
+    .apply-form h3 { font-size: 1.3rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+    .apply-form > p { font-size: .88rem; color: var(--muted); margin-bottom: 24px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: .82rem; font-weight: 700; color: var(--navy); }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 11px 14px; border: 1.5px solid var(--mid);
+      border-radius: 8px; font-size: .9rem; color: var(--text);
+      transition: border .15s, box-shadow .15s;
+      background: var(--light); font-family: inherit; width: 100%;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none; border-color: var(--sky);
+      box-shadow: 0 0 0 3px rgba(22,163,74,.12);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .skills-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .skill-tag {
+      background: var(--sky); color: white;
+      padding: 4px 12px; border-radius: 20px; font-size: .78rem;
+      font-weight: 600; display: flex; align-items: center; gap: 6px;
+    }
+    .skill-tag button { background: none; border: none; color: white; cursor: pointer; font-size: .85rem; padding: 0; line-height: 1; }
+    .form-submit-btn {
+      width: 100%; padding: 14px; background: var(--blue); color: white;
+      font-size: 1rem; font-weight: 700; border: none; border-radius: 10px;
+      cursor: pointer; margin-top: 20px; transition: background .15s, transform .15s;
+    }
+    .form-submit-btn:hover { background: var(--sky); transform: translateY(-1px); }
+    .form-note { font-size: .78rem; color: var(--muted); text-align: center; margin-top: 12px; }
+    .rate-row { display: flex; align-items: center; gap: 8px; }
+    .rate-prefix {
+      font-size: 1rem; font-weight: 700; color: var(--navy);
+      padding: 11px 12px; background: var(--mid); border-radius: 8px 0 0 8px;
+      border: 1.5px solid var(--mid); border-right: none; white-space: nowrap;
+    }
+    .rate-row input { border-radius: 0 8px 8px 0 !important; }
+
+    /* ─── CTA BANNER ────────────────────────────────────────────── */
+    .cta-banner {
+      padding: 70px 0;
+      background: linear-gradient(90deg, var(--blue) 0%, #0f9e58 100%);
+      color: white; text-align: center;
+    }
+    .cta-banner h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 900; margin-bottom: 12px; }
+    .cta-banner p { opacity: .85; margin-bottom: 32px; font-size: 1.05rem; }
+    .cta-banner .phone-big {
+      font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900;
+      margin: 0 auto 32px; display: flex; align-items: center;
+      justify-content: center; gap: 14px;
+    }
+    .cta-banner .phone-big a { color: white; }
+    .phone-icon {
+      width: 54px; height: 54px; border-radius: 50%;
+      background: rgba(255,255,255,.2); display: flex;
+      align-items: center; justify-content: center; font-size: 1.5rem;
+    }
+    .cta-sub { font-size: .88rem; opacity: .75; margin-top: -18px; margin-bottom: 32px; }
+    .cta-banner .ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── FOOTER ────────────────────────────────────────────────── */
+    footer { background: var(--navy); color: rgba(255,255,255,.8); padding: 60px 0 28px; }
+    .footer-grid { display: grid; grid-template-columns: 1.8fr 1fr 1fr 1.2fr; gap: 40px; margin-bottom: 48px; }
+    .footer-brand .logo { font-size: 1.3rem; color: white; margin-bottom: 14px; }
+    .footer-brand p { font-size: .875rem; line-height: 1.65; max-width: 280px; }
+    .footer-brand .phone { margin-top: 18px; font-size: 1.05rem; font-weight: 700; color: var(--teal); display: flex; align-items: center; gap: 8px; }
+    .footer-col h5 { font-size: .88rem; font-weight: 800; color: white; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: .875rem; color: rgba(255,255,255,.6); transition: color .15s; }
+    .footer-col ul li a:hover { color: var(--teal); }
+    .footer-col.contact-col p { font-size: .875rem; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.1); padding-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .82rem; flex-wrap: wrap; gap: 10px;
+    }
+    .footer-bottom a { color: rgba(255,255,255,.5); }
+    .footer-bottom a:hover { color: var(--teal); }
+
+    /* ─── LEGAL MODALS ──────────────────────────────────────────── */
+    .legal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+      align-items: flex-start; justify-content: center; padding: 40px 16px;
+      overflow-y: auto;
+    }
+    .legal-overlay.open { display: flex; }
+    .legal-box {
+      background: #fff; border-radius: 16px; max-width: 760px; width: 100%;
+      padding: 48px 52px; position: relative; margin: auto;
+    }
+    .legal-box h2 { font-size: 1.55rem; color: var(--navy); margin-bottom: 6px; }
+    .legal-box .legal-updated { font-size: .8rem; color: var(--muted); margin-bottom: 28px; }
+    .legal-box h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 24px 0 8px; }
+    .legal-box p, .legal-box li { font-size: .9rem; color: #374151; line-height: 1.72; }
+    .legal-box ul { padding-left: 20px; margin-top: 6px; }
+    .legal-box ul li { margin-bottom: 5px; }
+    .legal-close {
+      position: absolute; top: 18px; right: 22px; background: none; border: none;
+      font-size: 1.6rem; cursor: pointer; color: var(--muted); line-height: 1;
+    }
+    .legal-close:hover { color: var(--navy); }
+    .legal-disclaimer {
+      margin-top: 28px; padding: 14px 18px; background: #fefce8;
+      border-left: 4px solid #f59e0b; border-radius: 6px;
+      font-size: .82rem; color: #78350f;
+    }
+    .social-links { display: flex; gap: 12px; }
+    .social-links a {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: rgba(255,255,255,.08); display: flex;
+      align-items: center; justify-content: center; font-size: .9rem;
+      color: rgba(255,255,255,.6); transition: background .15s, color .15s;
+    }
+    .social-links a:hover { background: var(--teal); color: var(--navy); }
+
+    /* ─── QUIZ MODAL ─────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(22,101,52,.65); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 24px; width: 100%;
+      max-width: 580px; position: relative; max-height: 92vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 20px; font-size: 1.4rem;
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      z-index: 10;
+    }
+
+    /* Quiz progress bar */
+    .quiz-progress-wrap {
+      background: var(--mid); border-radius: 24px 24px 0 0; overflow: hidden; height: 6px;
+    }
+    .quiz-progress-bar {
+      height: 6px; background: linear-gradient(90deg, var(--sky), var(--teal));
+      border-radius: 6px; transition: width .4s ease;
+    }
+
+    /* Quiz steps */
+    .quiz-body { padding: 36px 40px 40px; }
+    .quiz-step { display: none; }
+    .quiz-step.active { display: block; }
+    .quiz-step-label {
+      font-size: .75rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--sky); margin-bottom: 10px;
+    }
+    .quiz-step h2 { font-size: 1.5rem; font-weight: 900; color: var(--navy); margin-bottom: 6px; }
+    .quiz-step > p { font-size: .9rem; color: var(--muted); margin-bottom: 24px; }
+
+    /* Quiz service checkboxes */
+    .quiz-services-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px;
+    }
+    .quiz-service-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; border: 2px solid var(--mid); border-radius: 10px;
+      cursor: pointer; font-size: .88rem; font-weight: 600; color: var(--navy);
+      transition: border-color .15s, background .15s;
+    }
+    .quiz-service-option:hover { border-color: var(--sky); background: var(--light); }
+    .quiz-service-option input { display: none; }
+    .quiz-service-option.checked { border-color: var(--sky); background: var(--light); }
+    .quiz-service-option .svc-check {
+      width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--mid);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-size: .7rem; transition: all .15s;
+    }
+    .quiz-service-option.checked .svc-check { background: var(--sky); border-color: var(--sky); color: white; }
+
+    /* Quiz hours cards */
+    .quiz-hours-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 28px;
+    }
+    .quiz-hour-card {
+      border: 2px solid var(--mid); border-radius: 14px; padding: 20px 16px;
+      text-align: center; cursor: pointer; position: relative;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+    }
+    .quiz-hour-card:hover { border-color: var(--sky); background: var(--light); }
+    .quiz-hour-card.selected { border-color: var(--sky); background: var(--light); box-shadow: 0 4px 16px rgba(22,163,74,.15); }
+    .quiz-hour-card strong { display: block; font-size: 1.25rem; font-weight: 900; color: var(--navy); }
+    .quiz-hour-card .hr-price { font-size: .95rem; font-weight: 700; color: var(--sky); margin: 4px 0; display: block; }
+    .quiz-hour-card p { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+    .quiz-hour-card .popular-pill {
+      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: var(--navy); font-size: .68rem;
+      font-weight: 800; padding: 3px 12px; border-radius: 20px; white-space: nowrap;
+    }
+
+    /* Quiz VA count */
+    .quiz-va-row {
+      display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .quiz-va-pill {
+      padding: 10px 22px; border: 2px solid var(--mid); border-radius: 30px;
+      font-weight: 700; font-size: .88rem; cursor: pointer; color: var(--navy);
+      transition: all .15s; background: white;
+    }
+    .quiz-va-pill:hover { border-color: var(--sky); background: var(--light); }
+    .quiz-va-pill.selected { border-color: var(--sky); background: var(--sky); color: white; }
+
+    /* Quiz nav */
+    .quiz-nav { display: flex; gap: 12px; align-items: center; }
+    .quiz-back-btn {
+      background: none; border: 2px solid var(--mid); color: var(--muted);
+      padding: 12px 22px; border-radius: 8px; font-weight: 700; font-size: .9rem;
+      cursor: pointer; transition: border-color .15s, color .15s;
+    }
+    .quiz-back-btn:hover { border-color: var(--sky); color: var(--navy); }
+    .quiz-next-btn {
+      flex: 1; padding: 14px; background: var(--blue); color: white;
+      font-size: 1rem; font-weight: 700; border: none; border-radius: 10px;
+      cursor: pointer; transition: background .15s, transform .15s;
+    }
+    .quiz-next-btn:hover { background: var(--sky); transform: translateY(-1px); }
+
+    /* Contact step */
+    .quiz-input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--mid);
+      border-radius: 8px; font-size: .92rem; color: var(--text);
+      background: var(--light); font-family: inherit; margin-bottom: 14px;
+    }
+    .quiz-input:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(22,163,74,.12); }
+    .quiz-label { font-size: .82rem; font-weight: 700; color: var(--navy); display: block; margin-bottom: 6px; }
+
+    /* Success screen */
+    .quiz-success-screen { text-align: center; padding: 12px 0; }
+    .quiz-success-screen .success-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--sky), var(--teal));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; margin: 0 auto 24px;
+    }
+    .quiz-success-screen h2 { font-size: 1.6rem; font-weight: 900; color: var(--navy); margin-bottom: 12px; }
+    .quiz-success-screen p { color: var(--muted); font-size: .95rem; line-height: 1.6; margin-bottom: 10px; }
+    .quiz-success-screen .next-steps {
+      background: var(--light); border-radius: 14px; padding: 20px 24px;
+      margin: 20px 0; text-align: left;
+    }
+    .quiz-success-screen .next-steps h4 { font-size: .88rem; font-weight: 800; color: var(--navy); margin-bottom: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .quiz-success-screen .next-step-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; font-size: .88rem; color: var(--muted); }
+    .quiz-success-screen .next-step-item span { color: var(--sky); font-weight: 800; flex-shrink: 0; }
+
+    /* ─── SUCCESS TOAST ─────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #052e16; color: white; padding: 14px 28px; border-radius: 10px;
+      font-weight: 600; font-size: .9rem; z-index: 99999;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      display: flex; align-items: center; gap: 10px; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast .toast-icon { color: var(--teal); font-size: 1.1rem; }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────────── */
+    @media (max-width: 960px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .stats-grid { grid-template-columns: repeat(2,1fr); }
+      .stat-item + .stat-item { border-left: none; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .cat-grid { grid-template-columns: repeat(2,1fr); }
+      .why-grid { grid-template-columns: 1fr; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .va-apply-inner { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .quiz-services-grid { grid-template-columns: 1fr; }
+    }
+    /* Nav wraps gracefully on small screens — never collapses */
+    @media (max-width: 720px) {
+      nav { gap: 4px; }
+      .nav-links a { padding: 7px 10px; font-size: .8rem; }
+      .logo { margin-right: 4px; }
+    }
+    @media (max-width: 520px) {
+      .cat-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-ctas { flex-direction: column; }
+      .hero-ctas .btn { text-align: center; }
+      .cta-banner .ctas { flex-direction: column; align-items: center; }
+      .quiz-body { padding: 24px 20px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOP BAR ───────────────────────────────────────────────────── -->
+<div class="top-bar">
+  <div class="container">
+    🔥 <strong>Only $6/hr</strong> — No contracts, no hidden fees &nbsp;<span>|</span>&nbsp;
+    📞 Speak with a staffing expert:&nbsp;
+    <a href="tel:+18005550199">(800) 555-0199</a>
+    <span>|</span>
+    Mon–Fri 9am–5pm EST
+  </div>
+</div>
+
+<!-- ── NAVIGATION ────────────────────────────────────────────────── -->
+<header>
+  <div class="container">
+    <nav>
+      <a href="#" class="logo">
+        <img src="logo.png" alt="StaffNest Agency Logo" class="logo-img" />
+        <div class="logo-text-wrap">
+          <span>StaffNest Agency</span>
+          <span class="logo-slogan">Hire Smarter. Grow Faster.</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#apply">For VAs</a></li>
+      </ul>
+      <div class="nav-ctas">
+        <button class="btn btn-secondary" onclick="openModal()" style="padding:9px 22px;font-size:.88rem;">Hire a Virtual Assistant</button>
+      </div>
+      <button class="hamburger" id="hamburgerBtn" onclick="toggleMobile()">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#how-it-works" onclick="toggleMobile()">How It Works</a>
+    <a href="#services" onclick="toggleMobile()">Services</a>
+    <a href="#pricing" onclick="toggleMobile()">Pricing</a>
+    <a href="#testimonials" onclick="toggleMobile()">Reviews</a>
+    <a href="#apply" onclick="toggleMobile()">For VAs</a>
+    <a href="#" onclick="openModal();toggleMobile()">Log In</a>
+    <a href="#" onclick="openModal();toggleMobile()" style="color:#15803d;font-weight:800;">Get Started →</a>
+  </div>
+</header>
+
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">Top-Vetted Virtual Assistants — Ready to Start</div>
+        <div style="font-size:1rem;font-weight:700;color:var(--teal);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;margin-top:-8px">Hire Smarter. Grow Faster.</div>
+        <h1>
+          Hire a Virtual Assistant for Only <em>$6/Hour</em>
+        </h1>
+        <!-- Price callout strip -->
+        <div style="display:inline-flex;align-items:center;gap:16px;background:rgba(245,159,11,.15);border:1.5px solid rgba(245,159,11,.4);border-radius:12px;padding:14px 22px;margin-bottom:20px;flex-wrap:wrap">
+          <div style="display:flex;align-items:baseline;gap:4px">
+            <span style="font-size:2.8rem;font-weight:900;color:var(--gold);line-height:1">$6</span>
+            <span style="font-size:1rem;font-weight:700;color:rgba(255,255,255,.7)">/hr · flat rate</span>
+          </div>
+          <div style="width:1px;height:40px;background:rgba(255,255,255,.2)"></div>
+          <div style="font-size:.88rem;color:rgba(255,255,255,.8);line-height:1.5">
+            No plans. No contracts.<br>
+            <strong style="color:white">Choose your own hours — pay only for work done.</strong>
+          </div>
+        </div>
+        <p>
+          Pre-screened, reliable virtual assistants ready to handle your admin, customer service, social media, and more — at a fraction of local hiring costs.
+        </p>
+        <p style="font-size:.88rem;color:rgba(255,255,255,.8);margin-bottom:14px;line-height:1.65;max-width:440px">
+          Fill out our quick quiz — tell us exactly what you need, and we'll hand-pick the right virtual assistants for you. As soon as you're done, we'll reach out with your matched profiles, ready to start.
+        </p>
+        <div class="hero-ctas">
+          <button class="btn btn-primary" onclick="openModal()">Get Started — It's Free</button>
+          <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+        </div>
+        <div class="hero-trust">
+          <div class="avatars">
+            <span>JM</span><span>SR</span><span>TK</span><span>AL</span>
+          </div>
+          <p><strong>100+ businesses</strong> already hiring<br>through StaffNest Agency</p>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <!-- Cost comparison card -->
+        <div class="va-card" style="flex-direction:column;align-items:flex-start;gap:10px">
+          <div style="font-size:.78rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.1em">Cost Comparison</div>
+          <div style="width:100%">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:.85rem;color:rgba(255,255,255,.75)">Local in-house hire</span>
+              <span style="font-weight:800;color:#ff6b6b">$25–$50+/hr</span>
+            </div>
+            <div style="background:rgba(255,99,99,.15);border-radius:6px;height:10px;margin-bottom:14px">
+              <div style="width:100%;height:10px;background:#ff6b6b;border-radius:6px"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:.85rem;color:rgba(255,255,255,.75)">StaffNest Agency VA</span>
+              <span style="font-weight:800;color:var(--gold)">$6/hr flat</span>
+            </div>
+            <div style="background:rgba(34,211,168,.15);border-radius:6px;height:10px">
+              <div style="width:18%;height:10px;background:var(--gold);border-radius:6px"></div>
+            </div>
+          </div>
+          <div style="margin-top:4px;font-size:.8rem;color:rgba(255,255,255,.55)">You save up to <strong style="color:white">75%</strong> on staffing costs</div>
+        </div>
+        <!-- What you get card -->
+        <div class="va-card" style="flex-direction:column;align-items:flex-start;gap:12px">
+          <div style="font-size:.78rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.1em">What You Get at $6/hr</div>
+          <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+            <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(255,255,255,.8)"><span style="color:var(--teal);font-weight:800">✓</span> Fully vetted, pre-screened talent</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(255,255,255,.8)"><span style="color:var(--teal);font-weight:800">✓</span> Choose your own hours (any amount)</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(255,255,255,.8)"><span style="color:var(--teal);font-weight:800">✓</span> No taxes, benefits, or office costs</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(255,255,255,.8)"><span style="color:var(--teal);font-weight:800">✓</span> Start in as little as 48 hours</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:rgba(255,255,255,.8)"><span style="color:var(--teal);font-weight:800">✓</span> You pick your VA from our matches</div>
+          </div>
+        </div>
+        <div class="savings-badge">
+          <div class="icon">💰</div>
+          <div class="text">
+            <strong>Save up to 75% vs. local hiring</strong>
+            <p>No benefits, taxes, or overhead costs</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS BAR ──────────────────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <strong>100+</strong>
+        <span>Active Business Clients</span>
+      </div>
+      <div class="stat-item">
+        <strong>250+</strong>
+        <span>Vetted Virtual Assistants</span>
+      </div>
+      <div class="stat-item">
+        <strong>75%</strong>
+        <span>Average Cost Savings</span>
+      </div>
+      <div class="stat-item">
+        <strong>48h</strong>
+        <span>Average Hire Time</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────────────── -->
+<section class="how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Simple 3-Step Process</span>
+      <h2 class="section-title">Go From Overwhelmed to Supported in Days</h2>
+      <p class="section-sub">We do the hard work of finding, vetting, and matching you with the right virtual assistant so you don't have to.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon">📋</div>
+        <div class="step-number">01</div>
+        <h3>Tell Us What You Need</h3>
+        <p>Answer a quick quiz — describe the tasks you need help with and how many hours per week you're looking for. Takes under 2 minutes.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">👥</div>
+        <div class="step-number">02</div>
+        <h3>Review &amp; Choose Your VA</h3>
+        <p>We send you profiles of pre-vetted virtual assistants who match your needs. <strong>You pick the one you want</strong> — no guesswork, no surprises.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">🚀</div>
+        <div class="step-number">03</div>
+        <h3>Start Working Together</h3>
+        <p>Onboard your chosen VA to your workflow and start delegating immediately. Pay only for the hours worked — no hidden fees, ever.</p>
+      </div>
+    </div>
+
+    <!-- VA choice callout -->
+    <div style="margin-top:48px;background:linear-gradient(135deg,var(--navy),#15803d);border-radius:18px;padding:36px 40px;color:white;display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+      <div style="font-size:3rem;flex-shrink:0">🎯</div>
+      <div style="flex:1;min-width:240px">
+        <h3 style="font-size:1.3rem;font-weight:900;margin-bottom:8px">You Always Choose Your Own VA</h3>
+        <p style="color:rgba(255,255,255,.75);font-size:.95rem;line-height:1.6">We don't just assign someone to you. We match and send you <strong style="color:white">multiple VA profiles</strong> — you review their experience, skills, and background, then decide who you want to hire. You're always in control.</p>
+      </div>
+      <button class="btn btn-primary" onclick="openModal()" style="font-size:1rem;padding:14px 30px;flex-shrink:0">Get Matched Now</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICE CATEGORIES ─────────────────────────────────────────── -->
+<section class="categories" id="services">
+  <div class="container">
+    <span class="section-label">What VAs Can Do For You</span>
+    <h2 class="section-title">Every Task. Every Department.</h2>
+    <p class="section-sub">Our virtual assistants cover a wide range of skills to support every corner of your business.</p>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <div class="cat-icon">📅</div>
+        <h4>Administrative Support</h4>
+        <p>Scheduling, email management, data entry, travel booking</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">📱</div>
+        <h4>Social Media Management</h4>
+        <p>Content creation, posting, engagement, analytics reporting</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🎧</div>
+        <h4>Customer Service</h4>
+        <p>Live chat, email support, ticketing systems, refund handling</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🔢</div>
+        <h4>Bookkeeping</h4>
+        <p>Invoicing, expense tracking, QuickBooks, financial reporting</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">✍️</div>
+        <h4>Content Writing</h4>
+        <p>Blog posts, newsletters, product descriptions, copywriting</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🛒</div>
+        <h4>eCommerce Support</h4>
+        <p>Product listings, order management, Shopify/Amazon support</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">📊</div>
+        <h4>Research &amp; Analytics</h4>
+        <p>Market research, competitor analysis, lead generation</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🎨</div>
+        <h4>Graphic Design</h4>
+        <p>Canva, Adobe, presentation design, branding assets</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY US ──────────────────────────────────────────────────────── -->
+<section class="why-us">
+  <div class="container">
+    <div class="why-grid">
+      <div>
+        <span class="section-label">Why StaffNest Agency</span>
+        <h2 class="section-title">Not Just a Job Board — A True Staffing Partner</h2>
+        <div class="why-features">
+          <div class="why-item">
+            <div class="why-item-icon">✅</div>
+            <div>
+              <h4>Fully Vetted Candidates</h4>
+              <p>Every VA completes skills testing, background screening, and a multi-step interview before joining our talent pool.</p>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">🎯</div>
+            <div>
+              <h4>You Choose Who You Hire</h4>
+              <p>We send you matched VA profiles and you decide. No random assignments — you're always in control of who works for you.</p>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">🔄</div>
+            <div>
+              <h4>Replacement Guarantee</h4>
+              <p>If your VA isn't the right fit, we'll replace them at no extra charge — no questions asked within 30 days.</p>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">📊</div>
+            <div>
+              <h4>Flexible Hours — Any Amount</h4>
+              <p>Need 10 hours a week or 40? You decide. Change hours any time based on your workload. Pay only for hours worked.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="why-visual">
+        <h3>StaffNest Agency vs. Traditional Hiring</h3>
+        <p>See why businesses are switching to remote talent</p>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">Feature</th>
+              <th>StaffNest Agency</th>
+              <th>In-House Hire</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td style="text-align:left;color:white">Average hourly cost</td>
+              <td style="color:#f59e0b;font-weight:800">$6/hr flat</td>
+              <td style="color:#ff6b6b;font-weight:800">$25–$50+/hr</td>
+            </tr>
+            <tr>
+              <td style="text-align:left">You choose your VA</td>
+              <td><span class="check">✓ Always</span></td>
+              <td><span class="cross">✗ Limited</span></td>
+            </tr>
+            <tr>
+              <td style="text-align:left">Benefits &amp; taxes</td>
+              <td><span class="check">✓ None</span></td>
+              <td><span class="cross">✗ Required</span></td>
+            </tr>
+            <tr>
+              <td style="text-align:left">Time to hire</td>
+              <td><span class="check">✓ 48 hours</span></td>
+              <td><span class="cross">✗ 4–8 weeks</span></td>
+            </tr>
+            <tr>
+              <td style="text-align:left">Flexible hours</td>
+              <td><span class="check">✓ Any time</span></td>
+              <td><span class="cross">✗ Fixed contract</span></td>
+            </tr>
+            <tr>
+              <td style="text-align:left">Replacement guarantee</td>
+              <td><span class="check">✓ Included</span></td>
+              <td><span class="cross">✗ Start over</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ─────────────────────────────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <span class="section-label">Simple, Honest Pricing</span>
+      <h2 class="section-title">Just <span style="color:var(--sky)">$6 / Hour.</span> That's It.</h2>
+      <p class="section-sub" style="margin:12px auto 0">No monthly fees. No contracts. No hidden costs. You choose exactly how many hours you need and only pay for the work done.</p>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin:48px 0 40px">
+      <div style="background:var(--navy);color:white;border-radius:24px;padding:48px 64px;text-align:center;max-width:520px;width:100%;box-shadow:0 20px 60px rgba(5,46,22,.25)">
+        <div style="font-size:5rem;font-weight:900;line-height:1;color:var(--gold)">$6</div>
+        <div style="font-size:1.5rem;font-weight:700;color:rgba(255,255,255,.7);margin-top:4px">per hour</div>
+        <div style="width:60px;height:3px;background:var(--teal);border-radius:2px;margin:20px auto"></div>
+        <p style="font-size:.95rem;color:rgba(255,255,255,.65);line-height:1.7">You hire one VA or ten — the rate stays the same. Scale up or down any week based on your workload. Billed only for hours worked.</p>
+        <button class="btn btn-primary" onclick="openModal()" style="margin-top:28px;font-size:1rem;padding:15px 40px">Get Started Now</button>
+      </div>
+    </div>
+
+    <div class="pricing-hours-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:20px">
+      <div style="background:white;border:2px solid var(--mid);border-radius:16px;padding:28px 20px;text-align:center;transition:border-color .2s,box-shadow .2s" onmouseover="this.style.borderColor='var(--sky)';this.style.boxShadow='0 8px 28px rgba(22,163,74,.12)'" onmouseout="this.style.borderColor='var(--mid)';this.style.boxShadow='none'">
+        <div style="font-size:2rem;font-weight:900;color:var(--blue)">10 hrs</div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:6px 0">per week</div>
+        <div style="font-size:1.6rem;font-weight:800;color:var(--navy);margin:10px 0">$60<span style="font-size:.9rem;font-weight:400;color:var(--muted)">/wk</span></div>
+        <p style="font-size:.8rem;color:var(--muted)">Great for light task support &amp; overflow help</p>
+      </div>
+      <div style="background:white;border:2px solid var(--mid);border-radius:16px;padding:28px 20px;text-align:center;transition:border-color .2s,box-shadow .2s" onmouseover="this.style.borderColor='var(--sky)';this.style.boxShadow='0 8px 28px rgba(22,163,74,.12)'" onmouseout="this.style.borderColor='var(--mid)';this.style.boxShadow='none'">
+        <div style="font-size:2rem;font-weight:900;color:var(--blue)">20 hrs</div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:6px 0">per week</div>
+        <div style="font-size:1.6rem;font-weight:800;color:var(--navy);margin:10px 0">$120<span style="font-size:.9rem;font-weight:400;color:var(--muted)">/wk</span></div>
+        <p style="font-size:.8rem;color:var(--muted)">Ideal for part-time dedicated assistant work</p>
+      </div>
+      <div style="background:var(--blue);border:2px solid var(--blue);border-radius:16px;padding:28px 20px;text-align:center;position:relative;box-shadow:0 12px 40px rgba(21,128,61,.3)">
+        <div style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-size:.72rem;font-weight:800;padding:4px 14px;border-radius:20px;white-space:nowrap">Most Common</div>
+        <div style="font-size:2rem;font-weight:900;color:white">40 hrs</div>
+        <div style="font-size:.82rem;font-weight:700;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.08em;margin:6px 0">per week</div>
+        <div style="font-size:1.6rem;font-weight:800;color:white;margin:10px 0">$240<span style="font-size:.9rem;font-weight:400;color:rgba(255,255,255,.6)">/wk</span></div>
+        <p style="font-size:.8rem;color:rgba(255,255,255,.7)">Full-time VA — fully dedicated to your business</p>
+      </div>
+      <div style="background:white;border:2px solid var(--mid);border-radius:16px;padding:28px 20px;text-align:center;transition:border-color .2s,box-shadow .2s" onmouseover="this.style.borderColor='var(--sky)';this.style.boxShadow='0 8px 28px rgba(22,163,74,.12)'" onmouseout="this.style.borderColor='var(--mid)';this.style.boxShadow='none'">
+        <div style="font-size:2rem;font-weight:900;color:var(--blue)">Custom</div>
+        <div style="font-size:.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:6px 0">your choice</div>
+        <div style="font-size:1.6rem;font-weight:800;color:var(--navy);margin:10px 0">$6<span style="font-size:.9rem;font-weight:400;color:var(--muted)">/hr</span></div>
+        <p style="font-size:.8rem;color:var(--muted)">Set any hours you need — change any time, no penalty</p>
+      </div>
+    </div>
+
+    <div style="background:var(--light);border-radius:14px;padding:22px 32px;display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+      <span style="font-size:.88rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px">✅ No monthly subscription</span>
+      <span style="font-size:.88rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px">✅ No long-term contracts</span>
+      <span style="font-size:.88rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px">✅ No hidden fees</span>
+      <span style="font-size:.88rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px">✅ Change hours any week</span>
+      <span style="font-size:.88rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px">✅ You choose your VA</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ───────────────────────────────────────────────── -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <span class="section-label">Client Reviews</span>
+      <h2 class="section-title">Business Owners Love StaffNest Agency</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I was skeptical about hiring remotely, but StaffNest Agency made the whole process painless. My VA handles all of my inbox, scheduling, and social media — and I'm saving over $2,000 a month compared to my old assistant."</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar">JM</div>
+          <div>
+            <strong>James Mitchell</strong>
+            <span>CEO, Mitchell Real Estate Group</span>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"The quality of the VAs on this platform blew me away. My customer support team of 3 VAs costs me less than one part-time local hire. Response times are fast, professional, and my customers notice the difference."</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#e84393)">SR</div>
+          <div>
+            <strong>Sarah Rodriguez</strong>
+            <span>Founder, Bloom Skincare Co.</span>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"StaffNest Agency found me a bookkeeper and an admin VA within 48 hours. Both are absolute rockstars. The platform is easy to manage, billing is crystal clear, and the support team actually picks up the phone."</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#22d3a8,#15803d)">TK</div>
+          <div>
+            <strong>Tom Kaplan</strong>
+            <span>Owner, Kaplan Digital Marketing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VA APPLICATION ─────────────────────────────────────────────── -->
+<section class="va-apply" id="apply">
+  <div class="container">
+    <div class="va-apply-inner">
+      <div>
+        <span class="section-label" style="color:var(--blue)">For Virtual Assistants</span>
+        <h2 class="section-title">Work Remotely. Earn Reliably.</h2>
+        <p class="section-sub">Join our growing network of skilled virtual assistants and connect with businesses that need your expertise — on your terms.</p>
+        <div class="va-benefits">
+          <div class="va-benefit-item">
+            <div class="check-icon">✓</div>
+            <div><h5>Set Your Own Rate</h5><p>You decide what you're worth. Propose your hourly rate and get matched with clients who value your skills.</p></div>
+          </div>
+          <div class="va-benefit-item">
+            <div class="check-icon">✓</div>
+            <div><h5>Choose Your Hours</h5><p>Work full-time, part-time, or weekends only. We match you with clients that fit your availability.</p></div>
+          </div>
+          <div class="va-benefit-item">
+            <div class="check-icon">✓</div>
+            <div><h5>100% Remote Work</h5><p>Work from anywhere in the world. All you need is a reliable internet connection and a great work ethic.</p></div>
+          </div>
+          <div class="va-benefit-item">
+            <div class="check-icon">✓</div>
+            <div><h5>Fast, Reliable Payments</h5><p>Get paid on a consistent bi-weekly schedule. No chasing invoices — we handle it all for you.</p></div>
+          </div>
+          <div class="va-benefit-item">
+            <div class="check-icon">✓</div>
+            <div><h5>Career Growth</h5><p>Build your portfolio, earn reviews, and move up our talent tiers for access to higher-paying clients.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="apply-form">
+        <h3>Virtual Assistant Application</h3>
+        <p>Fill out the form below and our team will review your application within 2–3 business days.</p>
+        <form id="vaApplicationForm" onsubmit="submitVAForm(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" placeholder="Ana" required />
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" placeholder="Martinez" required />
+            </div>
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" placeholder="ana@email.com" required />
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" placeholder="+1 (555) 000-0000" />
+            </div>
+            <div class="form-group">
+              <label>Country / Location *</label>
+              <input type="text" placeholder="Philippines, Mexico, Colombia..." required />
+            </div>
+            <div class="form-group">
+              <label>Primary Role *</label>
+              <select required>
+                <option value="" disabled selected>Select a role</option>
+                <option>Executive / Administrative Assistant</option>
+                <option>Customer Service Specialist</option>
+                <option>Social Media Manager</option>
+                <option>Bookkeeper / Accounting</option>
+                <option>Content Writer / Copywriter</option>
+                <option>Graphic Designer</option>
+                <option>eCommerce / Shopify Specialist</option>
+                <option>Data Entry / Research</option>
+                <option>Project Manager</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Years of Experience *</label>
+              <select required>
+                <option value="" disabled selected>Select experience</option>
+                <option>Less than 1 year</option>
+                <option>1–2 years</option>
+                <option>3–5 years</option>
+                <option>6–10 years</option>
+                <option>10+ years</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Hours Available Per Week *</label>
+              <select required>
+                <option value="" disabled selected>Select availability</option>
+                <option>Less than 10 hrs/week (project-based)</option>
+                <option>10–20 hrs/week (part-time)</option>
+                <option>20–30 hrs/week</option>
+                <option>30–40 hrs/week</option>
+                <option>40+ hrs/week (full-time)</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Desired Hourly Rate (USD) *</label>
+              <div class="rate-row">
+                <span class="rate-prefix">$ USD /hr</span>
+                <input type="number" placeholder="e.g. 9" min="3" max="100" required />
+              </div>
+            </div>
+            <div class="form-group full">
+              <label>Top Skills *</label>
+              <input type="text" id="skillInput" placeholder="Type a skill and press Enter (e.g. Excel, Canva, Shopify...)" onkeydown="addSkill(event)" />
+              <div class="skills-tags" id="skillsTags"></div>
+            </div>
+            <div class="form-group full">
+              <label>Previous Job Experience *</label>
+              <textarea placeholder="Briefly describe your 2–3 most relevant previous roles and what you accomplished..." required></textarea>
+            </div>
+            <div class="form-group full">
+              <label>LinkedIn Profile or Portfolio URL</label>
+              <input type="url" placeholder="https://linkedin.com/in/yourprofile" />
+            </div>
+            <div class="form-group full">
+              <label>Additional Notes or Specializations</label>
+              <textarea placeholder="Mention any tools you're certified in, languages you speak, timezone, or anything else that sets you apart..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="form-submit-btn">Submit My Application →</button>
+          <p class="form-note">🔒 Your information is confidential and never shared without your permission.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA / CONTACT BANNER ───────────────────────────────────────── -->
+<section class="cta-banner" id="contact">
+  <div class="container">
+    <h2>Ready to Hire Your First Virtual Assistant?</h2>
+    <p>Call us today or take our quick quiz — and be staffed within 48 hours.</p>
+    <div class="phone-big">
+      <div class="phone-icon">📞</div>
+      <a href="tel:+18005550199">(800) 555-0199</a>
+    </div>
+    <p class="cta-sub">Mon–Fri 9am–5pm EST · Free Consultation · No Obligation</p>
+    <div class="ctas">
+      <button class="btn btn-primary" onclick="openModal()" style="font-size:1rem;padding:14px 34px">Get Started — Free Quiz</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" style="font-size:1.2rem">
+          <img src="logo.png" alt="StaffNest Agency Logo" class="logo-img" />
+          <div class="logo-text-wrap">
+            <span style="color:white">StaffNest Agency</span>
+            <span class="logo-slogan" style="color:rgba(255,255,255,.45)">Hire Smarter. Grow Faster.</span>
+          </div>
+        </div>
+        <p>Connecting ambitious businesses with world-class virtual talent. Affordable, reliable, and ready to scale with you.</p>
+        <div class="phone">📞 <a href="tel:+18005550199" style="color:var(--teal)">(800) 555-0199</a></div>
+      </div>
+      <div class="footer-col">
+        <h5>For Businesses</h5>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#services">VA Services</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#" onclick="openModal()">Get Started</a></li>
+          <li><a href="#testimonials">Client Reviews</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>For VAs</h5>
+        <ul>
+          <li><a href="#apply">Apply Now</a></li>
+          <li><a href="#apply">How to Get Hired</a></li>
+          <li><a href="#apply">VA Requirements</a></li>
+          <li><a href="#apply">Payment Info</a></li>
+        </ul>
+      </div>
+      <div class="footer-col contact-col">
+        <h5>Contact Us</h5>
+        <p>📞 <a href="tel:+18005550199" style="color:rgba(255,255,255,.6)">(800) 555-0199</a></p>
+        <p>🕐 Mon–Fri 9am–5pm EST</p>
+        <p style="margin-top:4px;font-size:.82rem;opacity:.5">We respond to all inquiries<br>as soon as possible.</p>
+      </div>
+    </div>
+    <!-- Legal Disclaimer -->
+    <div style="border-top:1px solid rgba(255,255,255,.1);padding:28px 0 20px;margin-bottom:8px;">
+      <p style="font-size:.78rem;color:rgba(255,255,255,.4);line-height:1.75;text-align:center;max-width:860px;margin:0 auto;">
+        <strong style="color:rgba(255,255,255,.6);">Legal Disclaimer:</strong>
+        StaffNest Agency operates solely as a staffing marketplace and intermediary. All virtual assistants engaged through StaffNest Agency are <strong style="color:rgba(255,255,255,.55);">independent contractors</strong>, not employees of StaffNest Agency or any client business. StaffNest Agency is not the employer of record and assumes no liability for the actions, omissions, work quality, or conduct of any virtual assistant. Clients are responsible for supervising their assigned VA and for protecting any sensitive business information shared. StaffNest Agency makes no guarantee of specific results or business outcomes. By using our services, all parties agree to our full
+        <a href="#" onclick="openLegal('terms');return false;" style="color:rgba(255,255,255,.55);text-decoration:underline;">Terms of Service</a>
+        and
+        <a href="#" onclick="openLegal('privacy');return false;" style="color:rgba(255,255,255,.55);text-decoration:underline;">Privacy Policy</a>.
+        StaffNest Agency's total liability shall not exceed amounts paid in the prior 30 days. All disputes are subject to binding arbitration — class action claims are waived.
+      </p>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2025 StaffNest Agency. All rights reserved.</span>
+      <div class="social-links">
+        <a href="#" title="Facebook">f</a>
+        <a href="#" title="LinkedIn">in</a>
+        <a href="#" title="Instagram">ig</a>
+        <a href="#" title="Twitter/X">𝕏</a>
+      </div>
+      <div style="display:flex;gap:16px">
+        <a href="#" onclick="openLegal('privacy');return false;">Privacy Policy</a>
+        <a href="#" onclick="openLegal('terms');return false;">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── QUIZ MODAL ─────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="authModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-bar" id="quizProgressBar" style="width:25%"></div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="quiz-body">
+
+      <!-- ── STEP 1: Services ── -->
+      <div class="quiz-step active" id="quizStep1">
+        <div class="quiz-step-label">Step 1 of 5 · Free &amp; No Obligation</div>
+        <h2>What kind of help do you need?</h2>
+        <p>Select all that apply — we'll match you with the right VA.</p>
+        <div class="quiz-services-grid">
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> 📅 Administrative Support
+          </div>
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> 📱 Social Media
+          </div>
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> 🎧 Customer Service
+          </div>
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> 🔢 Bookkeeping
+          </div>
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> ✍️ Content Writing
+          </div>
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> 🛒 eCommerce Support
+          </div>
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> 📊 Research &amp; Analytics
+          </div>
+          <div class="quiz-service-option" onclick="toggleService(this)">
+            <div class="svc-check">✓</div> 🎨 Graphic Design
+          </div>
+        </div>
+        <button class="quiz-next-btn" onclick="goToStep(2)">Next: Hours &amp; Schedule →</button>
+      </div>
+
+      <!-- ── STEP 2: Hours ── -->
+      <div class="quiz-step" id="quizStep2">
+        <div class="quiz-step-label">Step 2 of 5</div>
+        <h2>How many hours per week do you need?</h2>
+        <p>You can always adjust this later — no commitment required.</p>
+        <div class="quiz-hours-grid">
+          <div class="quiz-hour-card" onclick="selectHours(this, '10 hrs/week')">
+            <strong>10 hrs/wk</strong>
+            <span class="hr-price">$60 / week</span>
+            <p>Light support &amp; overflow tasks</p>
+          </div>
+          <div class="quiz-hour-card" onclick="selectHours(this, '20 hrs/week')">
+            <strong>20 hrs/wk</strong>
+            <span class="hr-price">$120 / week</span>
+            <p>Part-time dedicated assistant</p>
+          </div>
+          <div class="quiz-hour-card selected" onclick="selectHours(this, '40 hrs/week')">
+            <div class="popular-pill">Most Common</div>
+            <strong>40 hrs/wk</strong>
+            <span class="hr-price">$240 / week</span>
+            <p>Full-time, fully dedicated</p>
+          </div>
+          <div class="quiz-hour-card" onclick="selectHours(this, 'Custom hours')">
+            <strong>Custom</strong>
+            <span class="hr-price">$6 / hr</span>
+            <p>I'll decide — any amount works</p>
+          </div>
+        </div>
+        <div class="quiz-nav">
+          <button class="quiz-back-btn" onclick="goToStep(1)">← Back</button>
+          <button class="quiz-next-btn" onclick="goToStep(3)">Next: A Few Details →</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Start date + how many VAs ── -->
+      <div class="quiz-step" id="quizStep3">
+        <div class="quiz-step-label">Step 3 of 5</div>
+        <h2>A couple quick questions</h2>
+        <p>Help us match you with the best options.</p>
+
+        <label class="quiz-label">When would you like to get started?</label>
+        <div class="quiz-va-row" id="startRow">
+          <div class="quiz-va-pill selected" onclick="selectPill('startRow', this)">As soon as possible</div>
+          <div class="quiz-va-pill" onclick="selectPill('startRow', this)">Within 1–2 weeks</div>
+          <div class="quiz-va-pill" onclick="selectPill('startRow', this)">Within a month</div>
+          <div class="quiz-va-pill" onclick="selectPill('startRow', this)">Just exploring</div>
+        </div>
+
+        <label class="quiz-label" style="margin-top:8px">How many VAs are you looking to hire?</label>
+        <div class="quiz-va-row" id="vaCountRow">
+          <div class="quiz-va-pill selected" onclick="selectPill('vaCountRow', this)">1 VA</div>
+          <div class="quiz-va-pill" onclick="selectPill('vaCountRow', this)">2–3 VAs</div>
+          <div class="quiz-va-pill" onclick="selectPill('vaCountRow', this)">4+ VAs</div>
+          <div class="quiz-va-pill" onclick="selectPill('vaCountRow', this)">Not sure yet</div>
+        </div>
+
+        <div style="background:var(--light);border:1.5px solid var(--mid);border-radius:12px;padding:16px 18px;margin:20px 0;display:flex;gap:12px;align-items:flex-start">
+          <span style="font-size:1.3rem">🎯</span>
+          <p style="font-size:.85rem;color:var(--muted);margin:0;line-height:1.6"><strong style="color:var(--navy)">You choose your VA.</strong> After we receive your info, we'll send you profiles of matched virtual assistants. You review them and pick who you want — no pressure, no random assignments.</p>
+        </div>
+
+        <div class="quiz-nav">
+          <button class="quiz-back-btn" onclick="goToStep(2)">← Back</button>
+          <button class="quiz-next-btn" onclick="goToStep(4)">Next: Your Contact Info →</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 4: Contact info ── -->
+      <div class="quiz-step" id="quizStep4">
+        <div class="quiz-step-label">Step 4 of 5</div>
+        <h2>Where should we send your matches?</h2>
+        <p>We'll reach out as soon as possible with VA profiles matched to your needs.</p>
+
+        <label class="quiz-label">Your Name *</label>
+        <input class="quiz-input" id="qName" type="text" placeholder="James Mitchell" required />
+
+        <label class="quiz-label">Business / Company Name</label>
+        <input class="quiz-input" id="qBusiness" type="text" placeholder="Mitchell Real Estate Group" />
+
+        <label class="quiz-label">Phone Number *</label>
+        <input class="quiz-input" id="qPhone" type="tel" placeholder="(555) 000-0000" required />
+
+        <label class="quiz-label">Email Address *</label>
+        <input class="quiz-input" id="qEmail" type="email" placeholder="james@mybusiness.com" required />
+
+        <div class="quiz-nav" style="margin-top:4px">
+          <button class="quiz-back-btn" onclick="goToStep(3)">← Back</button>
+          <button class="quiz-next-btn" onclick="goToStep(5)">Next: Any Special Needs? →</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 5: Special requirements (free text, last step) ── -->
+      <div class="quiz-step" id="quizStep5">
+        <div class="quiz-step-label">Step 5 of 5 · Almost done!</div>
+        <h2>Any special requirements?</h2>
+        <p>This is optional — but the more you share, the better we can match you. Feel free to include anything that matters to you.</p>
+
+        <label class="quiz-label">Tell us anything specific you're looking for <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+        <textarea class="quiz-input" id="qSpecial" rows="5" placeholder="e.g. Must be fluent in Spanish, has experience with Shopify, familiar with QuickBooks, available during EST business hours, background in real estate, great communicator..." style="resize:vertical;min-height:120px;font-family:inherit"></textarea>
+
+        <div style="background:var(--light);border:1.5px solid var(--mid);border-radius:10px;padding:14px 16px;margin:16px 0;font-size:.82rem;color:var(--muted);line-height:1.8">
+          <strong style="color:var(--navy)">💡 Examples of what you can include:</strong><br>
+          Language &amp; fluency (e.g. native English, bilingual Spanish/English) &nbsp;·&nbsp;
+          Industry knowledge (e.g. real estate, healthcare, eCommerce) &nbsp;·&nbsp;
+          Software skills (e.g. HubSpot, QuickBooks, Shopify, CapCut) &nbsp;·&nbsp;
+          Availability (e.g. must be available 9am–5pm EST) &nbsp;·&nbsp;
+          Personality (e.g. proactive, fast learner, great on the phone)
+        </div>
+
+        <div class="quiz-nav" style="margin-top:4px">
+          <button class="quiz-back-btn" onclick="goToStep(4)">← Back</button>
+          <button class="quiz-next-btn" onclick="submitQuiz()">Get My VA Matches →</button>
+        </div>
+        <p style="font-size:.75rem;color:var(--muted);margin-top:12px;text-align:center">🔒 We never share your info. No spam — ever.</p>
+      </div>
+
+      <!-- ── SUCCESS ── -->
+      <div class="quiz-step" id="quizSuccess">
+        <div class="quiz-success-screen">
+          <div class="success-icon">✅</div>
+          <h2>You're All Set!</h2>
+          <p>Thank you for reaching out to <strong>StaffNest Agency</strong>. We've received your information and will reach out to you <strong>as soon as possible</strong>.</p>
+
+          <div class="next-steps">
+            <h4>What Happens Next</h4>
+            <div class="next-step-item"><span>1.</span> Our team reviews your needs and finds the best VA matches for you.</div>
+            <div class="next-step-item"><span>2.</span> We send you profiles of pre-vetted VAs — you <strong>review and choose</strong> who you want.</div>
+            <div class="next-step-item"><span>3.</span> Once you pick your VA, we get you onboarded and working within 48 hours.</div>
+          </div>
+
+          <p style="font-size:.88rem">In the meantime, give us a call if you have any questions:</p>
+          <a href="tel:+18005550199" style="font-size:1.3rem;font-weight:900;color:var(--sky);display:block;margin:10px 0">📞 (800) 555-0199</a>
+          <p style="font-size:.8rem;color:var(--muted)">Mon–Fri · 9am–5pm EST</p>
+
+          <button class="quiz-next-btn" onclick="closeModal()" style="margin-top:20px;max-width:300px;margin-left:auto;margin-right:auto;display:block">Close</button>
+        </div>
+      </div>
+
+    </div><!-- end quiz-body -->
+  </div>
+</div>
+
+<!-- ── SUCCESS TOAST ──────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✅</span>
+  <span id="toastMsg">Success!</span>
+</div>
+
+<!-- ── SCRIPTS ────────────────────────────────────────────────────── -->
+<script>
+  /* ── Quiz state ── */
+  let currentStep = 1;
+  let selectedHours = '40 hrs/week';
+
+  const progressMap = { 1: '20%', 2: '40%', 3: '60%', 4: '80%', 5: '95%', 6: '100%' };
+
+  function goToStep(step) {
+    document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+    const ids = { 1:'quizStep1', 2:'quizStep2', 3:'quizStep3', 4:'quizStep4', 5:'quizStep5', 6:'quizSuccess' };
+    const el = document.getElementById(ids[step]);
+    if (el) el.classList.add('active');
+    document.getElementById('quizProgressBar').style.width = progressMap[step] || '100%';
+    currentStep = step;
+    // scroll modal to top
+    const modal = document.querySelector('.modal');
+    if (modal) modal.scrollTop = 0;
+  }
+
+  function toggleService(el) {
+    el.classList.toggle('checked');
+  }
+
+  function selectHours(el, hrs) {
+    document.querySelectorAll('.quiz-hour-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedHours = hrs;
+  }
+
+  function selectPill(rowId, el) {
+    document.querySelectorAll('#' + rowId + ' .quiz-va-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function submitQuiz() {
+    const name  = document.getElementById('qName').value.trim();
+    const phone = document.getElementById('qPhone').value.trim();
+    const email = document.getElementById('qEmail').value.trim();
+    if (!name || !phone || !email) {
+      showToast('Please fill in your name, phone, and email.');
+      return;
+    }
+    const services   = [...document.querySelectorAll('.quiz-service-option.checked')]
+                         .map(el => el.textContent.replace('✓','').trim()).join(', ') || 'Not specified';
+    const startTime  = document.querySelector('#startRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const vaCount    = document.querySelector('#vaCountRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const business   = document.getElementById('qBusiness').value.trim() || 'Not provided';
+    const special    = document.getElementById('qSpecial')?.value.trim() || 'None';
+
+    const data = {
+      access_key: 'YOUR_WEB3FORMS_KEY',
+      subject: `New VA Request — ${name} | ${business}`,
+      from_name: 'StaffNest Agency Business Quiz',
+      replyto: email,
+      name: name,
+      message: `BUSINESS OWNER QUIZ SUBMISSION\n\nName: ${name}\nBusiness: ${business}\nPhone: ${phone}\nEmail: ${email}\n\nServices Needed: ${services}\nHours Per Week: ${selectedHours}\nStart Timeline: ${startTime}\nNumber of VAs: ${vaCount}\n\nSpecial Requirements:\n${special}`
+    };
+
+    const btn = document.querySelector('#quizStep5 .quiz-next-btn');
+    if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => { goToStep(6); })
+    .catch(() => { goToStep(6); })
+    .finally(() => { if (btn) { btn.textContent = 'Get My VA Matches →'; btn.disabled = false; } });
+  }
+
+  /* ── Modal ── */
+  function openModal() {
+    goToStep(1);
+    document.getElementById('authModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('authModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeModalOnOverlay(e) {
+    if (e.target === document.getElementById('authModal')) closeModal();
+  }
+
+  /* ── Toast ── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  /* ── VA form ── */
+  const skills = [];
+  function addSkill(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const input = document.getElementById('skillInput');
+      const val = input.value.trim();
+      if (val && !skills.includes(val)) { skills.push(val); renderSkills(); }
+      input.value = '';
+    }
+  }
+  function removeSkill(i) { skills.splice(i, 1); renderSkills(); }
+  function renderSkills() {
+    document.getElementById('skillsTags').innerHTML = skills.map((s, i) =>
+      `<span class="skill-tag">${s}<button type="button" onclick="removeSkill(${i})">✕</button></span>`
+    ).join('');
+  }
+  function submitVAForm(e) {
+    e.preventDefault();
+    const form = document.getElementById('vaApplicationForm');
+    const f    = form.querySelectorAll('input:not(#skillInput):not([type="submit"]), select, textarea');
+    const firstName  = f[0]?.value.trim() || '';
+    const lastName   = f[1]?.value.trim() || '';
+    const email      = f[2]?.value.trim() || '';
+    const phone      = f[3]?.value.trim() || '';
+    const country    = f[4]?.value.trim() || '';
+    const role       = f[5]?.value || '';
+    const experience = f[6]?.value || '';
+    const hours      = f[7]?.value || '';
+    const rate       = f[8]?.value.trim() || '';
+    const prevExp    = f[9]?.value.trim() || '';
+    const linkedin   = f[10]?.value.trim() || '';
+    const notes      = f[11]?.value.trim() || '';
+
+    const data = {
+      access_key: 'YOUR_WEB3FORMS_KEY',
+      subject: `New VA Application — ${firstName} ${lastName} | ${role}`,
+      from_name: 'StaffNest Agency VA Application',
+      replyto: email,
+      name: `${firstName} ${lastName}`,
+      message: `VA APPLICATION\n\nName: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nCountry: ${country}\n\nPrimary Role: ${role}\nYears of Experience: ${experience}\nHours Available: ${hours}\nDesired Rate: $${rate}/hr\n\nTop Skills: ${skills.join(', ') || 'Not provided'}\n\nPrevious Experience:\n${prevExp}\n\nLinkedIn / Portfolio: ${linkedin || 'Not provided'}\n\nAdditional Notes:\n${notes || 'None'}`
+    };
+
+    const btn = form.querySelector('.form-submit-btn');
+    if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      showToast('Application submitted! We\'ll review it within 2–3 business days. ✅');
+      form.reset(); skills.length = 0; renderSkills();
+    })
+    .catch(() => {
+      showToast('Application submitted! We\'ll review it within 2–3 business days. ✅');
+      form.reset(); skills.length = 0; renderSkills();
+    })
+    .finally(() => { if (btn) { btn.textContent = 'Submit My Application →'; btn.disabled = false; } });
+  }
+
+  /* ── Legal modals ── */
+  function openLegal(which) {
+    document.getElementById(which === 'privacy' ? 'privacyModal' : 'termsModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLegal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeLegalOnOverlay(e, id) {
+    if (e.target === e.currentTarget) closeLegal(id);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      ['privacyModal','termsModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.classList.contains('open')) closeLegal(id);
+      });
+    }
+  });
+
+  /* ── Mobile nav ── */
+  function toggleMobile() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  /* ── Smooth scroll ── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  /* ── Animate stats on scroll ── */
+  const statEls = document.querySelectorAll('.stat-item strong');
+  const statTargets = ['100+', '250+', '75%', '48h'];
+  let animated = false;
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && !animated) {
+      animated = true;
+      statEls.forEach((el, i) => {
+        el.style.transition = `opacity .4s ease ${i * 0.12}s, transform .4s ease ${i * 0.12}s`;
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+          el.textContent = statTargets[i];
+        }, i * 120 + 50);
+      });
+    }
+  }, { threshold: 0.5 });
+  if (document.querySelector('.stats-bar')) observer.observe(document.querySelector('.stats-bar'));
+
+  /* ── Fade-in on scroll ── */
+  const fadeEls = document.querySelectorAll('.step-card, .cat-card, .testi-card, .why-item');
+  const fadeObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.transition = 'opacity .5s ease, transform .5s ease';
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        fadeObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  fadeEls.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    fadeObserver.observe(el);
+  });
+</script>
+
+<!-- ── PRIVACY POLICY MODAL ──────────────────────────────────────── -->
+<div class="legal-overlay" id="privacyModal" onclick="closeLegalOnOverlay(event,'privacyModal')">
+  <div class="legal-box">
+    <button class="legal-close" onclick="closeLegal('privacyModal')">&times;</button>
+    <h2>Privacy Policy</h2>
+    <p class="legal-updated">Last updated: March 2025</p>
+
+    <h3>1. Information We Collect</h3>
+    <p>When you fill out our quiz or VA application, we collect information you voluntarily provide, including your name, phone number, email address, business name, service preferences, hours needed, and any special requirements you describe. We do not collect payment information through this website.</p>
+
+    <h3>2. How We Use Your Information</h3>
+    <ul>
+      <li>To match you with qualified virtual assistants based on your stated needs</li>
+      <li>To contact you about your inquiry via phone or email</li>
+      <li>To screen and vet VA applicants for our talent pool</li>
+      <li>To improve our matching process and services</li>
+    </ul>
+
+    <h3>3. We Do Not Sell Your Data</h3>
+    <p>StaffNest Agency does not sell, rent, or trade your personal information to any third party for marketing purposes. Your information is used solely for the purpose of facilitating our staffing services.</p>
+
+    <h3>4. Information Sharing</h3>
+    <p>We may share limited information (such as your name, contact details, and service requirements) with vetted virtual assistants we believe may be a good match for your needs. We do not share your information with unrelated third parties.</p>
+
+    <h3>5. Data Security</h3>
+    <p>We take reasonable measures to protect your personal information from unauthorized access or disclosure. However, no internet transmission is 100% secure, and we cannot guarantee absolute security.</p>
+
+    <h3>6. Cookies</h3>
+    <p>This website may use basic cookies to ensure proper functionality. We do not use tracking cookies for advertising purposes.</p>
+
+    <h3>7. Your Rights</h3>
+    <p>You may request that we delete or correct your personal information at any time by calling us at (800) 555-0199 or emailing us directly. We will respond to all data requests within a reasonable timeframe.</p>
+
+    <h3>8. Children's Privacy</h3>
+    <p>Our services are intended for business owners and professionals aged 18 and older. We do not knowingly collect information from anyone under 18.</p>
+
+    <h3>9. Changes to This Policy</h3>
+    <p>We may update this Privacy Policy from time to time. Continued use of our website after changes are posted constitutes your acceptance of the updated policy.</p>
+
+    <h3>10. Contact</h3>
+    <p>For any privacy-related questions, please call us at <strong>(800) 555-0199</strong>, Mon–Fri 9am–5pm EST.</p>
+
+    <div class="legal-disclaimer">⚠️ <strong>Note:</strong> This policy is provided for general informational purposes. StaffNest Agency recommends consulting a licensed attorney to ensure full legal compliance for your specific business situation.</div>
+  </div>
+</div>
+
+<!-- ── TERMS OF SERVICE MODAL ─────────────────────────────────────── -->
+<div class="legal-overlay" id="termsModal" onclick="closeLegalOnOverlay(event,'termsModal')">
+  <div class="legal-box">
+    <button class="legal-close" onclick="closeLegal('termsModal')">&times;</button>
+    <h2>Terms of Service</h2>
+    <p class="legal-updated">Last updated: March 2025</p>
+
+    <h3>1. Acceptance of Terms</h3>
+    <p>By using the StaffNest Agency website or services, you agree to be bound by these Terms of Service. If you do not agree, please do not use our services. These terms apply to all visitors, business clients, and virtual assistant applicants.</p>
+
+    <h3>2. StaffNest Agency Is a Staffing Marketplace</h3>
+    <p>StaffNest Agency operates as a staffing intermediary that connects business owners with independent virtual assistants. StaffNest Agency is <strong>not an employer</strong> of the virtual assistants on its platform. Virtual assistants work as independent contractors, not as employees of StaffNest Agency or of any client business unless a separate employment agreement is established directly between those parties.</p>
+
+    <h3>3. Independent Contractor Relationship</h3>
+    <ul>
+      <li>Virtual assistants engaged through StaffNest Agency are independent contractors</li>
+      <li>StaffNest Agency does not withhold taxes on behalf of virtual assistants — each VA is solely responsible for reporting and paying their own taxes</li>
+      <li>VAs are not entitled to employee benefits, workers' compensation, unemployment insurance, or similar protections through StaffNest Agency</li>
+      <li>Business clients are not the employer of record for any VA matched through StaffNest Agency</li>
+    </ul>
+
+    <h3>4. Hourly Rate &amp; Payments</h3>
+    <p>StaffNest Agency charges a flat rate of <strong>$6.00 per hour</strong> for virtual assistant services. Business clients pay StaffNest Agency directly. StaffNest Agency then compensates virtual assistants according to separate contractor agreements. Rates, hours, and payment schedules are subject to the specific agreement entered into at the time of engagement. All payments are non-refundable unless otherwise stated in writing.</p>
+
+    <h3>5. No Guarantee of Results</h3>
+    <p>StaffNest Agency makes no guarantee that any virtual assistant will meet your specific expectations or produce specific business outcomes. While we vet all VAs in our network, we cannot guarantee uninterrupted availability, specific skill levels beyond what is represented, or business results of any kind.</p>
+
+    <h3>6. Client Responsibilities</h3>
+    <ul>
+      <li>Clients are responsible for clearly communicating tasks, expectations, and deadlines to their assigned VA</li>
+      <li>Clients must treat VAs with professionalism and respect — abusive or harassing behavior is grounds for immediate termination of service</li>
+      <li>Clients are responsible for safeguarding any sensitive business information shared with a VA</li>
+      <li>Clients must not solicit or hire StaffNest Agency VAs directly outside the platform during active engagement or for 12 months after termination without written consent from StaffNest Agency</li>
+    </ul>
+
+    <h3>7. VA Applicant Terms</h3>
+    <ul>
+      <li>All information submitted in your application must be truthful and accurate — misrepresentation is grounds for immediate removal</li>
+      <li>Acceptance into the StaffNest Agency talent pool does not guarantee placement or a minimum number of work hours</li>
+      <li>VAs may be removed from the network at any time for performance issues, client complaints, or conduct violations</li>
+      <li>VAs are solely responsible for their own tax obligations and compliance with applicable laws in their country or region</li>
+    </ul>
+
+    <h3>8. Limitation of Liability</h3>
+    <p>To the maximum extent permitted by law, StaffNest Agency shall not be liable for any indirect, incidental, special, consequential, or punitive damages — including but not limited to loss of profits, loss of data, or business interruption — arising from your use of our services or from the actions or inactions of any virtual assistant. StaffNest Agency's total liability to any party shall not exceed the total amount paid to StaffNest Agency by that party in the 30 days preceding the claim.</p>
+
+    <h3>9. Indemnification</h3>
+    <p>You agree to indemnify, defend, and hold harmless StaffNest Agency, its owners, employees, and agents from and against any claims, damages, losses, or expenses (including legal fees) arising from your use of our services, your violation of these terms, or your violation of any applicable law.</p>
+
+    <h3>10. Termination</h3>
+    <p>Either party may terminate services at any time with reasonable notice. StaffNest Agency reserves the right to immediately suspend or terminate access for any violation of these terms, abusive behavior, fraudulent activity, or non-payment.</p>
+
+    <h3>11. Dispute Resolution</h3>
+    <p>Any disputes arising from these terms or StaffNest Agency services shall first be attempted to be resolved informally by contacting us at (800) 555-0199. If informal resolution fails, disputes shall be resolved through binding arbitration in accordance with applicable law. Both parties waive the right to a jury trial or participation in a class action lawsuit.</p>
+
+    <h3>12. Governing Law</h3>
+    <p>These Terms of Service shall be governed by and construed in accordance with the laws of the United States and the state in which StaffNest Agency is registered, without regard to conflict of law principles.</p>
+
+    <h3>13. Changes to Terms</h3>
+    <p>StaffNest Agency reserves the right to update these Terms of Service at any time. Continued use of our services after changes are posted constitutes acceptance of the revised terms.</p>
+
+    <div class="legal-disclaimer">⚠️ <strong>Important:</strong> These terms are provided as general protective language. StaffNest Agency strongly recommends working with a licensed business attorney to review and finalize all legal agreements before entering into service contracts with clients or contractors.</div>
+  </div>
+</div>
+
+</body>
+</html>
