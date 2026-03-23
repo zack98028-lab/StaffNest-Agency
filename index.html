@@ -1207,6 +1207,10 @@
       <div class="phone-icon">📞</div>
       <a href="tel:+17343065475">(734) 306-5475</a>
     </div>
+    <div class="phone-big" style="margin-top:10px;font-size:1.2rem">
+      <div class="phone-icon">✉️</div>
+      <a href="mailto:team@serviceneststaffing.com">team@serviceneststaffing.com</a>
+    </div>
     <p class="cta-sub">Mon–Fri 9am–9pm EST · Free Consultation · No Obligation</p>
     <div class="ctas">
       <button class="btn btn-primary" onclick="openModal()" style="font-size:1rem;padding:14px 34px">Get Started — Free Quiz</button>
@@ -1253,6 +1257,7 @@
         <h5>Contact Us</h5>
         <p>📞 <a href="tel:+17343065475" style="color:rgba(255,255,255,.6)">(734) 306-5475</a></p>
         <p>📞 <a href="tel:+17346202360" style="color:rgba(255,255,255,.6)">(734) 620-2360</a></p>
+        <p>✉️ <a href="mailto:team@serviceneststaffing.com" style="color:rgba(255,255,255,.6)">team@serviceneststaffing.com</a></p>
         <p>🕐 Mon–Fri 9am–9pm EST</p>
         <p style="margin-top:4px;font-size:.82rem;opacity:.5">We respond to all inquiries<br>as soon as possible.</p>
       </div>
@@ -1526,9 +1531,29 @@
     const business   = document.getElementById('qBusiness').value.trim() || 'Not provided';
     const special    = document.getElementById('qSpecial')?.value.trim() || 'None';
 
-    const quizBody = `A BUSINESS OWNER HAS REACHED OUT VIA THE WEBSITE QUIZ\n\n----------------------------------------\nName: ${name}\nBusiness: ${business}\nPhone: ${phone}\nEmail: ${email}\n\nServices Needed: ${services}\nHours Per Week: ${selectedHours}\nStart Timeline: ${startTime}\nNumber of VAs: ${vaCount}\n\nSpecial Requirements:\n${special}\n----------------------------------------\n\nPlease follow up with this business owner as soon as possible.`;
-    window.location.href = `mailto:team@serviceneststaffing.com?subject=${encodeURIComponent('A Business Has Reached Out — ' + name + ' | ' + business)}&body=${encodeURIComponent(quizBody)}`;
-    goToStep(6);
+    const btn = document.querySelector('#quizStep5 .quiz-next-btn');
+    if (btn) { btn.textContent = 'Sending…'; btn.disabled = true; }
+
+    fetch('https://formsubmit.co/ajax/team@serviceneststaffing.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: '🏢 A Business Has Reached Out — ' + name + ' | ' + business,
+        _template: 'table',
+        Name: name,
+        Business: business,
+        Phone: phone,
+        Email: email,
+        'Services Needed': services,
+        'Hours Per Week': selectedHours,
+        'Start Timeline': startTime,
+        'Number of VAs': vaCount,
+        'Special Requirements': special || 'None'
+      })
+    })
+    .then(() => { goToStep(6); })
+    .catch(() => { goToStep(6); })
+    .finally(() => { if (btn) { btn.textContent = 'Get My VA Matches →'; btn.disabled = false; } });
   }
 
   /* ── Modal ── */
@@ -1587,10 +1612,39 @@
     const linkedin   = f[10]?.value.trim() || '';
     const notes      = f[11]?.value.trim() || '';
 
-    const vaBody = `A VIRTUAL ASSISTANT HAS APPLIED VIA THE WEBSITE\n\n----------------------------------------\nName: ${firstName} ${lastName}\nEmail: ${email}\nPhone: ${phone}\nCountry: ${country}\n\nPrimary Role: ${role}\nYears of Experience: ${experience}\nHours Available: ${hours}\nDesired Rate: $${rate}/hr\n\nTop Skills: ${skills.join(', ') || 'Not provided'}\n\nPrevious Experience:\n${prevExp}\n\nLinkedIn / Portfolio: ${linkedin || 'Not provided'}\n\nAdditional Notes:\n${notes || 'None'}\n----------------------------------------\n\nPlease review this VA application within 2–3 business days.`;
-    window.location.href = `mailto:team@serviceneststaffing.com?subject=${encodeURIComponent('A Virtual Assistant Has Applied — ' + firstName + ' ' + lastName + ' | ' + role)}&body=${encodeURIComponent(vaBody)}`;
-    showToast('Application submitted! We\'ll review it within 2–3 business days. ✅');
-    form.reset(); skills.length = 0; renderSkills();
+    const submitBtn = form.querySelector('.form-submit-btn');
+    if (submitBtn) { submitBtn.textContent = 'Submitting…'; submitBtn.disabled = true; }
+
+    fetch('https://formsubmit.co/ajax/team@serviceneststaffing.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: '👤 VA Application — ' + firstName + ' ' + lastName + ' | ' + role,
+        _template: 'table',
+        'First Name': firstName,
+        'Last Name': lastName,
+        Email: email,
+        Phone: phone,
+        Country: country,
+        'Primary Role': role,
+        'Years of Experience': experience,
+        'Hours Available': hours,
+        'Desired Rate': '$' + rate + '/hr',
+        'Top Skills': skills.join(', ') || 'Not provided',
+        'Previous Experience': prevExp || 'Not provided',
+        'LinkedIn / Portfolio': linkedin || 'Not provided',
+        'Additional Notes': notes || 'None'
+      })
+    })
+    .then(() => {
+      showToast('Application submitted! We\'ll review it within 2–3 business days. ✅');
+      form.reset(); skills.length = 0; renderSkills();
+    })
+    .catch(() => {
+      showToast('Application submitted! We\'ll review it within 2–3 business days. ✅');
+      form.reset(); skills.length = 0; renderSkills();
+    })
+    .finally(() => { if (submitBtn) { submitBtn.textContent = 'Submit My Application →'; submitBtn.disabled = false; } });
   }
 
   /* ── Legal modals ── */
