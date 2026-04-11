@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hire a Virtual Assistant for $6/hr — ServiceNest Staffing</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #052e16;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .logo-img {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: white;
+      padding: 6px;
+      object-fit: contain;
+      margin-bottom: 16px;
+    }
+
+    .logo-text {
+      font-size: 1.6rem;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .logo-text span { color: #22c55e; }
+
+    .logo-sub {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 50px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+    h1 span { color: #22c55e; }
+
+    p {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 44px;
+      max-width: 500px;
+    }
+
+    .info-pills {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .info-pills span {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #22c55e;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 100px;
+    }
+    .cta-line {
+      font-size: 1rem !important;
+      color: rgba(255,255,255,0.5) !important;
+      margin-bottom: 20px !important;
+    }
+
+    .btn {
+      background: #22c55e;
+      color: #052e16;
+      font-size: 1.2rem;
+      font-weight: 900;
+      padding: 22px 64px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(34,197,94,0.35);
+    }
+
+    .phone {
+      margin-top: 28px;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.35);
+    }
+    .phone a { color: #22c55e; font-weight: 700; text-decoration: none; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    .modal-header {
+      background: #052e16;
+      border-radius: 20px 20px 0 0;
+      padding: 20px 28px 0;
+      position: relative;
+    }
+    .close-btn {
+      position: absolute;
+      top: 14px; right: 18px;
+      background: none; border: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .progress-wrap {
+      background: rgba(255,255,255,0.15);
+      border-radius: 100px;
+      height: 6px;
+      margin-bottom: 20px;
+    }
+    .progress-bar {
+      background: #22c55e;
+      height: 6px;
+      border-radius: 100px;
+      transition: width 0.4s ease;
+    }
+    .modal-body { padding: 30px 28px 34px; color: #1e293b; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .step-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #16a34a;
+      margin-bottom: 6px;
+    }
+    .step h2 { font-size: 1.35rem; font-weight: 900; color: #052e16; margin-bottom: 6px; }
+    .step > p { font-size: 0.87rem; color: #6b7280; margin-bottom: 20px; }
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .option {
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 13px 14px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #052e16;
+      background: white;
+      text-align: left;
+      transition: all .15s;
+    }
+    .option:hover, .option.selected { border-color: #16a34a; background: #f0fdf4; }
+    .option .icon { font-size: 1.2rem; display: block; margin-bottom: 3px; }
+    .quiz-input {
+      width: 100%;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 13px 15px;
+      font-size: 0.93rem;
+      font-family: inherit;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .quiz-input:focus { border-color: #16a34a; }
+    .btn-next {
+      width: 100%;
+      background: #052e16;
+      color: white;
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-next:hover { background: #16a34a; }
+    .success-box { text-align: center; padding: 10px 0; }
+    .success-box .check { font-size: 3.5rem; margin-bottom: 14px; }
+    .success-box h2 { font-size: 1.5rem; font-weight: 900; color: #052e16; margin-bottom: 10px; }
+    .success-box p { font-size: 0.92rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+
+  <img class="logo-img" src="logo.png" alt="ServiceNest" />
+  <div class="logo-text">Service<span>Nest</span></div>
+  <div class="logo-sub">Staffing Agency</div>
+
+  <h1>Hire a Full-Time VA<br>for <span>$6/hr</span></h1>
+
+  <p>We connect business owners with pre-screened virtual assistants — placed in 72 hours, no contracts, no hidden fees.</p>
+
+  <div class="info-pills">
+    <span>✅ Pre-screened VAs</span>
+    <span>⚡ 72-hour placement</span>
+    <span>🔓 No contracts</span>
+  </div>
+
+  <p class="cta-line">Answer a quick quiz and we'll get back to you<br>with exactly what you're looking for.</p>
+
+  <button class="btn" onclick="openQuiz()">Click Here to Get Started</button>
+  <div class="phone">Or call us: <a href="tel:+17343065475">(734) 306-5475</a></div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="quizModal" onclick="closeOnOverlay(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <button class="close-btn" onclick="closeQuiz()">✕</button>
+        <div class="progress-wrap">
+          <div class="progress-bar" id="progressBar" style="width:25%"></div>
+        </div>
+      </div>
+      <div class="modal-body">
+
+        <!-- Step 1 -->
+        <div class="step active" id="step1">
+          <div class="step-label">Step 1 of 3</div>
+          <h2>What do you need help with?</h2>
+          <p>Select all that apply.</p>
+          <div class="options-grid">
+            <div class="option" onclick="toggleOption(this)"><span class="icon">📧</span>Email & Admin</div>
+            <div class="option" onclick="toggleOption(this)"><span class="icon">📅</span>Scheduling</div>
+            <div class="option" onclick="toggleOption(this)"><span class="icon">💬</span>Customer Support</div>
+            <div class="option" onclick="toggleOption(this)"><span class="icon">📱</span>Social Media</div>
+            <div class="option" onclick="toggleOption(this)"><span class="icon">🛍️</span>E-commerce</div>
+            <div class="option" onclick="toggleOption(this)"><span class="icon">📊</span>Data & Research</div>
+            <div class="option" onclick="toggleOption(this)"><span class="icon">✍️</span>Content Writing</div>
+            <div class="option" onclick="toggleOption(this)"><span class="icon">🔧</span>Other</div>
+          </div>
+          <button class="btn-next" onclick="goStep(2)">Next →</button>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step" id="step2">
+          <div class="step-label">Step 2 of 3</div>
+          <h2>How many hours per week?</h2>
+          <p>We'll match you with the right VA.</p>
+          <div class="options-grid">
+            <div class="option" onclick="pickOne(this)">Under 10 hrs/wk</div>
+            <div class="option" onclick="pickOne(this)">10–20 hrs/wk</div>
+            <div class="option" onclick="pickOne(this)">20–30 hrs/wk</div>
+            <div class="option" onclick="pickOne(this)">Full-time (40+)</div>
+          </div>
+          <button class="btn-next" onclick="goStep(3)">Next →</button>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step" id="step3">
+          <div class="step-label">Step 3 of 3</div>
+          <h2>Where should we send your match?</h2>
+          <p>We'll reach out within 24 hours.</p>
+          <input class="quiz-input" id="qName" type="text" placeholder="Your full name" />
+          <input class="quiz-input" id="qBusiness" type="text" placeholder="Business name (optional)" />
+          <input class="quiz-input" id="qPhone" type="tel" placeholder="Phone number" />
+          <input class="quiz-input" id="qEmail" type="email" placeholder="Email address" />
+          <button class="btn-next" onclick="submitQuiz()">Get My VA Match →</button>
+        </div>
+
+        <!-- Success -->
+        <div class="step" id="stepSuccess">
+          <div class="success-box">
+            <div class="check">✅</div>
+            <h2>You're all set!</h2>
+            <p>We'll reach out within 24 hours with your VA match. Check your email and phone.</p>
+            <br>
+            <p style="font-size:0.83rem;color:#9ca3af">Questions? Call <strong style="color:#16a34a">(734) 306-5475</strong></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openQuiz() {
+      document.getElementById('quizModal').classList.add('open');
+    }
+    function closeQuiz() {
+      document.getElementById('quizModal').classList.remove('open');
+    }
+    function closeOnOverlay(e) {
+      if (e.target === document.getElementById('quizModal')) closeQuiz();
+    }
+    function goStep(n) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('step' + n).classList.add('active');
+      const p = { 2: 50, 3: 80 };
+      if (p[n]) document.getElementById('progressBar').style.width = p[n] + '%';
+    }
+    function toggleOption(el) { el.classList.toggle('selected'); }
+    function pickOne(el) {
+      el.closest('.options-grid').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function submitQuiz() {
+      const name = document.getElementById('qName').value.trim();
+      const phone = document.getElementById('qPhone').value.trim();
+      const email = document.getElementById('qEmail').value.trim();
+      if (!name || !phone || !email) {
+        alert('Please fill in your name, phone, and email.');
+        return;
+      }
+      fetch('https://script.google.com/macros/s/AKfycbxnhj0yMVPQWkVo2DSNOO1Z8N2sfAEt6GxPTidYFDcP7cpqU0GQ2bDnA0C7OlBxQI0/exec', {
+        method: 'POST',
+        body: JSON.stringify({
+          Name: name,
+          Business: document.getElementById('qBusiness').value.trim(),
+          Phone: phone,
+          Email: email,
+          Source: 'Ad Landing Page'
+        })
+      }).catch(() => {});
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById('stepSuccess').classList.add('active');
+      document.getElementById('progressBar').style.width = '100%';
+    }
+  </script>
+
+</body>
+</html>
