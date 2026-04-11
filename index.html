@@ -1837,5 +1837,40 @@
   </div>
 </div>
 
+<!-- AD LANDING PAGE OVERLAY -->
+<div id="adLanding" style="display:none;position:fixed;inset:0;z-index:99999;background:#052e16;overflow-y:auto;font-family:'Segoe UI',system-ui,sans-serif;color:white;text-align:center;">
+  <div style="max-width:600px;margin:0 auto;padding:60px 24px;display:flex;flex-direction:column;align-items:center;">
+    <img src="logo.png" alt="ServiceNest" style="width:90px;height:90px;border-radius:50%;background:white;padding:6px;object-fit:contain;margin-bottom:16px;" />
+    <div style="font-size:1.6rem;font-weight:900;margin-bottom:4px;">Service<span style="color:#22c55e;">Nest</span></div>
+    <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:44px;">Staffing Agency</div>
+
+    <h1 style="font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.1;letter-spacing:-1px;margin-bottom:18px;">Hire a Full-Time VA<br>for <span style="color:#22c55e;">$6/hr</span></h1>
+
+    <p style="font-size:1.05rem;color:rgba(255,255,255,0.65);margin-bottom:24px;max-width:480px;">We connect business owners with pre-screened virtual assistants — placed in 72 hours, no contracts, no hidden fees.</p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;">
+      <span style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:#22c55e;font-size:0.83rem;font-weight:600;padding:8px 16px;border-radius:100px;">✅ Pre-screened VAs</span>
+      <span style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:#22c55e;font-size:0.83rem;font-weight:600;padding:8px 16px;border-radius:100px;">⚡ 72-hour placement</span>
+      <span style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:#22c55e;font-size:0.83rem;font-weight:600;padding:8px 16px;border-radius:100px;">🔓 No contracts</span>
+    </div>
+
+    <p style="font-size:0.95rem;color:rgba(255,255,255,0.45);margin-bottom:20px;">Answer a quick quiz and we'll get back to you<br>with exactly what you're looking for.</p>
+
+    <button onclick="openModal()" style="background:#22c55e;color:#052e16;font-size:1.15rem;font-weight:900;padding:22px 60px;border-radius:14px;border:none;cursor:pointer;text-transform:uppercase;letter-spacing:0.03em;transition:transform .15s,box-shadow .15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(34,197,94,0.35)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+      Click Here to Get Started
+    </button>
+
+    <div style="margin-top:24px;font-size:0.88rem;color:rgba(255,255,255,0.35);">Or call us: <a href="tel:+17343065475" style="color:#22c55e;font-weight:700;text-decoration:none;">(734) 306-5475</a></div>
+  </div>
+</div>
+
+<script>
+  // Show landing page if ?ad is in the URL
+  if (window.location.search.includes('ad')) {
+    document.getElementById('adLanding').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+</script>
+
 </body>
 </html>
