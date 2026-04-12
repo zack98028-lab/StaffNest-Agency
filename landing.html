@@ -278,6 +278,15 @@
             <div class="option" onclick="pickOne(this)">20–30 hrs/wk</div>
             <div class="option" onclick="pickOne(this)">Full-time (40+)</div>
           </div>
+          <p style="font-size:.85rem;color:#6b7280;margin:14px 0 6px">What schedule do you prefer for your VA?</p>
+          <div class="options-grid" id="scheduleRow">
+            <div class="option" onclick="pickOne(this)" data-schedule="Set specific hours">📅 Set specific hours</div>
+            <div class="option" onclick="pickOne(this)" data-schedule="VA picks their own schedule">🕐 VA's own schedule</div>
+            <div class="option" onclick="pickOne(this)" data-schedule="Flexible / Anytime">🔄 Flexible / Anytime</div>
+          </div>
+          <div id="scheduleDetailWrap" style="margin-top:8px;display:none;">
+            <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST, or 3x a week mornings..." style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;" />
+          </div>
           <button class="btn-next" onclick="goStep(3)">Next →</button>
         </div>
 
@@ -328,6 +337,11 @@
     function pickOne(el) {
       el.closest('.options-grid').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
+      // Show schedule detail field if "Set specific hours" is picked
+      if (el.closest('#scheduleRow')) {
+        const wrap = document.getElementById('scheduleDetailWrap');
+        if (wrap) wrap.style.display = el.textContent.includes('Set specific hours') ? 'block' : 'none';
+      }
     }
     function submitQuiz() {
       const name = document.getElementById('qName').value.trim();
@@ -337,6 +351,9 @@
         alert('Please fill in your name, phone, and email.');
         return;
       }
+      const schedulePref = document.querySelector('#scheduleRow .option.selected')?.textContent.trim() || 'Not specified';
+      const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
+      const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
       fetch('https://script.google.com/macros/s/AKfycbxnhj0yMVPQWkVo2DSNOO1Z8N2sfAEt6GxPTidYFDcP7cpqU0GQ2bDnA0C7OlBxQI0/exec', {
         method: 'POST',
         body: JSON.stringify({
@@ -344,6 +361,7 @@
           Business: document.getElementById('qBusiness').value.trim(),
           Phone: phone,
           Email: email,
+          'Preferred VA Schedule': fullSchedule,
           Source: 'Ad Landing Page'
         })
       }).catch(() => {});

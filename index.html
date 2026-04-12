@@ -1367,6 +1367,16 @@
             <p>I'll decide — any amount works</p>
           </div>
         </div>
+        <label class="quiz-label" style="margin-top:16px">What schedule do you prefer for your VA?</label>
+        <div class="quiz-va-row" id="scheduleRow">
+          <div class="quiz-va-pill selected" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">📅 Set specific hours</div>
+          <div class="quiz-va-pill" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">🕐 VA picks their own schedule</div>
+          <div class="quiz-va-pill" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">🔄 Flexible / Anytime</div>
+        </div>
+        <div id="scheduleFieldWrap" style="margin-top:10px;">
+          <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST, or 3 days a week mornings..." />
+        </div>
+
         <div class="quiz-nav">
           <button class="quiz-back-btn" onclick="goToStep(1)">← Back</button>
           <button class="quiz-next-btn" onclick="goToStep(3)">Next: A Few Details →</button>
@@ -1523,6 +1533,12 @@
     if (wrap) wrap.style.display = el.classList.contains('checked') ? 'block' : 'none';
   }
 
+  function toggleScheduleField(el) {
+    const wrap = document.getElementById('scheduleFieldWrap');
+    if (!wrap) return;
+    wrap.style.display = el.textContent.includes('Set specific hours') ? 'block' : 'none';
+  }
+
   function selectHours(el, hrs) {
     document.querySelectorAll('.quiz-hour-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
@@ -1549,6 +1565,9 @@
     const startTime  = document.querySelector('#startRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
     const vaCount    = document.querySelector('#vaCountRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
     const contactPref = document.querySelector('#contactPrefRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const schedulePref = document.querySelector('#scheduleRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
+    const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
     const business   = document.getElementById('qBusiness').value.trim() || 'Not provided';
     const special    = document.getElementById('qSpecial')?.value.trim() || 'None';
 
@@ -1570,6 +1589,7 @@
         'Start Timeline': startTime,
         'Number of VAs': vaCount,
         'Best Way to Contact': contactPref,
+        'Preferred VA Schedule': fullSchedule,
         'Special Requirements': special || 'None'
       })
     })
