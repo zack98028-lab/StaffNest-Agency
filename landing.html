@@ -301,6 +301,12 @@
           <input class="quiz-input" id="qBusiness" type="text" placeholder="Business name (optional)" />
           <input class="quiz-input" id="qPhone" type="tel" placeholder="Phone number" />
           <input class="quiz-input" id="qEmail" type="email" placeholder="Email address" />
+          <p style="font-size:.85rem;color:#6b7280;margin:12px 0 6px">Best way to contact you?</p>
+          <div class="options-grid" id="contactPrefRowLanding">
+            <div class="option" onclick="pickOne(this)">📧 Email</div>
+            <div class="option" onclick="pickOne(this)">📞 Phone / Text</div>
+            <div class="option" onclick="pickOne(this)">Either works</div>
+          </div>
           <button class="btn-next" onclick="submitQuiz()">Get My VA Match →</button>
         </div>
 
@@ -363,6 +369,7 @@
       const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
       const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
       const business = document.getElementById('qBusiness').value.trim() || 'Not provided';
+      const contactPref = document.querySelector('#contactPrefRowLanding .option.selected')?.textContent.trim() || 'Not specified';
 
       fetch('https://formsubmit.co/ajax/team@serviceneststaffing.com', {
         method: 'POST',
@@ -374,6 +381,7 @@
           Business: business,
           Phone: phone,
           Email: email,
+          'Best Way to Contact': contactPref,
           'Services Needed': services,
           'Hours Per Week': hours,
           'Preferred VA Schedule': fullSchedule,
