@@ -356,20 +356,31 @@
         alert('Please fill in your name, phone, and email.');
         return;
       }
+      const services = [...document.querySelectorAll('#step1 .option.selected')]
+                        .map(el => el.textContent.trim()).join(', ') || 'Not specified';
+      const hours = document.querySelector('#hoursRowLanding .option.selected')?.textContent.trim() || 'Not specified';
       const schedulePref = document.querySelector('#scheduleRow .option.selected')?.textContent.trim() || 'Not specified';
       const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
       const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
-      fetch('https://script.google.com/macros/s/AKfycbxnhj0yMVPQWkVo2DSNOO1Z8N2sfAEt6GxPTidYFDcP7cpqU0GQ2bDnA0C7OlBxQI0/exec', {
+      const business = document.getElementById('qBusiness').value.trim() || 'Not provided';
+
+      fetch('https://formsubmit.co/ajax/team@serviceneststaffing.com', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
+          _subject: '🏢 New Ad Lead — ' + name + ' | ' + business,
+          _template: 'table',
           Name: name,
-          Business: document.getElementById('qBusiness').value.trim(),
+          Business: business,
           Phone: phone,
           Email: email,
+          'Services Needed': services,
+          'Hours Per Week': hours,
           'Preferred VA Schedule': fullSchedule,
-          Source: 'Ad Landing Page'
+          Source: 'Meta Ad Landing Page'
         })
       }).catch(() => {});
+
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById('stepSuccess').classList.add('active');
       document.getElementById('progressBar').style.width = '100%';
