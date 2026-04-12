@@ -1355,7 +1355,7 @@
             <span class="hr-price">$120 / week</span>
             <p>Part-time dedicated assistant</p>
           </div>
-          <div class="quiz-hour-card selected" onclick="selectHours(this, '40 hrs/week');showSchedule()">
+          <div class="quiz-hour-card" onclick="selectHours(this, '40 hrs/week');showSchedule()">
             <div class="popular-pill">Most Common</div>
             <strong>40 hrs/wk</strong>
             <span class="hr-price">$240 / week</span>
@@ -1394,18 +1394,20 @@
 
         <label class="quiz-label">When would you like to get started?</label>
         <div class="quiz-va-row" id="startRow">
-          <div class="quiz-va-pill selected" onclick="selectPill('startRow', this)">As soon as possible</div>
-          <div class="quiz-va-pill" onclick="selectPill('startRow', this)">Within 1–2 weeks</div>
-          <div class="quiz-va-pill" onclick="selectPill('startRow', this)">Within a month</div>
-          <div class="quiz-va-pill" onclick="selectPill('startRow', this)">Just exploring</div>
+          <div class="quiz-va-pill" onclick="selectPill('startRow', this);document.getElementById('startDateWrap').style.display='none'">As soon as possible</div>
+          <div class="quiz-va-pill" onclick="selectPill('startRow', this);document.getElementById('startDateWrap').style.display='none'">Within 1–2 weeks</div>
+          <div class="quiz-va-pill" onclick="selectPill('startRow', this);document.getElementById('startDateWrap').style.display='none'">Within a month</div>
+          <div class="quiz-va-pill" onclick="selectPill('startRow', this);document.getElementById('startDateWrap').style.display='block'">Specific date</div>
+        </div>
+        <div id="startDateWrap" style="display:none;margin-top:10px;">
+          <input class="quiz-input" id="qStartDate" type="text" placeholder="e.g. May 15, 2026 or after June..." />
         </div>
 
-        <label class="quiz-label" style="margin-top:8px">How many VAs are you looking to hire?</label>
+        <label class="quiz-label" style="margin-top:16px">How many VAs are you looking to hire?</label>
         <div class="quiz-va-row" id="vaCountRow">
-          <div class="quiz-va-pill selected" onclick="selectPill('vaCountRow', this)">1 VA</div>
+          <div class="quiz-va-pill" onclick="selectPill('vaCountRow', this)">1 VA</div>
           <div class="quiz-va-pill" onclick="selectPill('vaCountRow', this)">2–3 VAs</div>
           <div class="quiz-va-pill" onclick="selectPill('vaCountRow', this)">4+ VAs</div>
-          <div class="quiz-va-pill" onclick="selectPill('vaCountRow', this)">Not sure yet</div>
         </div>
 
         <div style="background:var(--light);border:1.5px solid var(--mid);border-radius:12px;padding:16px 18px;margin:20px 0;display:flex;gap:12px;align-items:flex-start">
@@ -1570,7 +1572,9 @@
                          .map(el => el.textContent.replace('✓','').trim()).join(', ') || 'Not specified';
     const otherService = document.getElementById('qOtherService')?.value.trim();
     const allServices  = otherService ? services + (services !== 'Not specified' ? ', Other: ' : 'Other: ') + otherService : services;
-    const startTime  = document.querySelector('#startRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const startPill  = document.querySelector('#startRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const startDateInput = document.getElementById('qStartDate')?.value.trim() || '';
+    const startTime = startDateInput ? `${startPill} — ${startDateInput}` : startPill;
     const vaCount    = document.querySelector('#vaCountRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
     const contactPref = document.querySelector('#contactPrefRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
     const schedulePref = document.querySelector('#scheduleRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
