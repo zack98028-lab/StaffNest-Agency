@@ -273,19 +273,22 @@
           <h2>How many hours per week?</h2>
           <p>We'll match you with the right VA.</p>
           <div class="options-grid">
-            <div class="option" onclick="pickOne(this)">Under 10 hrs/wk</div>
-            <div class="option" onclick="pickOne(this)">10–20 hrs/wk</div>
-            <div class="option" onclick="pickOne(this)">20–30 hrs/wk</div>
-            <div class="option" onclick="pickOne(this)">Full-time (40+)</div>
+            <div class="option" onclick="pickOne(this);showScheduleLanding()">Under 10 hrs/wk</div>
+            <div class="option" onclick="pickOne(this);showScheduleLanding()">10–20 hrs/wk</div>
+            <div class="option" onclick="pickOne(this);showScheduleLanding()">20–30 hrs/wk</div>
+            <div class="option" onclick="pickOne(this);showScheduleLanding()">Full-time (40+)</div>
           </div>
-          <p style="font-size:.85rem;color:#6b7280;margin:14px 0 6px">What schedule do you prefer for your VA?</p>
-          <div class="options-grid" id="scheduleRow">
-            <div class="option" onclick="pickOne(this)" data-schedule="Set specific hours">📅 Set specific hours</div>
-            <div class="option" onclick="pickOne(this)" data-schedule="VA picks their own schedule">🕐 VA's own schedule</div>
-            <div class="option" onclick="pickOne(this)" data-schedule="Flexible / Anytime">🔄 Flexible / Anytime</div>
-          </div>
-          <div id="scheduleDetailWrap" style="margin-top:8px;display:none;">
-            <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST, or 3x a week mornings..." style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;" />
+
+          <div id="scheduleSectionLanding" style="display:none;margin-top:16px;">
+            <p style="font-size:.85rem;color:#6b7280;margin:0 0 6px">What schedule do you prefer for your VA?</p>
+            <div class="options-grid" id="scheduleRow">
+              <div class="option" onclick="pickOne(this);toggleScheduleLanding(this)">📅 Set specific hours</div>
+              <div class="option" onclick="pickOne(this);toggleScheduleLanding(this)">🕐 VA's own schedule</div>
+              <div class="option" onclick="pickOne(this);toggleScheduleLanding(this)">🔄 Flexible / Anytime</div>
+            </div>
+            <div id="scheduleDetailWrap" style="margin-top:8px;display:none;">
+              <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST, or 3x a week mornings..." style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;" />
+            </div>
           </div>
           <button class="btn-next" onclick="goStep(3)">Next →</button>
         </div>
@@ -337,11 +340,14 @@
     function pickOne(el) {
       el.closest('.options-grid').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
-      // Show schedule detail field if "Set specific hours" is picked
-      if (el.closest('#scheduleRow')) {
-        const wrap = document.getElementById('scheduleDetailWrap');
-        if (wrap) wrap.style.display = el.textContent.includes('Set specific hours') ? 'block' : 'none';
-      }
+    }
+    function showScheduleLanding() {
+      const s = document.getElementById('scheduleSectionLanding');
+      if (s) s.style.display = 'block';
+    }
+    function toggleScheduleLanding(el) {
+      const wrap = document.getElementById('scheduleDetailWrap');
+      if (wrap) wrap.style.display = el.textContent.includes('Set specific hours') ? 'block' : 'none';
     }
     function submitQuiz() {
       const name = document.getElementById('qName').value.trim();

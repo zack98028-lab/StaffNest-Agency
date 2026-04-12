@@ -1345,36 +1345,39 @@
         <h2>How many hours per week do you need?</h2>
         <p>You can always adjust this later — no commitment required.</p>
         <div class="quiz-hours-grid">
-          <div class="quiz-hour-card" onclick="selectHours(this, '10 hrs/week')">
+          <div class="quiz-hour-card" onclick="selectHours(this, '10 hrs/week');showSchedule()">
             <strong>10 hrs/wk</strong>
             <span class="hr-price">$60 / week</span>
             <p>Light support &amp; overflow tasks</p>
           </div>
-          <div class="quiz-hour-card" onclick="selectHours(this, '20 hrs/week')">
+          <div class="quiz-hour-card" onclick="selectHours(this, '20 hrs/week');showSchedule()">
             <strong>20 hrs/wk</strong>
             <span class="hr-price">$120 / week</span>
             <p>Part-time dedicated assistant</p>
           </div>
-          <div class="quiz-hour-card selected" onclick="selectHours(this, '40 hrs/week')">
+          <div class="quiz-hour-card selected" onclick="selectHours(this, '40 hrs/week');showSchedule()">
             <div class="popular-pill">Most Common</div>
             <strong>40 hrs/wk</strong>
             <span class="hr-price">$240 / week</span>
             <p>Full-time, fully dedicated</p>
           </div>
-          <div class="quiz-hour-card" onclick="selectHours(this, 'Custom hours')">
+          <div class="quiz-hour-card" onclick="selectHours(this, 'Custom hours');showSchedule()">
             <strong>Custom</strong>
             <span class="hr-price">$6 / hr</span>
             <p>I'll decide — any amount works</p>
           </div>
         </div>
-        <label class="quiz-label" style="margin-top:16px">What schedule do you prefer for your VA?</label>
-        <div class="quiz-va-row" id="scheduleRow">
-          <div class="quiz-va-pill selected" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">📅 Set specific hours</div>
-          <div class="quiz-va-pill" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">🕐 VA picks their own schedule</div>
-          <div class="quiz-va-pill" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">🔄 Flexible / Anytime</div>
-        </div>
-        <div id="scheduleFieldWrap" style="margin-top:10px;">
-          <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST, or 3 days a week mornings..." />
+
+        <div id="scheduleSection" style="display:none;margin-top:18px;">
+          <label class="quiz-label">What schedule do you prefer for your VA?</label>
+          <div class="quiz-va-row" id="scheduleRow">
+            <div class="quiz-va-pill" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">📅 Set specific hours</div>
+            <div class="quiz-va-pill" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">🕐 VA's own schedule</div>
+            <div class="quiz-va-pill" onclick="selectPill('scheduleRow',this);toggleScheduleField(this)">🔄 Flexible / Anytime</div>
+          </div>
+          <div id="scheduleFieldWrap" style="display:none;margin-top:10px;">
+            <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST, or 3 days a week mornings..." />
+          </div>
         </div>
 
         <div class="quiz-nav">
@@ -1531,6 +1534,11 @@
   function toggleOtherField(el) {
     const wrap = document.getElementById('otherFieldWrap');
     if (wrap) wrap.style.display = el.classList.contains('checked') ? 'block' : 'none';
+  }
+
+  function showSchedule() {
+    const section = document.getElementById('scheduleSection');
+    if (section) section.style.display = 'block';
   }
 
   function toggleScheduleField(el) {
