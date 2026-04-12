@@ -1330,6 +1330,12 @@
           <div class="quiz-service-option" onclick="toggleService(this)">
             <div class="svc-check">✓</div> 🎨 Graphic Design
           </div>
+          <div class="quiz-service-option" onclick="toggleService(this);toggleOtherField(this)">
+            <div class="svc-check">✓</div> 🔧 Other
+          </div>
+        </div>
+        <div id="otherFieldWrap" style="display:none;margin-top:10px;">
+          <input class="quiz-input" id="qOtherService" type="text" placeholder="Describe what you need help with..." />
         </div>
         <button class="quiz-next-btn" onclick="goToStep(2)">Next: Hours &amp; Schedule →</button>
       </div>
@@ -1419,6 +1425,13 @@
         <label class="quiz-label">Email Address *</label>
         <input class="quiz-input" id="qEmail" type="email" placeholder="james@mybusiness.com" required />
 
+        <label class="quiz-label">Best way to contact you?</label>
+        <div class="quiz-va-row" id="contactPrefRow">
+          <div class="quiz-va-pill selected" onclick="selectPill('contactPrefRow', this)">📧 Email</div>
+          <div class="quiz-va-pill" onclick="selectPill('contactPrefRow', this)">📞 Phone / Text</div>
+          <div class="quiz-va-pill" onclick="selectPill('contactPrefRow', this)">Either works</div>
+        </div>
+
         <div class="quiz-nav" style="margin-top:4px">
           <button class="quiz-back-btn" onclick="goToStep(3)">← Back</button>
           <button class="quiz-next-btn" onclick="goToStep(5)">Next: Any Special Needs? →</button>
@@ -1506,6 +1519,11 @@
     el.classList.toggle('checked');
   }
 
+  function toggleOtherField(el) {
+    const wrap = document.getElementById('otherFieldWrap');
+    if (wrap) wrap.style.display = el.classList.contains('checked') ? 'block' : 'none';
+  }
+
   function selectHours(el, hrs) {
     document.querySelectorAll('.quiz-hour-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
@@ -1527,8 +1545,11 @@
     }
     const services   = [...document.querySelectorAll('.quiz-service-option.checked')]
                          .map(el => el.textContent.replace('✓','').trim()).join(', ') || 'Not specified';
+    const otherService = document.getElementById('qOtherService')?.value.trim();
+    const allServices  = otherService ? services + (services !== 'Not specified' ? ', Other: ' : 'Other: ') + otherService : services;
     const startTime  = document.querySelector('#startRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
     const vaCount    = document.querySelector('#vaCountRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const contactPref = document.querySelector('#contactPrefRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
     const business   = document.getElementById('qBusiness').value.trim() || 'Not provided';
     const special    = document.getElementById('qSpecial')?.value.trim() || 'None';
 
@@ -1545,10 +1566,11 @@
         Business: business,
         Phone: phone,
         Email: email,
-        'Services Needed': services,
+        'Services Needed': allServices,
         'Hours Per Week': selectedHours,
         'Start Timeline': startTime,
         'Number of VAs': vaCount,
+        'Best Way to Contact': contactPref,
         'Special Requirements': special || 'None'
       })
     })
