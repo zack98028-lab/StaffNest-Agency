@@ -1658,6 +1658,13 @@
     if (e.target === document.getElementById('authModal')) closeModal();
   }
 
+  // Auto-open quiz for ad traffic
+  if (new URLSearchParams(window.location.search).get('ad') === '1') {
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(openModal, 800);
+    });
+  }
+
   /* ── Toast ── */
   function showToast(msg) {
     const t = document.getElementById('toast');
