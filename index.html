@@ -1335,8 +1335,8 @@
     <div class="quiz-body">
 
       <!-- ── STEP 1: Services ── -->
-      <div class="quiz-step active" id="quizStep1">
-        <div class="quiz-step-label">Step 1 of 5 · Free &amp; No Obligation</div>
+      <div class="quiz-step" id="quizStep1">
+        <div class="quiz-step-label">Step 2 of 5 · Free &amp; No Obligation</div>
         <h2>What kind of help do you need?</h2>
         <p>Select all that apply — we'll match you with the right VA.</p>
         <div class="quiz-services-grid">
@@ -1371,12 +1371,15 @@
         <div id="otherFieldWrap" style="display:none;margin-top:10px;">
           <input class="quiz-input" id="qOtherService" type="text" placeholder="Describe what you need help with..." />
         </div>
-        <button class="quiz-next-btn" onclick="goToStep(2)">Next: Hours &amp; Schedule →</button>
+        <div class="quiz-nav">
+          <button class="quiz-back-btn" onclick="goToStep(1)">← Back</button>
+          <button class="quiz-next-btn" onclick="goToStep(3)">Next: Hours &amp; Schedule →</button>
+        </div>
       </div>
 
       <!-- ── STEP 2: Hours ── -->
       <div class="quiz-step" id="quizStep2">
-        <div class="quiz-step-label">Step 2 of 5</div>
+        <div class="quiz-step-label">Step 3 of 5</div>
         <h2>How many hours per week do you need?</h2>
         <p>You can always adjust this later — no commitment required.</p>
         <div class="quiz-hours-grid">
@@ -1415,14 +1418,14 @@
         </div>
 
         <div class="quiz-nav">
-          <button class="quiz-back-btn" onclick="goToStep(1)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStep(3)">Next: A Few Details →</button>
+          <button class="quiz-back-btn" onclick="goToStep(2)">← Back</button>
+          <button class="quiz-next-btn" onclick="goToStep(4)">Next: A Few Details →</button>
         </div>
       </div>
 
       <!-- ── STEP 3: Start date + how many VAs ── -->
       <div class="quiz-step" id="quizStep3">
-        <div class="quiz-step-label">Step 3 of 5</div>
+        <div class="quiz-step-label">Step 4 of 5</div>
         <h2>A couple quick questions</h2>
         <p>Help us match you with the best options.</p>
 
@@ -1450,27 +1453,27 @@
         </div>
 
         <div class="quiz-nav">
-          <button class="quiz-back-btn" onclick="goToStep(2)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStep(4)">Next: Your Contact Info →</button>
+          <button class="quiz-back-btn" onclick="goToStep(3)">← Back</button>
+          <button class="quiz-next-btn" onclick="goToStep(5)">Next: Any Special Needs? →</button>
         </div>
       </div>
 
       <!-- ── STEP 4: Contact info ── -->
-      <div class="quiz-step" id="quizStep4">
-        <div class="quiz-step-label">Step 4 of 5</div>
-        <h2>Where should we send your match?</h2>
-        <p>We'll reach out as soon as possible with a VA matched to your exact needs.</p>
+      <div class="quiz-step active" id="quizStep4">
+        <div class="quiz-step-label">Step 1 of 5 · Free &amp; No Obligation</div>
+        <h2>Let's get your info first</h2>
+        <p>So we can reach out with your match — even if you don't finish.</p>
 
-        <label class="quiz-label">Your Name *</label>
+        <label class="quiz-label">Your Name</label>
         <input class="quiz-input" id="qName" type="text" placeholder="James Mitchell" />
 
         <label class="quiz-label">Business / Company Name</label>
         <input class="quiz-input" id="qBusiness" type="text" placeholder="Mitchell Real Estate Group" />
 
-        <label class="quiz-label">Phone Number *</label>
+        <label class="quiz-label">Phone Number</label>
         <input class="quiz-input" id="qPhone" type="tel" placeholder="(555) 000-0000" />
 
-        <label class="quiz-label">Email Address *</label>
+        <label class="quiz-label">Email Address</label>
         <input class="quiz-input" id="qEmail" type="email" placeholder="james@mybusiness.com" />
 
         <label class="quiz-label">Best way to contact you?</label>
@@ -1481,8 +1484,7 @@
         </div>
 
         <div class="quiz-nav" style="margin-top:4px">
-          <button class="quiz-back-btn" onclick="goToStep(3)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStep(5)">Next: Any Special Needs? →</button>
+          <button class="quiz-next-btn" onclick="saveContactAndNextMain()" style="width:100%">Next: What Do You Need? →</button>
         </div>
       </div>
 
@@ -1553,14 +1555,39 @@
 
   function goToStep(step) {
     document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
-    const ids = { 1:'quizStep1', 2:'quizStep2', 3:'quizStep3', 4:'quizStep4', 5:'quizStep5', 6:'quizSuccess' };
+    const ids = { 1:'quizStep4', 2:'quizStep1', 3:'quizStep2', 4:'quizStep3', 5:'quizStep5', 6:'quizSuccess' };
     const el = document.getElementById(ids[step]);
     if (el) el.classList.add('active');
     document.getElementById('quizProgressBar').style.width = progressMap[step] || '100%';
     currentStep = step;
-    // scroll modal to top
     const modal = document.querySelector('.modal');
     if (modal) modal.scrollTop = 0;
+  }
+
+  function saveContactAndNextMain() {
+    const name     = document.getElementById('qName').value.trim();
+    const phone    = document.getElementById('qPhone').value.trim();
+    const email    = document.getElementById('qEmail').value.trim();
+    const business = document.getElementById('qBusiness').value.trim() || 'Not provided';
+    const contactPref = document.querySelector('#contactPrefRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+
+    fetch('https://formsubmit.co/ajax/serviceneststaffing@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: '📝 DRAFT — ' + (name || 'Unknown') + ' | ' + business,
+        _template: 'table',
+        Status: 'DRAFT — did not finish quiz',
+        Name: name || 'Not provided',
+        Business: business,
+        Phone: phone || 'Not provided',
+        Email: email || 'Not provided',
+        'Best Way to Contact': contactPref,
+        Source: 'Main Website'
+      })
+    }).catch(() => {});
+
+    goToStep(2);
   }
 
   function toggleService(el) {
@@ -1620,9 +1647,10 @@
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
-        _subject: '🏢 A Business Has Reached Out — ' + name + ' | ' + business,
+        _subject: '✅ COMPLETED — ' + (name || 'Unknown') + ' | ' + business,
         _template: 'table',
-        Name: name,
+        Status: 'COMPLETED',
+        Name: name || 'Not provided',
         Business: business,
         Phone: phone,
         Email: email,
