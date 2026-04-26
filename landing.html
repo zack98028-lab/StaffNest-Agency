@@ -255,21 +255,21 @@
         <div class="step active" id="step1">
           <h2>What's your name?</h2>
           <input class="quiz-input" id="qName" type="text" placeholder="First and last name" />
-          <button class="btn-next" onclick="goStepSnap(2,'Name')">Continue →</button>
+          <button class="btn-next" onclick="requireAndGo('qName',2,'Name')">Continue →</button>
         </div>
 
         <!-- Phone -->
         <div class="step" id="step2">
           <h2>Best phone number?</h2>
           <input class="quiz-input" id="qPhone" type="tel" placeholder="(555) 000-0000" />
-          <button class="btn-next" onclick="goStepSnap(3,'Phone')">Continue →</button>
+          <button class="btn-next" onclick="requireAndGo('qPhone',3,'Phone')">Continue →</button>
         </div>
 
         <!-- Email -->
         <div class="step" id="step3">
           <h2>Your email address?</h2>
           <input class="quiz-input" id="qEmail" type="email" placeholder="you@example.com" />
-          <button class="btn-next" onclick="goStepSnap(4,'Email')">Continue →</button>
+          <button class="btn-next" onclick="requireAndGo('qEmail',4,'Email')">Continue →</button>
         </div>
 
         <!-- Business -->
@@ -385,6 +385,17 @@
     }
     window.addEventListener('beforeunload', sendAutoDraft);
     window.addEventListener('pagehide', sendAutoDraft);
+    function requireAndGo(fieldId, nextStep, label) {
+      const val = document.getElementById(fieldId)?.value.trim();
+      if (!val) {
+        const el = document.getElementById(fieldId);
+        el.style.borderColor = '#ef4444';
+        el.focus();
+        setTimeout(() => el.style.borderColor = '', 1500);
+        return;
+      }
+      goStepSnap(nextStep, label);
+    }
     function goStep(n) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById('step' + n).classList.add('active');

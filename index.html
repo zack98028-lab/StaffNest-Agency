@@ -1463,7 +1463,7 @@
         <h2>What's your name?</h2>
         <input class="quiz-input" id="qName" type="text" placeholder="First and last name" />
         <div class="quiz-nav">
-          <button class="quiz-next-btn" onclick="mainSnap('quizStep4b','Name')" style="width:100%">Continue →</button>
+          <button class="quiz-next-btn" onclick="requireAndGoMain('qName','quizStep4b','Name')" style="width:100%">Continue →</button>
         </div>
       </div>
 
@@ -1472,7 +1472,7 @@
         <h2>Best phone number?</h2>
         <input class="quiz-input" id="qPhone" type="tel" placeholder="(555) 000-0000" />
         <div class="quiz-nav">
-          <button class="quiz-next-btn" onclick="mainSnap('quizStep4c','Phone')" style="width:100%">Continue →</button>
+          <button class="quiz-next-btn" onclick="requireAndGoMain('qPhone','quizStep4c','Phone')" style="width:100%">Continue →</button>
         </div>
       </div>
 
@@ -1481,7 +1481,7 @@
         <h2>Your email address?</h2>
         <input class="quiz-input" id="qEmail" type="email" placeholder="you@example.com" />
         <div class="quiz-nav">
-          <button class="quiz-next-btn" onclick="mainSnap('quizStep4d','Email')" style="width:100%">Continue →</button>
+          <button class="quiz-next-btn" onclick="requireAndGoMain('qEmail','quizStep4d','Email')" style="width:100%">Continue →</button>
         </div>
       </div>
 
@@ -1659,6 +1659,17 @@
     quizStep4:'10%', quizStep4b:'20%', quizStep4c:'30%', quizStep4d:'40%',
     quizStep1:'55%', quizStep2:'68%', quizStep3:'80%', quizStep5:'92%', quizSuccess:'100%'
   };
+  function requireAndGoMain(fieldId, targetId, label) {
+    const val = document.getElementById(fieldId)?.value.trim();
+    if (!val) {
+      const el = document.getElementById(fieldId);
+      el.style.borderColor = '#ef4444';
+      el.focus();
+      setTimeout(() => el.style.borderColor = '', 1500);
+      return;
+    }
+    mainSnap(targetId, label);
+  }
   function mainSnap(targetId, label) {
     gatherMain('After ' + label);
     _mainDraftSent = false;
