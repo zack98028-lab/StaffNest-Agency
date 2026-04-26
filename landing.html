@@ -284,7 +284,7 @@
             <div class="option" onclick="toggleOption(this)"><span class="icon">✍️</span>Content Writing</div>
             <div class="option" onclick="toggleOption(this)"><span class="icon">🔧</span>Other</div>
           </div>
-          <button class="btn-next" onclick="goStep(3)">Next →</button>
+          <button class="btn-next" onclick="goToServicesNext()">Next →</button>
         </div>
 
         <!-- Step 3: Hours -->
@@ -355,31 +355,43 @@
       const wrap = document.getElementById('scheduleDetailWrap');
       if (wrap) wrap.style.display = el.textContent.includes('Set specific hours') ? 'block' : 'none';
     }
-    function saveContactAndNext() {
-      const name     = document.getElementById('qName').value.trim();
-      const phone    = document.getElementById('qPhone').value.trim();
-      const email    = document.getElementById('qEmail').value.trim();
-      const business = document.getElementById('qBusiness').value.trim() || 'Not provided';
+    function gatherLanding(stepLabel) {
+      const name        = document.getElementById('qName').value.trim();
+      const phone       = document.getElementById('qPhone').value.trim();
+      const email       = document.getElementById('qEmail').value.trim();
+      const business    = document.getElementById('qBusiness').value.trim() || 'Not provided';
       const contactPref = document.querySelector('#contactPrefRowLanding .option.selected')?.textContent.trim() || 'Not specified';
-
-      // Send draft immediately so you have contact info even if they abandon
+      const services    = [...document.querySelectorAll('#servicesGrid .option.selected')].map(el => el.textContent.trim()).join(', ') || 'Not yet selected';
+      const hours       = document.querySelector('#hoursRowLanding .option.selected')?.textContent.trim() || 'Not yet selected';
+      const schedulePref = document.querySelector('#scheduleRow .option.selected')?.textContent.trim() || 'Not yet selected';
+      const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
+      const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
       fetch('https://formsubmit.co/ajax/serviceneststaffing@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          _subject: '📝 DRAFT — ' + (name || 'Unknown') + ' | ' + business,
+          _subject: '📝 DRAFT (' + stepLabel + ') — ' + (name || 'Unknown') + ' | ' + business,
           _template: 'table',
-          Status: 'DRAFT — did not finish quiz',
+          Status: 'DRAFT — stopped at ' + stepLabel,
           Name: name || 'Not provided',
           Business: business,
           Phone: phone || 'Not provided',
           Email: email || 'Not provided',
           'Best Way to Contact': contactPref,
+          'Services Needed': services,
+          'Hours Per Week': hours,
+          'Preferred VA Schedule': fullSchedule,
           Source: 'Meta Ad Landing Page'
         })
       }).catch(() => {});
-
+    }
+    function saveContactAndNext() {
+      gatherLanding('Step 1 - Contact Info');
       goStep(2);
+    }
+    function goToServicesNext() {
+      gatherLanding('Step 2 - Services');
+      goStep(3);
     }
     function submitQuiz() {
       const name     = document.getElementById('qName').value.trim();

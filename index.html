@@ -1373,7 +1373,7 @@
         </div>
         <div class="quiz-nav">
           <button class="quiz-back-btn" onclick="goToStep(1)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStep(3)">Next: Hours &amp; Schedule →</button>
+          <button class="quiz-next-btn" onclick="goToStepWithSnapshot(3, 'Step 2 - Services')">Next: Hours &amp; Schedule →</button>
         </div>
       </div>
 
@@ -1419,7 +1419,7 @@
 
         <div class="quiz-nav">
           <button class="quiz-back-btn" onclick="goToStep(2)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStep(4)">Next: A Few Details →</button>
+          <button class="quiz-next-btn" onclick="goToStepWithSnapshot(4, 'Step 3 - Hours & Schedule')">Next: A Few Details →</button>
         </div>
       </div>
 
@@ -1454,7 +1454,7 @@
 
         <div class="quiz-nav">
           <button class="quiz-back-btn" onclick="goToStep(3)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStep(5)">Next: Any Special Needs? →</button>
+          <button class="quiz-next-btn" onclick="goToStepWithSnapshot(5, 'Step 4 - Start Date & VA Count')">Next: Any Special Needs? →</button>
         </div>
       </div>
 
@@ -1564,30 +1564,53 @@
     if (modal) modal.scrollTop = 0;
   }
 
-  function saveContactAndNextMain() {
-    const name     = document.getElementById('qName').value.trim();
-    const phone    = document.getElementById('qPhone').value.trim();
-    const email    = document.getElementById('qEmail').value.trim();
-    const business = document.getElementById('qBusiness').value.trim() || 'Not provided';
+  function gatherMain(stepLabel) {
+    const name        = document.getElementById('qName').value.trim();
+    const phone       = document.getElementById('qPhone').value.trim();
+    const email       = document.getElementById('qEmail').value.trim();
+    const business    = document.getElementById('qBusiness').value.trim() || 'Not provided';
     const contactPref = document.querySelector('#contactPrefRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
-
+    const services    = [...document.querySelectorAll('.quiz-service-option.checked')].map(el => el.textContent.replace('✓','').trim()).join(', ') || 'Not yet selected';
+    const otherSvc    = document.getElementById('qOtherService')?.value.trim() || '';
+    const allServices = otherSvc ? services + ', Other: ' + otherSvc : services;
+    const hours       = selectedHours || 'Not yet selected';
+    const schedulePref = document.querySelector('#scheduleRow .quiz-va-pill.selected')?.textContent.trim() || 'Not yet selected';
+    const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
+    const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
+    const startPill   = document.querySelector('#startRow .quiz-va-pill.selected')?.textContent.trim() || 'Not yet selected';
+    const startDate   = document.getElementById('qStartDate')?.value.trim() || '';
+    const startTime   = startDate ? `${startPill} — ${startDate}` : startPill;
+    const vaCount     = document.querySelector('#vaCountRow .quiz-va-pill.selected')?.textContent.trim() || 'Not yet selected';
+    const special     = document.getElementById('qSpecial')?.value.trim() || 'Not yet provided';
     fetch('https://formsubmit.co/ajax/serviceneststaffing@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
-        _subject: '📝 DRAFT — ' + (name || 'Unknown') + ' | ' + business,
+        _subject: '📝 DRAFT (' + stepLabel + ') — ' + (name || 'Unknown') + ' | ' + business,
         _template: 'table',
-        Status: 'DRAFT — did not finish quiz',
+        Status: 'DRAFT — stopped at ' + stepLabel,
         Name: name || 'Not provided',
         Business: business,
         Phone: phone || 'Not provided',
         Email: email || 'Not provided',
         'Best Way to Contact': contactPref,
+        'Services Needed': allServices,
+        'Hours Per Week': hours,
+        'Preferred VA Schedule': fullSchedule,
+        'When to Start': startTime,
+        'Number of VAs': vaCount,
+        'Special Requirements': special,
         Source: 'Main Website'
       })
     }).catch(() => {});
-
+  }
+  function saveContactAndNextMain() {
+    gatherMain('Step 1 - Contact Info');
     goToStep(2);
+  }
+  function goToStepWithSnapshot(step, label) {
+    gatherMain(label);
+    goToStep(step);
   }
 
   function toggleService(el) {
