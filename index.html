@@ -1373,7 +1373,7 @@
         </div>
         <div class="quiz-nav">
           <button class="quiz-back-btn" onclick="goToStep(1)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStepWithSnapshot(3, 'Step 2 - Services')">Next: Hours &amp; Schedule →</button>
+          <button class="quiz-next-btn" onclick="requireSelectionMain('.quiz-service-option.checked','.quiz-services-grid',()=>goToStepWithSnapshot(3,'Step 2 - Services'))">Next: Hours &amp; Schedule →</button>
         </div>
       </div>
 
@@ -1419,7 +1419,7 @@
 
         <div class="quiz-nav">
           <button class="quiz-back-btn" onclick="goToStep(2)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStepWithSnapshot(4, 'Step 3 - Hours & Schedule')">Next: A Few Details →</button>
+          <button class="quiz-next-btn" onclick="requireSelectionMain('.quiz-hour-card.selected','.quiz-hours-grid',()=>goToStepWithSnapshot(4,'Step 3 - Hours & Schedule'))">Next: A Few Details →</button>
         </div>
       </div>
 
@@ -1454,7 +1454,7 @@
 
         <div class="quiz-nav">
           <button class="quiz-back-btn" onclick="goToStep(3)">← Back</button>
-          <button class="quiz-next-btn" onclick="goToStepWithSnapshot(5, 'Step 4 - Start Date & VA Count')">Next: Any Special Needs? →</button>
+          <button class="quiz-next-btn" onclick="requireSelectionMain('#startRow .quiz-va-pill.selected','#startRow',()=>requireSelectionMain('#vaCountRow .quiz-va-pill.selected','#vaCountRow',()=>goToStepWithSnapshot(5,'Step 4 - Start Date & VA Count')))">Next: Any Special Needs? →</button>
         </div>
       </div>
 
@@ -1659,6 +1659,15 @@
     quizStep4:'10%', quizStep4b:'20%', quizStep4c:'30%', quizStep4d:'40%',
     quizStep1:'55%', quizStep2:'68%', quizStep3:'80%', quizStep5:'92%', quizSuccess:'100%'
   };
+  function requireSelectionMain(selector, container, thenFn) {
+    const hasSelection = document.querySelectorAll(selector).length > 0;
+    if (!hasSelection) {
+      const el = document.querySelector(container);
+      if (el) { el.style.outline = '2px solid #ef4444'; setTimeout(() => el.style.outline = '', 1500); }
+      return;
+    }
+    thenFn();
+  }
   function requireAndGoMain(fieldId, targetId, label) {
     const val = document.getElementById(fieldId)?.value.trim();
     if (!val) {

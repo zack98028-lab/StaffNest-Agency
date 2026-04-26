@@ -295,7 +295,7 @@
             <div class="option" onclick="toggleOption(this)"><span class="icon">✍️</span>Content Writing</div>
             <div class="option" onclick="toggleOption(this)"><span class="icon">🔧</span>Other</div>
           </div>
-          <button class="btn-next" onclick="goStepSnap(6,'Services')">Continue →</button>
+          <button class="btn-next" onclick="requireSelectionAndGo('#servicesGrid .option.selected',6,'Services','#servicesGrid')">Continue →</button>
         </div>
 
         <!-- Hours -->
@@ -317,7 +317,7 @@
               <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST..." style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;" />
             </div>
           </div>
-          <button class="btn-next" onclick="submitQuiz()">Get My VA Match →</button>
+          <button class="btn-next" onclick="requireSelectionAndSubmit('#hoursRowLanding .option.selected','#hoursRowLanding')">Get My VA Match →</button>
         </div>
 
         <!-- Success -->
@@ -395,6 +395,24 @@
         return;
       }
       goStepSnap(nextStep, label);
+    }
+    function requireSelectionAndGo(selector, nextStep, label, container) {
+      const hasSelection = document.querySelectorAll(selector).length > 0;
+      if (!hasSelection) {
+        const el = document.querySelector(container || '.options-grid');
+        if (el) { el.style.outline = '2px solid #ef4444'; setTimeout(() => el.style.outline = '', 1500); }
+        return;
+      }
+      goStepSnap(nextStep, label);
+    }
+    function requireSelectionAndSubmit(selector, container) {
+      const hasSelection = document.querySelectorAll(selector).length > 0;
+      if (!hasSelection) {
+        const el = document.querySelector(container);
+        if (el) { el.style.outline = '2px solid #ef4444'; setTimeout(() => el.style.outline = '', 1500); }
+        return;
+      }
+      submitQuiz();
     }
     function goStep(n) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
