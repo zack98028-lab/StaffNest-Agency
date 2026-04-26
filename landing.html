@@ -251,29 +251,40 @@
       </div>
       <div class="modal-body">
 
-        <!-- Step 1: Contact Info -->
+        <!-- Name -->
         <div class="step active" id="step1">
-          <div class="step-label">Step 1 of 3</div>
-          <h2>Let's get your info first</h2>
-          <p>So we can reach out with your match.</p>
-          <input class="quiz-input" id="qName" type="text" placeholder="Your full name" />
-          <input class="quiz-input" id="qBusiness" type="text" placeholder="Business name (optional)" />
-          <input class="quiz-input" id="qPhone" type="tel" placeholder="Phone number" />
-          <input class="quiz-input" id="qEmail" type="email" placeholder="Email address" />
-          <p style="font-size:.85rem;color:#6b7280;margin:12px 0 6px">Best way to contact you?</p>
-          <div class="options-grid" id="contactPrefRowLanding">
-            <div class="option" onclick="pickOne(this)">📧 Email</div>
-            <div class="option" onclick="pickOne(this)">📞 Phone / Text</div>
-            <div class="option" onclick="pickOne(this)">Either works</div>
-          </div>
-          <button class="btn-next" onclick="saveContactAndNext()">Next →</button>
+          <h2>What's your name?</h2>
+          <input class="quiz-input" id="qName" type="text" placeholder="First and last name" />
+          <button class="btn-next" onclick="goStepSnap(2,'Name')">Continue →</button>
         </div>
 
-        <!-- Step 2: Services -->
+        <!-- Phone -->
         <div class="step" id="step2">
-          <div class="step-label">Step 2 of 3</div>
+          <h2>Best phone number?</h2>
+          <input class="quiz-input" id="qPhone" type="tel" placeholder="(555) 000-0000" />
+          <button class="btn-next" onclick="goStepSnap(3,'Phone')">Continue →</button>
+        </div>
+
+        <!-- Email -->
+        <div class="step" id="step3">
+          <h2>Your email address?</h2>
+          <input class="quiz-input" id="qEmail" type="email" placeholder="you@example.com" />
+          <button class="btn-next" onclick="goStepSnap(4,'Email')">Continue →</button>
+        </div>
+
+        <!-- Business -->
+        <div class="step" id="step4">
+          <h2>Business or organization name?</h2>
+          <p style="font-size:.85rem;color:#6b7280;margin-bottom:14px">Optional — skip if you'd like.</p>
+          <input class="quiz-input" id="qBusiness" type="text" placeholder="Company name" />
+          <button class="btn-next" onclick="goStepSnap(5,'Business')">Continue →</button>
+          <button class="btn-next" style="background:#f1f5f9;color:#64748b;margin-top:8px;font-size:.9rem;padding:12px" onclick="goStepSnap(5,'Business')">Skip →</button>
+        </div>
+
+        <!-- Services -->
+        <div class="step" id="step5">
           <h2>What do you need help with?</h2>
-          <p>Select all that apply.</p>
+          <p style="font-size:.85rem;color:#6b7280;margin-bottom:14px">Select all that apply.</p>
           <div class="options-grid" id="servicesGrid">
             <div class="option" onclick="toggleOption(this)"><span class="icon">📧</span>Email & Admin</div>
             <div class="option" onclick="toggleOption(this)"><span class="icon">📅</span>Scheduling</div>
@@ -284,14 +295,12 @@
             <div class="option" onclick="toggleOption(this)"><span class="icon">✍️</span>Content Writing</div>
             <div class="option" onclick="toggleOption(this)"><span class="icon">🔧</span>Other</div>
           </div>
-          <button class="btn-next" onclick="goToServicesNext()">Next →</button>
+          <button class="btn-next" onclick="goStepSnap(6,'Services')">Continue →</button>
         </div>
 
-        <!-- Step 3: Hours -->
-        <div class="step" id="step3">
-          <div class="step-label">Step 3 of 3</div>
+        <!-- Hours -->
+        <div class="step" id="step6">
           <h2>How many hours per week?</h2>
-          <p>We'll match you with the right VA.</p>
           <div class="options-grid" id="hoursRowLanding">
             <div class="option" onclick="pickOne(this);showScheduleLanding()">Under 10 hrs/wk</div>
             <div class="option" onclick="pickOne(this);showScheduleLanding()">10–20 hrs/wk</div>
@@ -299,13 +308,13 @@
             <div class="option" onclick="pickOne(this);showScheduleLanding()">Full-time (40+)</div>
           </div>
           <div id="scheduleSectionLanding" style="display:none;margin-top:16px;">
-            <p style="font-size:.85rem;color:#6b7280;margin:0 0 6px">What schedule do you prefer for your VA?</p>
+            <p style="font-size:.85rem;color:#6b7280;margin:0 0 6px">Preferred schedule?</p>
             <div class="options-grid" id="scheduleRow">
               <div class="option" onclick="pickOne(this);toggleScheduleLanding(this)">📅 Set specific hours</div>
               <div class="option" onclick="pickOne(this);toggleScheduleLanding(this)">🕐 VA's own schedule</div>
             </div>
             <div id="scheduleDetailWrap" style="margin-top:8px;display:none;">
-              <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST, or 3x a week mornings..." style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;" />
+              <input class="quiz-input" id="qScheduleDetail" type="text" placeholder="e.g. Mon–Fri 9am–12pm EST..." style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:8px;font-size:.9rem;" />
             </div>
           </div>
           <button class="btn-next" onclick="submitQuiz()">Get My VA Match →</button>
@@ -316,9 +325,7 @@
           <div class="success-box">
             <div class="check">✅</div>
             <h2>You're all set!</h2>
-            <p>We'll reach out within 24 hours with your VA match. Check your email and phone.</p>
-            <br>
-            <p style="font-size:0.83rem;color:#9ca3af">We'll be in touch within 24 hours.</p>
+            <p>We'll reach out within 24 hours with your VA match.</p>
           </div>
         </div>
 
@@ -381,8 +388,12 @@
     function goStep(n) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById('step' + n).classList.add('active');
-      const p = { 2: 50, 3: 80 };
-      if (p[n]) document.getElementById('progressBar').style.width = p[n] + '%';
+      const p = { 1:14, 2:28, 3:42, 4:57, 5:71, 6:86 };
+      document.getElementById('progressBar').style.width = (p[n] || 100) + '%';
+    }
+    function goStepSnap(n, label) {
+      gatherLanding('After ' + label);
+      goStep(n);
     }
     function toggleOption(el) { el.classList.toggle('selected'); }
     function pickOne(el) {
@@ -427,27 +438,18 @@
         })
       }).catch(() => {});
     }
-    function saveContactAndNext() {
-      gatherLanding('Step 1 - Contact Info');
-      goStep(2);
-    }
-    function goToServicesNext() {
-      gatherLanding('Step 2 - Services');
-      goStep(3);
-    }
     function submitQuiz() {
       const name     = document.getElementById('qName').value.trim();
       const phone    = document.getElementById('qPhone').value.trim();
       const email    = document.getElementById('qEmail').value.trim();
       const business = document.getElementById('qBusiness').value.trim() || 'Not provided';
-      const contactPref = document.querySelector('#contactPrefRowLanding .option.selected')?.textContent.trim() || 'Not specified';
       const services = [...document.querySelectorAll('#servicesGrid .option.selected')]
                         .map(el => el.textContent.trim()).join(', ') || 'Not specified';
       const hours = document.querySelector('#hoursRowLanding .option.selected')?.textContent.trim() || 'Not specified';
       const schedulePref = document.querySelector('#scheduleRow .option.selected')?.textContent.trim() || 'Not specified';
       const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
       const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
-
+      _draftSent = true;
       fetch('https://formsubmit.co/ajax/serviceneststaffing@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -459,7 +461,6 @@
           Business: business,
           Phone: phone || 'Not provided',
           Email: email || 'Not provided',
-          'Best Way to Contact': contactPref,
           'Services Needed': services,
           'Hours Per Week': hours,
           'Preferred VA Schedule': fullSchedule,

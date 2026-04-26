@@ -1336,7 +1336,7 @@
 
       <!-- ── STEP 1: Services ── -->
       <div class="quiz-step" id="quizStep1">
-        <div class="quiz-step-label">Step 2 of 5 · Free &amp; No Obligation</div>
+        <div class="quiz-step-label">Free &amp; No Obligation</div>
         <h2>What kind of help do you need?</h2>
         <p>Select all that apply — we'll match you with the right VA.</p>
         <div class="quiz-services-grid">
@@ -1379,7 +1379,7 @@
 
       <!-- ── STEP 2: Hours ── -->
       <div class="quiz-step" id="quizStep2">
-        <div class="quiz-step-label">Step 3 of 5</div>
+        <div class="quiz-step-label">Free &amp; No Obligation</div>
         <h2>How many hours per week do you need?</h2>
         <p>You can always adjust this later — no commitment required.</p>
         <div class="quiz-hours-grid">
@@ -1425,7 +1425,7 @@
 
       <!-- ── STEP 3: Start date + how many VAs ── -->
       <div class="quiz-step" id="quizStep3">
-        <div class="quiz-step-label">Step 4 of 5</div>
+        <div class="quiz-step-label">Free &amp; No Obligation</div>
         <h2>A couple quick questions</h2>
         <p>Help us match you with the best options.</p>
 
@@ -1458,39 +1458,47 @@
         </div>
       </div>
 
-      <!-- ── STEP 4: Contact info ── -->
+      <!-- ── CONTACT: Name ── -->
       <div class="quiz-step active" id="quizStep4">
-        <div class="quiz-step-label">Step 1 of 5 · Free &amp; No Obligation</div>
-        <h2>Let's get your info first</h2>
-        <p>So we can reach out with your match — even if you don't finish.</p>
-
-        <label class="quiz-label">Your Name</label>
-        <input class="quiz-input" id="qName" type="text" placeholder="James Mitchell" />
-
-        <label class="quiz-label">Business / Company Name</label>
-        <input class="quiz-input" id="qBusiness" type="text" placeholder="Mitchell Real Estate Group" />
-
-        <label class="quiz-label">Phone Number</label>
-        <input class="quiz-input" id="qPhone" type="tel" placeholder="(555) 000-0000" />
-
-        <label class="quiz-label">Email Address</label>
-        <input class="quiz-input" id="qEmail" type="email" placeholder="james@mybusiness.com" />
-
-        <label class="quiz-label">Best way to contact you?</label>
-        <div class="quiz-va-row" id="contactPrefRow">
-          <div class="quiz-va-pill selected" onclick="selectPill('contactPrefRow', this)">📧 Email</div>
-          <div class="quiz-va-pill" onclick="selectPill('contactPrefRow', this)">📞 Phone / Text</div>
-          <div class="quiz-va-pill" onclick="selectPill('contactPrefRow', this)">Either works</div>
+        <h2>What's your name?</h2>
+        <input class="quiz-input" id="qName" type="text" placeholder="First and last name" />
+        <div class="quiz-nav">
+          <button class="quiz-next-btn" onclick="mainSnap('quizStep4b','Name')" style="width:100%">Continue →</button>
         </div>
+      </div>
 
-        <div class="quiz-nav" style="margin-top:4px">
-          <button class="quiz-next-btn" onclick="saveContactAndNextMain()" style="width:100%">Next: What Do You Need? →</button>
+      <!-- ── CONTACT: Phone ── -->
+      <div class="quiz-step" id="quizStep4b">
+        <h2>Best phone number?</h2>
+        <input class="quiz-input" id="qPhone" type="tel" placeholder="(555) 000-0000" />
+        <div class="quiz-nav">
+          <button class="quiz-next-btn" onclick="mainSnap('quizStep4c','Phone')" style="width:100%">Continue →</button>
+        </div>
+      </div>
+
+      <!-- ── CONTACT: Email ── -->
+      <div class="quiz-step" id="quizStep4c">
+        <h2>Your email address?</h2>
+        <input class="quiz-input" id="qEmail" type="email" placeholder="you@example.com" />
+        <div class="quiz-nav">
+          <button class="quiz-next-btn" onclick="mainSnap('quizStep4d','Email')" style="width:100%">Continue →</button>
+        </div>
+      </div>
+
+      <!-- ── CONTACT: Business ── -->
+      <div class="quiz-step" id="quizStep4d">
+        <h2>Business or organization name?</h2>
+        <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">Optional — skip if you'd like.</p>
+        <input class="quiz-input" id="qBusiness" type="text" placeholder="Company name" />
+        <div class="quiz-nav" style="flex-direction:column;gap:8px">
+          <button class="quiz-next-btn" onclick="saveContactAndNextMain()" style="width:100%">Continue →</button>
+          <button class="quiz-next-btn" onclick="saveContactAndNextMain()" style="width:100%;background:var(--light);color:var(--muted);font-size:.9rem">Skip →</button>
         </div>
       </div>
 
       <!-- ── STEP 5: Special requirements (free text, last step) ── -->
       <div class="quiz-step" id="quizStep5">
-        <div class="quiz-step-label">Step 5 of 5 · Almost done!</div>
+        <div class="quiz-step-label">Almost done!</div>
         <h2>Any special requirements?</h2>
         <p>This is optional — but the more you share, the better we can match you. Feel free to include anything that matters to you.</p>
 
@@ -1647,8 +1655,23 @@
       })
     }).catch(() => {});
   }
+  const _progressById = {
+    quizStep4:'10%', quizStep4b:'20%', quizStep4c:'30%', quizStep4d:'40%',
+    quizStep1:'55%', quizStep2:'68%', quizStep3:'80%', quizStep5:'92%', quizSuccess:'100%'
+  };
+  function mainSnap(targetId, label) {
+    gatherMain('After ' + label);
+    _mainDraftSent = false;
+    document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById(targetId);
+    if (el) el.classList.add('active');
+    document.getElementById('quizProgressBar').style.width = _progressById[targetId] || '50%';
+    const modal = document.querySelector('.modal');
+    if (modal) modal.scrollTop = 0;
+  }
   function saveContactAndNextMain() {
-    gatherMain('Step 1 - Contact Info');
+    gatherMain('Contact Info complete');
+    _mainDraftSent = false;
     goToStep(2);
   }
   function goToStepWithSnapshot(step, label) {
