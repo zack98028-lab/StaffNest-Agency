@@ -360,10 +360,6 @@
       const name = document.getElementById('qName').value.trim();
       const phone = document.getElementById('qPhone').value.trim();
       const email = document.getElementById('qEmail').value.trim();
-      if (!name || !phone || !email) {
-        alert('Please fill in your name, phone, and email.');
-        return;
-      }
       const services = [...document.querySelectorAll('#step1 .option.selected')]
                         .map(el => el.textContent.trim()).join(', ') || 'Not specified';
       const hours = document.querySelector('#hoursRowLanding .option.selected')?.textContent.trim() || 'Not specified';
