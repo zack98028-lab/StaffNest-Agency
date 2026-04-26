@@ -1550,6 +1550,49 @@
   /* ── Quiz state ── */
   let currentStep = 1;
   let selectedHours = 'Not specified';
+  let _mainQuizStarted = false;
+  let _mainDraftSent = false;
+
+  function sendAutoDraftMain() {
+    if (!_mainQuizStarted || _mainDraftSent) return;
+    const name        = document.getElementById('qName').value.trim();
+    const phone       = document.getElementById('qPhone').value.trim();
+    const email       = document.getElementById('qEmail').value.trim();
+    const business    = document.getElementById('qBusiness').value.trim() || 'Not provided';
+    const contactPref = document.querySelector('#contactPrefRow .quiz-va-pill.selected')?.textContent.trim() || 'Not specified';
+    const services    = [...document.querySelectorAll('.quiz-service-option.checked')].map(el => el.textContent.replace('✓','').trim()).join(', ') || 'None selected';
+    const hours       = selectedHours || 'None selected';
+    const schedulePref = document.querySelector('#scheduleRow .quiz-va-pill.selected')?.textContent.trim() || 'None selected';
+    const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
+    const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
+    const startPill   = document.querySelector('#startRow .quiz-va-pill.selected')?.textContent.trim() || 'None selected';
+    const startDate   = document.getElementById('qStartDate')?.value.trim() || '';
+    const startTime   = startDate ? `${startPill} — ${startDate}` : startPill;
+    const vaCount     = document.querySelector('#vaCountRow .quiz-va-pill.selected')?.textContent.trim() || 'None selected';
+    const special     = document.getElementById('qSpecial')?.value.trim() || 'None';
+    _mainDraftSent = true;
+    navigator.sendBeacon('https://formsubmit.co/ajax/serviceneststaffing@gmail.com',
+      new Blob([JSON.stringify({
+        _subject: '📝 DRAFT (abandoned) — ' + (name || 'Unknown') + ' | ' + business,
+        _template: 'table',
+        Status: 'DRAFT — left without submitting',
+        Name: name || 'Not provided',
+        Business: business,
+        Phone: phone || 'Not provided',
+        Email: email || 'Not provided',
+        'Best Way to Contact': contactPref,
+        'Services Needed': services,
+        'Hours Per Week': hours,
+        'Preferred VA Schedule': fullSchedule,
+        'When to Start': startTime,
+        'Number of VAs': vaCount,
+        'Special Requirements': special,
+        Source: 'Main Website'
+      })], { type: 'application/json' })
+    );
+  }
+  window.addEventListener('beforeunload', sendAutoDraftMain);
+  window.addEventListener('pagehide', sendAutoDraftMain);
 
   const progressMap = { 1: '20%', 2: '40%', 3: '60%', 4: '80%', 5: '95%', 6: '100%' };
 
@@ -1693,11 +1736,16 @@
 
   /* ── Modal ── */
   function openModal() {
+    _mainQuizStarted = false;
+    _mainDraftSent = false;
     goToStep(1);
     document.getElementById('authModal').classList.add('open');
     document.body.style.overflow = 'hidden';
+    document.getElementById('authModal').addEventListener('input', () => { _mainQuizStarted = true; }, { once: true });
+    document.getElementById('authModal').addEventListener('click', () => { _mainQuizStarted = true; }, { once: true });
   }
   function closeModal() {
+    sendAutoDraftMain();
     document.getElementById('authModal').classList.remove('open');
     document.body.style.overflow = '';
   }

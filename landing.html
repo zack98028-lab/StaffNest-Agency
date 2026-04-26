@@ -327,15 +327,57 @@
   </div>
 
   <script>
+    let _quizStarted = false;
+    let _draftSent = false;
+
+    function sendAutoDraft() {
+      if (!_quizStarted || _draftSent) return;
+      const name        = document.getElementById('qName').value.trim();
+      const phone       = document.getElementById('qPhone').value.trim();
+      const email       = document.getElementById('qEmail').value.trim();
+      const business    = document.getElementById('qBusiness').value.trim() || 'Not provided';
+      const contactPref = document.querySelector('#contactPrefRowLanding .option.selected')?.textContent.trim() || 'Not specified';
+      const services    = [...document.querySelectorAll('#servicesGrid .option.selected')].map(el => el.textContent.trim()).join(', ') || 'None selected';
+      const hours       = document.querySelector('#hoursRowLanding .option.selected')?.textContent.trim() || 'None selected';
+      const schedulePref = document.querySelector('#scheduleRow .option.selected')?.textContent.trim() || 'None selected';
+      const scheduleDetail = document.getElementById('qScheduleDetail')?.value.trim() || '';
+      const fullSchedule = scheduleDetail ? `${schedulePref} — ${scheduleDetail}` : schedulePref;
+      _draftSent = true;
+      navigator.sendBeacon('https://formsubmit.co/ajax/serviceneststaffing@gmail.com',
+        new Blob([JSON.stringify({
+          _subject: '📝 DRAFT (abandoned) — ' + (name || 'Unknown') + ' | ' + business,
+          _template: 'table',
+          Status: 'DRAFT — left without submitting',
+          Name: name || 'Not provided',
+          Business: business,
+          Phone: phone || 'Not provided',
+          Email: email || 'Not provided',
+          'Best Way to Contact': contactPref,
+          'Services Needed': services,
+          'Hours Per Week': hours,
+          'Preferred VA Schedule': fullSchedule,
+          Source: 'Meta Ad Landing Page'
+        })], { type: 'application/json' })
+      );
+    }
+
     function openQuiz() {
+      _quizStarted = false;
+      _draftSent = false;
       document.getElementById('quizModal').classList.add('open');
+      // Mark started as soon as they interact
+      document.getElementById('quizModal').addEventListener('input', () => { _quizStarted = true; }, { once: true });
+      document.getElementById('quizModal').addEventListener('click', () => { _quizStarted = true; }, { once: true });
     }
     function closeQuiz() {
+      sendAutoDraft();
       document.getElementById('quizModal').classList.remove('open');
     }
     function closeOnOverlay(e) {
       if (e.target === document.getElementById('quizModal')) closeQuiz();
     }
+    window.addEventListener('beforeunload', sendAutoDraft);
+    window.addEventListener('pagehide', sendAutoDraft);
     function goStep(n) {
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
       document.getElementById('step' + n).classList.add('active');
