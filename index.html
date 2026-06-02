@@ -693,6 +693,8 @@
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .form-grid { grid-template-columns: 1fr; }
       .quiz-services-grid { grid-template-columns: 1fr; }
+      /* Industry grid: override inline style */
+      .ind-grid { grid-template-columns: repeat(2,1fr) !important; }
     }
     /* Nav wraps gracefully on small screens — never collapses */
     @media (max-width: 720px) {
@@ -707,9 +709,8 @@
       .hero-ctas .btn { text-align: center; width: 100%; justify-content: center; }
       .cta-banner .ctas { flex-direction: column; align-items: center; }
       .quiz-body { padding: 24px 20px 28px; }
-      .ind-grid { grid-template-columns: repeat(2,1fr); }
-      /* Stats: single column on phones */
-      .stats-grid { grid-template-columns: 1fr !important; }
+      /* Industry cards: 2 columns on mobile (with !important to beat inline style) */
+      .ind-grid { grid-template-columns: repeat(2,1fr) !important; }
       /* Guarantee: reduce padding */
       .guarantee-inner { padding: 28px 20px !important; gap: 24px !important; }
       /* Section padding: tighter on phones */
@@ -717,20 +718,15 @@
       /* Top bar: smaller text, wrap */
       .top-bar { font-size: .72rem; padding: 7px 12px; }
       .top-bar span { margin: 0 5px; }
-      /* Pills box padding */
-      .ind-pill-box { padding: 20px !important; }
       /* Section headers */
       .section-title { font-size: clamp(1.4rem, 5vw, 2.2rem) !important; }
     }
 
     /* ─── WHAT IS A VA ──────────────────────────────────────────── */
     .what-is-va { padding: 80px 0; background: white; }
-    @media (max-width: 680px) {
-      .va-without-with { grid-template-columns: 1fr !important; }
+    @media (max-width: 520px) {
+      /* Capability grid: 2 columns always, never stack to 1 */
       .va-capability-grid { grid-template-columns: 1fr 1fr !important; }
-    }
-    @media (max-width: 420px) {
-      .va-capability-grid { grid-template-columns: 1fr !important; }
     }
 
     /* ─── INDUSTRIES ─────────────────────────────────────────────── */
@@ -741,6 +737,7 @@
     .ind-icon { width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--blue), var(--sky)); margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; }
     .ind-icon svg { width: 22px; height: 22px; fill: none; stroke: white; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .ind-card h4 { font-size: .9rem; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .ind-card p { overflow: visible; word-break: break-word; }
     .ind-pill {
       display: inline-block; padding: 7px 16px; border-radius: 100px;
       background: var(--light); border: 1px solid var(--mid);
