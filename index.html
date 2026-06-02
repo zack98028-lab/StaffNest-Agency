@@ -727,6 +727,10 @@
     .what-is-va { padding: 80px 0; background: white; }
     @media (max-width: 680px) {
       .va-without-with { grid-template-columns: 1fr !important; }
+      .va-capability-grid { grid-template-columns: 1fr 1fr !important; }
+    }
+    @media (max-width: 420px) {
+      .va-capability-grid { grid-template-columns: 1fr !important; }
     }
 
     /* ─── INDUSTRIES ─────────────────────────────────────────────── */
@@ -909,79 +913,74 @@
       </div>
     </div>
 
-    <!-- Compact task chips -->
-    <div style="background:white;border:1.5px solid var(--mid);border-radius:16px;padding:28px 36px">
-      <p style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.13em;color:var(--sky);margin-bottom:16px">Your VA can handle</p>
-      <div style="display:flex;flex-wrap:wrap;gap:9px">
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Secretary &amp; executive assistant</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Email &amp; inbox management</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Cold calling &amp; outreach</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Scheduling &amp; calendar</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Customer service</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Appointment setting</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">CRM &amp; data entry</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Social media management</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Bookkeeping &amp; invoicing</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Lead generation</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Content writing &amp; editing</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Research &amp; reporting</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Order &amp; vendor management</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--navy)">Website creation &amp; updates</span>
-        <span style="background:var(--light);border:1px solid var(--mid);padding:6px 14px;border-radius:100px;font-size:.82rem;font-weight:600;color:var(--muted);font-style:italic">...and much more</span>
+    <!-- VA capability grid -->
+    <div style="background:var(--navy);border-radius:20px;padding:40px 44px;margin-top:8px">
+      <h3 style="font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:900;color:white;margin-bottom:8px">What Your VA Can Handle</h3>
+      <p style="font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:28px">If it can be done remotely, your VA can take it off your plate.</p>
+      <div class="va-capability-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Secretary &amp; executive assistant</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Email &amp; inbox management</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Cold calling &amp; outreach</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Scheduling &amp; calendar</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Customer service &amp; support</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Appointment setting</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">CRM &amp; data entry</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Social media management</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Bookkeeping &amp; invoicing</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Lead generation</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Content writing &amp; editing</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Research &amp; reporting</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Order &amp; vendor management</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.07);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">✓</span>
+          <span style="font-size:.9rem;font-weight:700;color:white">Website creation &amp; updates</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:12px 16px">
+          <span style="color:var(--teal);font-weight:900;font-size:1rem;flex-shrink:0">+</span>
+          <span style="font-size:.9rem;font-weight:700;color:rgba(255,255,255,.6);font-style:italic">And much more...</span>
+        </div>
       </div>
     </div>
 
-  </div>
-</section>
-
-<!-- ── COMPARISON TABLE ──────────────────────────────────────────── -->
-<section style="padding:70px 0;background:var(--light)">
-  <div class="container">
-    <div class="section-header" style="text-align:center;margin-bottom:40px">
-      <span class="section-label">ServiceNest vs. Traditional Hiring</span>
-      <h2 class="section-title">See Why Businesses Are Switching</h2>
-    </div>
-    <div style="max-width:720px;margin:0 auto;overflow-x:auto;-webkit-overflow-scrolling:touch">
-      <table class="comparison-table" style="min-width:420px">
-        <thead>
-          <tr>
-            <th style="text-align:left">Feature</th>
-            <th>ServiceNest Staffing</th>
-            <th>In-House Hire</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="highlight">
-            <td style="text-align:left;color:white">Average hourly cost</td>
-            <td style="color:#f59e0b;font-weight:800">$6/hr flat</td>
-            <td style="color:#ff6b6b;font-weight:800">$25–$50+/hr</td>
-          </tr>
-          <tr>
-            <td style="text-align:left">Employer benefits</td>
-            <td><span class="check">✓ None</span></td>
-            <td><span class="cross">✗ Required</span></td>
-          </tr>
-          <tr>
-            <td style="text-align:left">Time to hire</td>
-            <td><span class="check">✓ ~4 days</span></td>
-            <td><span class="cross">✗ 4–8 weeks</span></td>
-          </tr>
-          <tr>
-            <td style="text-align:left">Adjust hours week to week</td>
-            <td><span class="check">✓ Any time</span></td>
-            <td><span class="cross">✗ Fixed schedule</span></td>
-          </tr>
-          <tr>
-            <td style="text-align:left">Replacement guarantee</td>
-            <td><span class="check">✓ 6 months free</span></td>
-            <td><span class="cross">✗ Start over</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <div style="text-align:center;margin-top:32px">
-        <button class="btn btn-secondary" onclick="openModal()">Get Started</button>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1046,6 +1045,57 @@
     <div style="text-align:center;margin-top:32px">
       <p style="color:var(--muted);font-size:.9rem;margin-bottom:16px">If your business can delegate work remotely, we can find you the right VA.</p>
       <button class="btn btn-secondary" onclick="openModal()">Get Started</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPARISON TABLE ──────────────────────────────────────────── -->
+<section style="padding:70px 0;background:white">
+  <div class="container">
+    <div class="section-header" style="text-align:center;margin-bottom:40px">
+      <span class="section-label">ServiceNest vs. Traditional Hiring</span>
+      <h2 class="section-title">See Why Businesses Are Switching</h2>
+    </div>
+    <div style="max-width:720px;margin:0 auto;overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table class="comparison-table" style="min-width:420px">
+        <thead>
+          <tr>
+            <th style="text-align:left">Feature</th>
+            <th>ServiceNest Staffing</th>
+            <th>In-House Hire</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight">
+            <td style="text-align:left;color:white">Average hourly cost</td>
+            <td style="color:#f59e0b;font-weight:800">$6/hr flat</td>
+            <td style="color:#ff6b6b;font-weight:800">$25–$50+/hr</td>
+          </tr>
+          <tr>
+            <td style="text-align:left">Employer benefits</td>
+            <td><span class="check">✓ None</span></td>
+            <td><span class="cross">✗ Required</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left">Time to hire</td>
+            <td><span class="check">✓ ~4 days</span></td>
+            <td><span class="cross">✗ 4–8 weeks</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left">Adjust hours week to week</td>
+            <td><span class="check">✓ Any time</span></td>
+            <td><span class="cross">✗ Fixed schedule</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left">Replacement guarantee</td>
+            <td><span class="check">✓ 6 months free</span></td>
+            <td><span class="cross">✗ Start over</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="text-align:center;margin-top:32px">
+        <button class="btn btn-secondary" onclick="openModal()">Get Started</button>
+      </div>
     </div>
   </div>
 </section>
