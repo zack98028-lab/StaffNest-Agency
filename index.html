@@ -720,6 +720,8 @@
       .top-bar span { margin: 0 5px; }
       /* Section headers */
       .section-title { font-size: clamp(1.4rem, 5vw, 2.2rem) !important; }
+      /* Industry pills: smaller on mobile so more fit per row */
+      .ind-pill { padding: 5px 10px !important; font-size: .72rem !important; }
     }
 
     /* ─── WHAT IS A VA ──────────────────────────────────────────── */
@@ -911,7 +913,7 @@
     </div>
 
     <!-- VA capability grid -->
-    <div style="background:var(--navy);border-radius:20px;padding:40px 44px;margin-top:8px">
+    <div style="background:var(--navy);border-radius:20px;padding:clamp(20px,4vw,40px) clamp(16px,4vw,44px);margin-top:8px;overflow:hidden">
       <h3 style="font-size:clamp(1.2rem,2.5vw,1.6rem);font-weight:900;color:white;margin-bottom:8px">What Your VA Can Handle</h3>
       <p style="font-size:.9rem;color:rgba(255,255,255,.55);margin-bottom:28px">If it can be done remotely, your VA can take it off your plate.</p>
       <div class="va-capability-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
@@ -1033,9 +1035,9 @@
       </div>
     </div>
     <!-- Large industry pill list -->
-    <div style="margin-top:40px;background:white;border-radius:18px;padding:36px 40px;border:1.5px solid var(--mid)">
+    <div style="margin-top:40px;background:white;border-radius:18px;padding:clamp(20px,4vw,36px) clamp(16px,4vw,40px);border:1.5px solid var(--mid)">
       <p style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--sky);margin-bottom:20px">We also serve these industries &amp; more:</p>
-      <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
         <span class="ind-pill">Software &amp; SaaS</span><span class="ind-pill">HR &amp; Staffing</span><span class="ind-pill">Accounting</span><span class="ind-pill">Manufacturing</span><span class="ind-pill">Transportation &amp; Logistics</span><span class="ind-pill">Nonprofit &amp; Government</span><span class="ind-pill">Media &amp; Entertainment</span><span class="ind-pill">Travel &amp; Hospitality</span><span class="ind-pill">Education</span><span class="ind-pill">Fitness &amp; Wellness</span><span class="ind-pill">Energy &amp; Utilities</span><span class="ind-pill">Insurance</span><span class="ind-pill">Mortgage &amp; Lending</span><span class="ind-pill">Dental &amp; Medical Offices</span><span class="ind-pill">Chiropractic Practices</span><span class="ind-pill">Therapy &amp; Counseling</span><span class="ind-pill">Property Management</span><span class="ind-pill">Photography &amp; Videography</span><span class="ind-pill">Event Planning</span><span class="ind-pill">Interior Design</span><span class="ind-pill">Architecture</span><span class="ind-pill">Landscaping</span><span class="ind-pill">Cleaning Services</span><span class="ind-pill">HVAC &amp; Plumbing</span><span class="ind-pill">Auto Dealerships</span><span class="ind-pill">Recruiting Firms</span><span class="ind-pill">PR &amp; Communications</span><span class="ind-pill">Churches &amp; Ministries</span><span class="ind-pill">Online Courses &amp; Memberships</span><span class="ind-pill">IT &amp; Tech Support</span><span class="ind-pill">Cybersecurity Firms</span><span class="ind-pill">SEO &amp; PPC Agencies</span><span class="ind-pill">Dropshipping</span><span class="ind-pill">Amazon FBA Sellers</span><span class="ind-pill">Catering Companies</span><span class="ind-pill">Salon &amp; Beauty</span><span class="ind-pill">Jewelry &amp; Retail</span><span class="ind-pill">Publishing &amp; Media</span><span class="ind-pill">Podcasting</span><span class="ind-pill">Influencer &amp; Creator Brands</span><span class="ind-pill">Solar &amp; Energy</span><span class="ind-pill">Home Services</span><span class="ind-pill">Pest Control</span><span class="ind-pill">Security Companies</span><span class="ind-pill">Car Rental &amp; Leasing</span><span class="ind-pill">Trucking Companies</span><span class="ind-pill">And many more...</span>
       </div>
     </div>
