@@ -2342,6 +2342,52 @@ function setView(v){
   if(currentLeads.length) renderLeads(currentLeads);
 }
 
+// Builds a plain-English sentence explaining WHY this specific business would buy
+function buildBuyReason(l){
+  const sigs=l.signals||[];
+  const age=l._ageYears;
+  const txt=(l.name+' '+(l.addr||'')+' '+(l.reason||'')+' '+(l.why||'')).toLowerCase();
+  const parts=[];
+
+  // 1. What they ARE and why that matters
+  const isDental=txt.includes('dental')||txt.includes('orthodon')||txt.includes('oral surg');
+  const isMedical=!isDental&&(txt.includes('medical')||txt.includes('clinic')||txt.includes('physician')||txt.includes('therapy')||txt.includes('chiro')||txt.includes('rehab'));
+  const isRestaurant=txt.includes('restaurant')||txt.includes('catering')||txt.includes('kitchen');
+  const isLaw=txt.includes('law')||txt.includes('attorney')||txt.includes('legal');
+  const isAcct=txt.includes('account')||txt.includes('cpa')||txt.includes('tax');
+
+  if(isDental) parts.push('Dental practices spend $300–500K fitting out a space — moving means losing that entire investment');
+  else if(isMedical) parts.push('Medical practices have expensive built-in equipment and plumbing — relocating costs $150–300K minimum');
+  else if(isRestaurant) parts.push('Restaurant build-outs run $200–400K in hood systems, grease traps, and kitchen plumbing — they can\'t just pick up and leave');
+  else if(isLaw||isAcct) parts.push('Professional service firms build their client base around a fixed address — moving loses clients');
+
+  // 2. How long they've been around
+  if(age>=10) parts.push(`${Math.floor(age)}-year established business with the financial history to qualify for a commercial mortgage`);
+  else if(age>=7) parts.push(`${Math.floor(age)} years in business — financially mature and past the stage where renting makes more sense than owning`);
+  else if(age>=5) parts.push(`${Math.floor(age)}-year business — hitting the window where most practices switch from leasing to owning`);
+  else if(age>=3) parts.push(`${Math.floor(age)} years old — SBA loan eligible, meaning they can buy with as little as 10% down`);
+
+  // 3. Lease pressure
+  if(sigs.some(s=>s.includes('2026')||s.includes('2025'))) parts.push('their lease is estimated to expire this year or next — perfect timing for this conversation');
+  else if(l._isLeasing) parts.push('currently renting (Suite/Unit in address) — every rent check is money they\'ll never see again');
+
+  // 4. Growth signal
+  if(l._newsHeadline) parts.push(`recently in the news: "${l._newsHeadline.substring(0,70)}" — actively expanding and needs space`);
+  else if(sigs.some(s=>s.includes('Growth')||s.includes('Expanding'))) parts.push('publicly signaling expansion — they need more space now');
+
+  // 5. SBA / financial
+  if(sigs.some(s=>s.includes('SBA'))) parts.push('SBA 504 eligible — they can buy with 10% down instead of 20–30%, making this much more affordable');
+
+  // 6. Owner identified
+  if(sigs.some(s=>s.includes('Named Owner'))&&l.name) parts.push(`owner identified by name — broker can ask for them directly instead of cold-pitching a receptionist`);
+
+  // Fallback
+  if(!parts.length) parts.push(l.reason||l.why||'Established local business that fits this property type');
+
+  // Return 2–3 most compelling parts joined naturally
+  return parts.slice(0,3).join('. ')+(parts.length?'.':'');
+}
+
 function renderCallList(leads){
   const rows=leads.map((l,i)=>{
     const rank=i+1;
@@ -2353,46 +2399,47 @@ function renderCallList(leads){
     const badge=isHot?'<span style="font-size:9px;font-weight:700;color:#FCA5A5;letter-spacing:.05em;">HOT</span>'
                :isWarm?'<span style="font-size:9px;font-weight:700;color:#FCD34D;letter-spacing:.05em;">WARM</span>':'';
 
-    // Who to ask for
-    const askFor=l._jobTitle&&/owner|founder|president|ceo|principal|partner/i.test(l._jobTitle)
-      ?`<span style="font-size:11px;background:#0c1a30;color:#93C5FD;border-radius:4px;padding:1px 6px;margin-left:4px;">Ask for ${l.name.split(' ')[0]}</span>`:'';
+    // Who to ask for on the call
+    const ownerName=l._jobTitle&&/owner|founder|president|ceo|principal|partner/i.test(l._jobTitle)?l.name.split(' ')[0]:'';
+    const askFor=ownerName
+      ?`<span style="font-size:11px;background:#0c1a30;color:#93C5FD;border-radius:4px;padding:1px 7px;margin-left:6px;">Ask for ${ownerName}</span>`:'';
 
-    // Top signal — the single most important reason
-    const sig=l.signals&&l.signals.length?l.signals[0]:'';
-    const sigColor=sig.includes('🔥')?'#FCA5A5':'#FCD34D';
+    // All signals as small tags
+    const sigTags=(l.signals||[]).slice(0,4).map(s=>{
+      const c=s.includes('🔥')?'#FCA5A5':s.includes('⏰')?'#FCD34D':'#6EE7B7';
+      const clean=s.replace(/^[^\w]+/,'');
+      return `<span style="font-size:10px;color:${c};background:#ffffff0d;border:1px solid #ffffff18;border-radius:3px;padding:1px 5px;">${clean}</span>`;
+    }).join(' ');
 
-    // One-line why — strip to essentials
-    const why=(l.reason||l.why||'').replace(/\s+/g,' ').substring(0,100);
-
-    // News teaser
-    const news=l._newsHeadline
-      ?`<div style="font-size:11px;color:#86efac;margin-top:3px;">📰 ${l._newsHeadline.substring(0,90)}</div>`:'';
+    // Plain-English buy reason
+    const buyReason=buildBuyReason(l);
 
     const phoneBtn=l.phone
-      ?`<button onclick="openCall(${l.id})" style="background:#166534;color:#bbf7d0;border:1px solid #166534;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">${l.phone}</button>`
-      :`<span style="font-size:11px;color:var(--text3);white-space:nowrap;">no phone</span>`;
+      ?`<button onclick="openCall(${l.id})" style="background:#166534;color:#bbf7d0;border:1px solid #166534;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;width:100%;">${l.phone}</button>`
+      :`<span style="font-size:11px;color:var(--text3);">no phone</span>`;
 
     const extras=[
-      l.li?`<a href="${l.li}" target="_blank" style="font-size:11px;color:#93C5FD;text-decoration:none;">LinkedIn</a>`:'',
-      l.email?`<button onclick="openEmail(${l.id})" style="font-size:11px;background:none;border:none;color:#93C5FD;cursor:pointer;padding:0;">Email</button>`:'',
-    ].filter(Boolean).join(' · ');
+      l.li?`<a href="${l.li}" target="_blank" style="font-size:11px;color:#93C5FD;text-decoration:none;display:block;text-align:center;margin-top:4px;">↗ LinkedIn</a>`:'',
+      l.email?`<button onclick="openEmail(${l.id})" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:4px;color:#93C5FD;cursor:pointer;padding:3px 8px;width:100%;margin-top:4px;">Email</button>`:'',
+    ].filter(Boolean).join('');
 
     return `<tr style="border-bottom:1px solid ${borderColor};background:${rowBg};">
-      <td style="padding:10px 8px 10px 14px;text-align:center;vertical-align:middle;border-right:1px solid ${borderColor};width:52px;">
-        <div style="font-size:20px;font-weight:900;color:${rankColor};line-height:1;">${rank}</div>
-        <div style="font-size:18px;font-weight:800;color:var(--text);line-height:1.1;">${score}<span style="font-size:10px;color:var(--text3);">/100</span></div>
+      <td style="padding:12px 8px 12px 14px;text-align:center;vertical-align:top;border-right:1px solid ${borderColor};width:58px;">
+        <div style="font-size:22px;font-weight:900;color:${rankColor};line-height:1;">${rank}</div>
+        <div style="font-size:17px;font-weight:800;color:var(--text);line-height:1.2;margin-top:2px;">${score}<span style="font-size:10px;color:var(--text3);">/100</span></div>
         ${badge}
       </td>
-      <td style="padding:10px 12px;vertical-align:middle;">
-        <div style="font-weight:700;font-size:15px;color:var(--text);">${l.name}${askFor}</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:1px;">${l.addr||''}</div>
-        ${sig?`<div style="font-size:12px;color:${sigColor};margin-top:3px;">${sig}</div>`:''}
-        ${news}
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">${why}</div>
-        ${extras?`<div style="margin-top:4px;">${extras}</div>`:''}
+      <td style="padding:12px 14px;vertical-align:top;">
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+          <span style="font-weight:700;font-size:15px;color:var(--text);">${l.name}</span>
+          ${askFor}
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${l.addr||''}</div>
+        <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${sigTags}</div>
+        <div style="margin-top:7px;font-size:13px;color:var(--text2);line-height:1.5;border-left:2px solid ${isHot?'#7F1D1D':isWarm?'#78350F':'var(--border)'};padding-left:10px;">${buyReason}</div>
       </td>
-      <td style="padding:10px 14px;vertical-align:middle;text-align:right;width:160px;">
-        ${phoneBtn}
+      <td style="padding:12px 14px;vertical-align:top;text-align:center;width:150px;">
+        ${phoneBtn}${extras}
       </td>
     </tr>`;
   }).join('');
