@@ -2241,8 +2241,22 @@ function switchView(v,btn){
 
 // ═════════════════════════ AUTO RUN ═════════════════════════
 function runDemo(){
+  const t0=Date.now();
+  const wrap=document.getElementById('walkWrap');
+  const fill=document.getElementById('walkBarFill');
+  const status=document.getElementById('walkStatus');
+  document.getElementById('heroCard').style.display='none';
+  wrap.classList.add('active');
   document.getElementById('propertyAuto').value='8,500 sq ft office building, Ann Arbor Michigan, asking $1.2M, previously built out as a medical office, ample parking, near University of Michigan campus, built 2005, zoned B-2 commercial. Vacant and ready for immediate occupancy.';
-  runAuto();
+  // Animate progress bar then show hardcoded leads — no live API needed
+  const steps=[[5,'Loading demo leads...'],[30,'Scoring and ranking...'],[70,'Building call list...'],[95,'Done']];
+  steps.forEach(([pct,msg],i)=>setTimeout(()=>{fill.style.width=pct+'%';status.textContent=msg;},i*400));
+  setTimeout(()=>{
+    fill.style.width='100%';
+    currentLeads=ALL_LEADS;
+    wrap.classList.remove('active');
+    showResults(t0);
+  },steps.length*400+200);
 }
 
 function fakeImport(){
