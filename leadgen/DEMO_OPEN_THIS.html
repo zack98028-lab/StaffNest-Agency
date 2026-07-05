@@ -2385,7 +2385,14 @@ function buildBuyReason(l){
   else if(age>=3) parts.push(`${Math.floor(age)} years in business — SBA loan eligible, meaning 10% down is all they need.`);
   else if(sigs.some(s=>s.includes('Multi-Provider')||s.includes('High Revenue')||s.includes('Multi-Site'))) parts.push('Multi-provider or multi-site operation — combined revenue makes mortgage qualification straightforward.');
 
-  return parts.slice(0,3).join(' ');
+  // LINE 4+ — any remaining strong signals
+  if(sigs.some(s=>s.includes('Multi-Source'))) parts.push('Independently confirmed across 3+ data sources — this business is definitely real, active, and established.');
+  if(sigs.some(s=>s.includes('Equipment-Heavy'))&&!parts.some(p=>p.includes('build-out')||p.includes('equipment'))) parts.push('Heavy equipment investment on-site — moving is extremely costly, ownership is the logical protection.');
+  if(sigs.some(s=>s.includes('BBB Accredited'))) parts.push('BBB Accredited — indicates a stable, consumer-facing business with long-term roots in the community.');
+  if(sigs.some(s=>s.includes('10+ yr')||s.includes('5+ yr'))) parts.push('Long web presence confirms the business has been operating and marketing consistently for years — not a fly-by-night operation.');
+  if(l.li&&!parts.some(p=>p.includes('LinkedIn')||p.includes('owner'))) parts.push('Owner found on LinkedIn — broker can reference their name on the call, which dramatically increases the chance of getting through.');
+
+  return parts.join(' ');
 }
 
 function renderCallList(leads){
