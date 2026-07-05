@@ -2349,43 +2349,43 @@ function buildBuyReason(l){
   const txt=(l.name+' '+(l.addr||'')+' '+(l.reason||'')+' '+(l.why||'')).toLowerCase();
   const parts=[];
 
-  // 1. What they ARE and why that matters
-  const isDental=txt.includes('dental')||txt.includes('orthodon')||txt.includes('oral surg');
-  const isMedical=!isDental&&(txt.includes('medical')||txt.includes('clinic')||txt.includes('physician')||txt.includes('therapy')||txt.includes('chiro')||txt.includes('rehab'));
-  const isRestaurant=txt.includes('restaurant')||txt.includes('catering')||txt.includes('kitchen');
+  // LINE 1 — WHY THIS TYPE OF BUSINESS WOULD BUY (equipment/build-out cost to move)
+  const isDental=txt.includes('dental')||txt.includes('orthodon')||txt.includes('oral surg')||txt.includes('dds')||txt.includes('dmd');
+  const isMedical=!isDental&&(txt.includes('medical')||txt.includes('clinic')||txt.includes('physician')||txt.includes(' md')||txt.includes('therapy')||txt.includes('chiro')||txt.includes('rehab')||txt.includes('optom')||txt.includes('cardio')||txt.includes('ent ')||txt.includes('dermatol')||txt.includes('pediatric')||txt.includes('urgent care'));
+  const isRestaurant=txt.includes('restaurant')||txt.includes('catering')||txt.includes('kitchen')||txt.includes('brewery')||txt.includes('bar ');
+  const isVet=txt.includes('veterina')||txt.includes('animal hospital');
   const isLaw=txt.includes('law')||txt.includes('attorney')||txt.includes('legal');
   const isAcct=txt.includes('account')||txt.includes('cpa')||txt.includes('tax');
+  const isSalon=txt.includes('salon')||txt.includes('spa')||txt.includes('barber')||txt.includes('nail');
 
-  if(isDental) parts.push('Dental practices spend $300–500K fitting out a space — moving means losing that entire investment');
-  else if(isMedical) parts.push('Medical practices have expensive built-in equipment and plumbing — relocating costs $150–300K minimum');
-  else if(isRestaurant) parts.push('Restaurant build-outs run $200–400K in hood systems, grease traps, and kitchen plumbing — they can\'t just pick up and leave');
-  else if(isLaw||isAcct) parts.push('Professional service firms build their client base around a fixed address — moving loses clients');
+  if(isDental) parts.push('Dental practices invest $300–500K in chairs, X-ray equipment, and specialized plumbing — relocating means scrapping that entire build-out. Owning the building is the only real protection.');
+  else if(isVet) parts.push('Veterinary clinics require $200–400K in surgical suites, kennels, and ventilation — impossible to move without losing everything. Ownership is how they protect that investment.');
+  else if(isMedical) parts.push('Medical offices carry $150–300K in equipment and specialized build-out — a landlord can price them out or not renew, wiping out years of investment. Owning eliminates that risk entirely.');
+  else if(isRestaurant) parts.push('Restaurant build-outs run $200–400K in hood systems, grease traps, and kitchen plumbing — they literally cannot move cheaply. Buying is the only way to stop paying rent on an irreplaceable build-out.');
+  else if(isSalon) parts.push('Salon and spa build-outs — plumbing for every station, custom lighting, flooring — run $80–150K. Moving means starting over. Ownership locks in their location permanently.');
+  else if(isLaw) parts.push('Law firms build their reputation and referral network around a stable address — moving disrupts client relationships. Ownership is also a tax and equity play for the partners.');
+  else if(isAcct) parts.push('Accounting firms depend on long-term client relationships tied to their location. Ownership signals stability to clients and converts rent payments into equity.');
+  else parts.push('Established local business — owning their space locks in fixed costs and builds equity instead of paying a landlord.');
 
-  // 2. How long they've been around
-  if(age>=10) parts.push(`${Math.floor(age)}-year established business with the financial history to qualify for a commercial mortgage`);
-  else if(age>=7) parts.push(`${Math.floor(age)} years in business — financially mature and past the stage where renting makes more sense than owning`);
-  else if(age>=5) parts.push(`${Math.floor(age)}-year business — hitting the window where most practices switch from leasing to owning`);
-  else if(age>=3) parts.push(`${Math.floor(age)} years old — SBA loan eligible, meaning they can buy with as little as 10% down`);
+  // LINE 2 — THE SPECIFIC EVIDENCE WHY THIS LEAD IN PARTICULAR
+  // Priority order: direct evidence from their signals/actions > age/lease cycle > financial fit
+  if(sigs.some(s=>s.includes('Motivated')||s.includes('Lease Frustrated'))) parts.push(l.why||'Has publicly expressed frustration with rising lease costs — already thinking about ownership.');
+  else if(sigs.some(s=>s.includes('Hiring')||s.includes('Growth Signal')||s.includes('Expanding'))) parts.push(l._newsHeadline?`In the news: "${l._newsHeadline.substring(0,80)}" — growing and needs stable, permanent space.`:(l.why||'Actively hiring and expanding — growing businesses need space they can control long-term.'));
+  else if(sigs.some(s=>s.includes('Named Owner'))) parts.push(l.why||'Owner identified by name — broker can ask for them directly, dramatically increasing pickup rate.');
+  else if(sigs.some(s=>s.includes('2026')||s.includes('2025')||s.includes('Lease Signal'))) parts.push(l.why||'Lease estimated to be expiring this year or next — the best time to have this conversation is before renewal pressure forces a bad deal.');
+  else if(l._isLeasing) parts.push('Currently in a leased space — every month they pay rent is equity they\'ll never see again. A fixed-rate mortgage is often cheaper than what they\'re paying.');
+  else if(l.why) parts.push(l.why);
+  else if(l.reason) parts.push(l.reason);
 
-  // 3. Lease pressure
-  if(sigs.some(s=>s.includes('2026')||s.includes('2025'))) parts.push('their lease is estimated to expire this year or next — perfect timing for this conversation');
-  else if(l._isLeasing) parts.push('currently renting (Suite/Unit in address) — every rent check is money they\'ll never see again');
+  // LINE 3 — FINANCIAL ANGLE (can they actually afford it?)
+  if(sigs.some(s=>s.includes('SBA'))) parts.push('SBA 504 loan eligible — they can buy with as little as 10% down instead of 20–30%, making this far more accessible.');
+  else if(age>=10) parts.push(`${Math.floor(age)}-year business — the financial track record banks need to approve a commercial mortgage.`);
+  else if(age>=7) parts.push(`${Math.floor(age)} years established — past the point where most lenders require to approve commercial financing.`);
+  else if(age>=5) parts.push(`${Math.floor(age)}-year practice — hitting the window where most owners switch from leasing to building equity.`);
+  else if(age>=3) parts.push(`${Math.floor(age)} years in business — SBA loan eligible, meaning 10% down is all they need.`);
+  else if(sigs.some(s=>s.includes('Multi-Provider')||s.includes('High Revenue')||s.includes('Multi-Site'))) parts.push('Multi-provider or multi-site operation — combined revenue makes mortgage qualification straightforward.');
 
-  // 4. Growth signal
-  if(l._newsHeadline) parts.push(`recently in the news: "${l._newsHeadline.substring(0,70)}" — actively expanding and needs space`);
-  else if(sigs.some(s=>s.includes('Growth')||s.includes('Expanding'))) parts.push('publicly signaling expansion — they need more space now');
-
-  // 5. SBA / financial
-  if(sigs.some(s=>s.includes('SBA'))) parts.push('SBA 504 eligible — they can buy with 10% down instead of 20–30%, making this much more affordable');
-
-  // 6. Owner identified
-  if(sigs.some(s=>s.includes('Named Owner'))&&l.name) parts.push(`owner identified by name — broker can ask for them directly instead of cold-pitching a receptionist`);
-
-  // Fallback
-  if(!parts.length) parts.push(l.reason||l.why||'Established local business that fits this property type');
-
-  // Return 2–3 most compelling parts joined naturally
-  return parts.slice(0,3).join('. ')+(parts.length?'.':'');
+  return parts.slice(0,3).join(' ');
 }
 
 function renderCallList(leads){
