@@ -387,6 +387,10 @@ textarea{resize:vertical;}
       <button class="filter-btn" onclick="filterLeads('linkedin',this)" style="display:inline-flex;align-items:center;gap:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg> LinkedIn</button>
       <button class="filter-btn" onclick="filterLeads('lease',this)" style="display:inline-flex;align-items:center;gap:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Lease Signal</button>
       <span style="margin-left:auto;color:var(--text3);font-size:12px;" id="filterCount"></span>
+      <div style="margin-left:12px;display:flex;gap:4px;border:1px solid var(--border);border-radius:6px;padding:2px;background:var(--surface2);">
+        <button id="viewListBtn" onclick="setView('list')" style="font-size:11px;padding:3px 10px;border:none;border-radius:4px;cursor:pointer;background:var(--blue);color:#fff;font-weight:600;">Call List</button>
+        <button id="viewCardsBtn" onclick="setView('cards')" style="font-size:11px;padding:3px 10px;border:none;border-radius:4px;cursor:pointer;background:transparent;color:var(--text3);">Detailed</button>
+      </div>
     </div>
 
     <div id="leadsList"></div>
@@ -2327,6 +2331,62 @@ function showResults(t0){
   }
 }
 
+let currentView='list'; // default: simple call list
+
+function setView(v){
+  currentView=v;
+  document.getElementById('viewListBtn').style.background=v==='list'?'var(--blue)':'transparent';
+  document.getElementById('viewListBtn').style.color=v==='list'?'#fff':'var(--text3)';
+  document.getElementById('viewCardsBtn').style.background=v==='cards'?'var(--blue)':'transparent';
+  document.getElementById('viewCardsBtn').style.color=v==='cards'?'#fff':'var(--text3)';
+  if(currentLeads.length) renderLeads(currentLeads);
+}
+
+function renderCallList(leads){
+  // One clean row per lead — rank, name, phone, one reason, call button
+  // That's all the broker needs to work down the list
+  let html=`<div style="margin-top:4px;">`;
+  leads.forEach((l,i)=>{
+    const rank=i+1;
+    const score=l.score||calcDualScore(l).total;
+    const tier=score>=75?{bg:'#450A0A',border:'#7F1D1D',badge:'HOT',badgeColor:'#FCA5A5'}
+               :score>=55?{bg:'#1c1300',border:'#78350F',badge:'WARM',badgeColor:'#FCD34D'}
+               :{bg:'var(--surface)',border:'var(--border)',badge:'',badgeColor:''};
+    const topSig=l.signals&&l.signals.length?l.signals[0]:'';
+    const reason=l.reason||l.why||'';
+    const shortReason=reason.length>90?reason.substring(0,88)+'…':reason;
+    const newsHint=l._newsHeadline?`<span style="color:#86efac;font-size:11px;"> · 📰 ${l._newsHeadline.substring(0,60)}…</span>`:'';
+    const ownerHint=l._jobTitle&&l.name?`<span style="font-size:11px;color:#93C5FD;"> · Ask for ${l.name.split(' ')[0]}</span>`:'';
+
+    html+=`<div style="display:flex;align-items:center;gap:0;border:1px solid ${tier.border};border-radius:8px;margin-bottom:6px;background:${tier.bg};overflow:hidden;">
+      <!-- RANK -->
+      <div style="min-width:44px;text-align:center;padding:0 10px;border-right:1px solid ${tier.border};align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="font-size:18px;font-weight:800;color:var(--text);line-height:1;">${rank}</div>
+        <div style="font-size:10px;color:var(--text3);">${score}</div>
+        ${tier.badge?`<div style="font-size:9px;font-weight:700;color:${tier.badgeColor};letter-spacing:.04em;margin-top:1px;">${tier.badge}</div>`:''}
+      </div>
+      <!-- MAIN INFO -->
+      <div style="flex:1;padding:10px 12px;min-width:0;">
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+          <span style="font-weight:700;font-size:14px;color:var(--text);">${l.name}</span>
+          ${topSig?`<span style="font-size:11px;color:${topSig.includes('🔥')?'#FCA5A5':'#FCD34D'}">${topSig}</span>`:''}
+          ${newsHint}
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px;">${l.addr||''}${ownerHint}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">${shortReason}</div>
+      </div>
+      <!-- CALL ACTION -->
+      <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;border-left:1px solid ${tier.border};min-width:130px;">
+        ${l.phone?`<button class="btn btn-call" onclick="openCall(${l.id})" style="font-size:12px;font-weight:600;padding:6px 14px;width:100%;justify-content:center;">${l.phone}</button>`:'<span style="font-size:11px;color:var(--text3);">No phone found</span>'}
+        ${l.li?`<a href="${l.li}" target="_blank" class="btn btn-li" style="font-size:11px;padding:4px 10px;width:100%;justify-content:center;text-decoration:none;">LinkedIn</a>`:''}
+        ${l.email?`<button class="btn btn-email" onclick="openEmail(${l.id})" style="font-size:11px;padding:4px 10px;width:100%;justify-content:center;">Email</button>`:''}
+      </div>
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('leadsList').innerHTML=html;
+}
+
 function renderLeads(leads){
   leads=[...leads].sort((a,b)=>calcDualScore(b).total-calcDualScore(a).total);
 
@@ -2381,7 +2441,11 @@ function renderLeads(leads){
     html+=tierSep('LOWER PRIORITY','tier-cold-label',cold.length,'score under 55 · call only if top tiers don\'t close');
     html+=cold.map(renderLeadCard).join('');
   }
-  document.getElementById('leadsList').innerHTML=html;
+  if(currentView==='list'){
+    renderCallList(leads);
+  } else {
+    document.getElementById('leadsList').innerHTML=html;
+  }
 }
 
 const SRC_EXPLAIN = {
