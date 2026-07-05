@@ -975,6 +975,38 @@ async function searchOverpass(tagPairs, coords, radiusM=9000){
   } catch(e){ console.warn('Overpass error:',e); return []; }
 }
 
+// OSM tag → category hint so enrichAndScore can score correctly even when
+// the business name doesn't contain a keyword like "dental" or "chiro"
+const OSM_CATEGORY_HINT={
+  'amenity=dentist':'dental clinic dentist',
+  'amenity=doctors':'medical clinic physician doctor',
+  'amenity=clinic':'medical clinic health center',
+  'amenity=physiotherapist':'physical therapy physio rehab',
+  'healthcare=clinic':'medical clinic health center',
+  'healthcare=doctor':'medical physician doctor',
+  'healthcare=optometrist':'optometry eye care optician',
+  'healthcare=psychotherapist':'counseling mental health behavioral health',
+  'healthcare=centre':'medical clinic health center',
+  'healthcare=hospital':'medical clinic hospital',
+  'amenity=hospital':'medical clinic hospital',
+  'healthcare=audiologist':'audiology medical',
+  'healthcare=podiatrist':'medical podiatry',
+  'healthcare=surgeon':'surgery medical clinic',
+  'office=therapist':'physical therapy rehab counseling',
+  'amenity=optician':'optometry eye care optician',
+  'shop=clothes':'retail boutique apparel',
+  'shop=beauty':'salon spa beauty retail',
+  'shop=hairdresser':'salon barber retail',
+  'amenity=restaurant':'restaurant food kitchen',
+  'amenity=cafe':'cafe restaurant coffee',
+  'amenity=bar':'bar restaurant pub',
+  'office=lawyer':'law attorney legal',
+  'office=accountant':'accounting cpa tax',
+  'office=financial_advisor':'financial wealth investment',
+  'industrial=warehouse':'warehouse logistics distribution',
+  'amenity=veterinary':'veterinary animal hospital',
+};
+
 function overpassToLead(el){
   const t=el.tags||{};
   const name=t.name||t['name:en']||'';
@@ -984,12 +1016,16 @@ function overpassToLead(el){
   const phone=(t.phone||t['contact:phone']||'').replace(/^\+?1[-.\s]?/,'').replace(/(\d{3})[-.\s]?(\d{3})[-.\s]?(\d{4})/,'($1) $2-$3');
   const website=t.website||t['contact:website']||t['url']||'';
   const isLeasing=addr.includes(' Ste')||addr.includes('Suite')||addr.includes(' Unit')||addr.includes(', #');
+  // Build category hint from the OSM tag so scoring works even when the name
+  // doesn't contain keywords like "dental" — "Dr. Kim" IS a dentist if amenity=dentist
+  const osmKey=Object.keys(t).find(k=>k==='amenity'||k==='healthcare'||k==='office'||k==='shop'||k==='industrial');
+  const osmTag=osmKey?`${osmKey}=${t[osmKey]}`:'';
+  const _hint=OSM_CATEGORY_HINT[osmTag]||'';
   const signals=[];
   if(isLeasing) signals.push('⏰ Lease Signal');
-  signals.push('📈 Active Business');
   return {id:nextLeadId++,name,company:'',addr,phone,email:'',website,li:'',
     match:'OpenStreetMap',src:'maps',score:0,reason:'',signals,why:'',
-    _rating:0,_reviews:0,_isLeasing:isLeasing};
+    _rating:0,_reviews:0,_isLeasing:isLeasing,_hint};
 }
 
 // ── Google Maps Places API (optional, much richer data) ──────────────────────
@@ -1121,7 +1157,7 @@ async function searchWikidata(type, coords){
 
 // ── Scoring: fit + intent + financial readiness + business age ────────────────
 function enrichAndScore(lead, propType){
-  const txt=(lead.name+' '+lead.addr+' '+(lead._entityType||'')).toLowerCase();
+  const txt=(lead.name+' '+lead.addr+' '+(lead._entityType||'')+' '+(lead._hint||'')).toLowerCase();
   const isLeasing=lead._isLeasing;
   const rating=lead._rating||0;
   const reviews=lead._reviews||0;
@@ -1222,6 +1258,11 @@ function enrichAndScore(lead, propType){
 
   // ── INTENT: signals this business is ready/motivated to buy ──
   let intent=0;
+  // Baseline: any real verified business in the right category gets a floor
+  // Without this, OSM leads with no reviews/rating score too low to appear
+  if(fit>=43) intent+=18;       // exact type match (dental for medical, law for office, etc.)
+  else if(fit>=35) intent+=12;  // strong type match
+  else if(fit>=25) intent+=6;   // reasonable match
   if(isLeasing) intent+=22;        // renting = lease renewal pressure = #1 signal
   if(reviews>200) intent+=12;
   else if(reviews>100) intent+=8;
@@ -1415,7 +1456,7 @@ async function runLiveSearch(property, t0){
 
   const scored=allLeads
     .map(l=>enrichAndScore(l,type))
-    .filter(l=>l.score>=38)
+    .filter(l=>l.score>=30)
     .sort((a,b)=>b.score-a.score)
     .slice(0,60);
 
@@ -1423,23 +1464,6 @@ async function runLiveSearch(property, t0){
   fill.style.width='85%';
   status.textContent='Enriching top leads with Clearbit...';
   await enrichWithClearbit(scored.slice(0,20));
-
-  // Domain age: fill in business age for leads that have websites but no age yet
-  fill.style.width='90%';
-  status.textContent='Checking domain ages...';
-  await enrichWithDomainAge(scored.slice(0,25));
-
-  // Google News: scan for expansion / hiring / growth signals
-  fill.style.width='95%';
-  status.textContent='Scanning Google News for growth signals...';
-  await enrichWithGoogleNews(scored.slice(0,20), city);
-
-  // Re-sort after new signals may have changed scores
-  scored.sort((a,b)=>b.score-a.score);
-  // Re-classify tiers after rescore
-  scored.forEach(l=>{
-    l._tier=l.score>=77?'hot':l.score>=57?'warm':'cold';
-  });
 
   fill.style.width='100%';
   const hot=scored.filter(l=>l._tier==='hot').length;
@@ -1469,7 +1493,7 @@ async function searchYelp(type, city){
       const url=`https://www.yelp.com/search?find_desc=${encodeURIComponent(kw)}&find_loc=${encodeURIComponent(city+', MI')}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
       const ctrl=new AbortController();
-      const t=setTimeout(()=>ctrl.abort(),10000);
+      const t=setTimeout(()=>ctrl.abort(),4000);
       const r=await fetch(proxy,{signal:ctrl.signal});
       clearTimeout(t);
       if(!r.ok) continue;
@@ -1520,7 +1544,7 @@ async function searchBBB(type, city){
       const url=`https://www.bbb.org/search?find_text=${encodeURIComponent(kw)}&find_loc=${encodeURIComponent(city+', Michigan')}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
       const ctrl=new AbortController();
-      const t=setTimeout(()=>ctrl.abort(),10000);
+      const t=setTimeout(()=>ctrl.abort(),4000);
       const r=await fetch(proxy,{signal:ctrl.signal});
       clearTimeout(t);
       if(!r.ok) continue;
@@ -1590,7 +1614,7 @@ async function searchManta(type, city){
       const url=`https://www.manta.com/mb/MI/${citySlug}/${cat}/`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
       const ctrl=new AbortController();
-      const t=setTimeout(()=>ctrl.abort(),10000);
+      const t=setTimeout(()=>ctrl.abort(),4000);
       const r=await fetch(proxy,{signal:ctrl.signal});
       clearTimeout(t);
       if(!r.ok) continue;
@@ -1655,7 +1679,7 @@ async function searchLinkedIn(type, city){
       const ddgUrl=`https://html.duckduckgo.com/html/?q=${encodeURIComponent(q)}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(ddgUrl)}`;
       const ctrl=new AbortController();
-      const t=setTimeout(()=>ctrl.abort(),10000);
+      const t=setTimeout(()=>ctrl.abort(),4000);
       const r=await fetch(proxy,{signal:ctrl.signal});
       clearTimeout(t);
       if(!r.ok) continue;
@@ -1709,7 +1733,7 @@ async function searchYellowPages(type, city){
       const ypUrl=`https://www.yellowpages.com/search?search_terms=${encodeURIComponent(kw)}&geo_location_terms=${encodeURIComponent(city+', MI')}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(ypUrl)}`;
       const ctrl=new AbortController();
-      const t=setTimeout(()=>ctrl.abort(),9000);
+      const t=setTimeout(()=>ctrl.abort(),4000);
       const r=await fetch(proxy,{signal:ctrl.signal});
       clearTimeout(t);
       if(!r.ok) continue;
@@ -1766,7 +1790,7 @@ async function enrichWithDomainAge(leads){
         }
       }
     }catch(e){}
-    await new Promise(r=>setTimeout(r,150));
+    await new Promise(r=>setTimeout(r,50));
   }
 }
 
@@ -1805,7 +1829,7 @@ async function enrichWithGoogleNews(leads,city){
         }
       }
     }catch(e){}
-    await new Promise(r=>setTimeout(r,200));
+    await new Promise(r=>setTimeout(r,80));
   }
 }
 
@@ -2360,7 +2384,7 @@ function setView(v){
 function buildBuyReason(l){
   const sigs=l.signals||[];
   const age=l._ageYears;
-  const txt=(l.name+' '+(l.addr||'')+' '+(l.reason||'')+' '+(l.why||'')).toLowerCase();
+  const txt=(l.name+' '+(l.addr||'')+' '+(l.reason||'')+' '+(l.why||'')+' '+(l._hint||'')).toLowerCase();
   const parts=[];
 
   // LINE 1 — WHY THIS TYPE OF BUSINESS WOULD BUY (equipment/build-out cost to move)
