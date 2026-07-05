@@ -1416,7 +1416,7 @@ async function runLiveSearch(property, t0){
   const scored=allLeads
     .map(l=>enrichAndScore(l,type))
     .filter(l=>l.score>=38)
-    .sort((a,b)=>calcDualScore(b).total-calcDualScore(a).total)
+    .sort((a,b)=>b.score-a.score)
     .slice(0,60);
 
   // Clearbit: fill in missing websites for top leads (free, no key)
@@ -2412,7 +2412,7 @@ function buildBuyReason(l){
 function renderCallList(leads){
   const rows=leads.map((l,i)=>{
     const rank=i+1;
-    const score=l.score||calcDualScore(l).total;
+    const score=l.score||0;
     const isHot=score>=75, isWarm=score>=55&&score<75;
     const rowBg=isHot?'#1a0505':isWarm?'#110d00':'var(--surface)';
     const borderColor=isHot?'#7F1D1D':isWarm?'#78350F':'var(--border)';
@@ -2479,12 +2479,12 @@ function renderCallList(leads){
 }
 
 function renderLeads(leads){
-  leads=[...leads].sort((a,b)=>calcDualScore(b).total-calcDualScore(a).total);
+  leads=[...leads].sort((a,b)=>b.score-a.score);
 
   // Split into tiers so broker knows exactly who to call first
-  const hot=leads.filter(l=>calcDualScore(l).total>=75);
-  const warm=leads.filter(l=>{ const s=calcDualScore(l).total; return s>=55&&s<75; });
-  const cold=leads.filter(l=>calcDualScore(l).total<55);
+  const hot=leads.filter(l=>l.score>=75);
+  const warm=leads.filter(l=>l.score>=55&&l.score<75);
+  const cold=leads.filter(l=>l.score<55);
 
   const withPhone=leads.filter(l=>l.phone).length;
   const leasing=leads.filter(l=>l._isLeasing).length;
