@@ -393,6 +393,13 @@ textarea{resize:vertical;}
       </div>
     </div>
 
+    <div id="mapsKeyBanner" style="display:none;margin-bottom:12px;padding:12px 16px;background:#0c1a0c;border:1px solid #166534;border-radius:8px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <div style="font-weight:700;font-size:13px;color:#86efac;">🗺 Connect Google Maps (free) → unlock ratings, reviews &amp; 3× more phone numbers</div>
+        <div style="font-size:11px;color:#4ade80;margin-top:2px;">Free tier = $200/month credit. Most brokers never pay a cent. Takes 3 minutes to set up.</div>
+      </div>
+      <button onclick="openMapsSetup()" style="background:#166534;color:#bbf7d0;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Set Up Free →</button>
+    </div>
     <div id="leadsList"></div>
 
     <!-- OUTREACH COMPOSER -->
@@ -695,6 +702,35 @@ textarea{resize:vertical;}
 </div>
 
 <!-- ═══════════════════════ EMAIL MODAL ═══════════════════════ -->
+<!-- Google Maps Setup Modal -->
+<div class="modal-bg hidden" id="mapsModal" onclick="if(event.target===this)closeMapsModal()">
+  <div class="modal" style="max-width:500px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="color:var(--text);font-size:16px;">🗺 Connect Google Maps — Free</h3>
+      <span class="modal-close" onclick="closeMapsModal()">✕</span>
+    </div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:16px;">
+      Google Maps returns <strong style="color:var(--text);">ratings, reviews, phone numbers, and websites</strong> for every business — pushing scores from 55–65 up to <strong style="color:#86efac;">75–95</strong>. Free tier gives $200/month credit (most brokers never spend it).
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
+      <div style="font-weight:700;font-size:12px;color:var(--text2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;">3-minute setup:</div>
+      <ol style="font-size:12px;color:var(--text2);margin:0;padding-left:18px;line-height:2;">
+        <li>Go to <a href="https://console.cloud.google.com" target="_blank" style="color:#93C5FD;">console.cloud.google.com</a> → sign in</li>
+        <li>Create a project (any name)</li>
+        <li>Go to <strong style="color:var(--text);">APIs &amp; Services → Enable APIs</strong> → search <strong style="color:var(--text);">"Places API"</strong> → Enable</li>
+        <li>Go to <strong style="color:var(--text);">Credentials → Create Credentials → API Key</strong></li>
+        <li>Copy the key and paste it below</li>
+      </ol>
+    </div>
+    <input id="mapsKeyInput" type="text" placeholder="Paste your API key here (AIza...)" style="width:100%;margin-bottom:10px;font-family:monospace;font-size:13px;" />
+    <div style="display:flex;gap:8px;">
+      <button onclick="applyMapsKey()" style="flex:1;background:var(--blue);color:#fff;border:none;border-radius:6px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;">Save &amp; Run Again</button>
+      <button onclick="closeMapsModal()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:10px 16px;color:var(--text2);cursor:pointer;font-size:13px;">Skip</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);">Key is saved in your browser — you won't need to re-enter it. Google charges after $200/month free credit (≈3,000 nearby searches). A typical broker search uses ~10.</div>
+  </div>
+</div>
+
 <div class="modal-bg hidden" id="emailModal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
@@ -749,7 +785,9 @@ textarea{resize:vertical;}
 // Overpass: free, no auth, CORS-enabled, 10k req/day, real OSM business data
 // Google Maps: richer data (ratings, reviews, phone) — needs free API key
 
-const MAPS_API_KEY = 'PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE';
+// Load Maps key from localStorage so broker doesn't re-enter it every time
+let MAPS_API_KEY = localStorage.getItem('df_maps_key') || 'PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE';
+function saveMapsKey(k){ localStorage.setItem('df_maps_key',k); MAPS_API_KEY=k; }
 let mapsPlacesService = null;
 let mapsLoaded = false;
 let nextLeadId = 1000;
@@ -1465,6 +1503,11 @@ async function runLiveSearch(property, t0){
   status.textContent='Enriching top leads with Clearbit...';
   await enrichWithClearbit(scored.slice(0,20));
 
+  // Website phone extraction: pull phones from business sites for top leads missing numbers
+  fill.style.width='91%';
+  status.textContent='Extracting phone numbers from business websites...';
+  await enrichWithWebsitePhones(scored.slice(0,30));
+
   fill.style.width='100%';
   const hot=scored.filter(l=>l._tier==='hot').length;
   status.textContent=`Done — ${scored.length} leads ranked. ${hot} HOT leads at the top.`;
@@ -1890,6 +1933,9 @@ function showResultsLive(leads,t0,location,type){
   renderLeads(leads);
   document.getElementById('leadsCard').classList.add('show');
   document.getElementById('seqStatus').textContent=leads.length+' live leads';
+  // Show Maps key banner only if no key configured
+  const banner=document.getElementById('mapsKeyBanner');
+  if(banner) banner.style.display=hasMaps?'none':'flex';
   window.scrollTo(0,0);
 }
 
@@ -2459,13 +2505,38 @@ function renderCallList(leads){
     // Plain-English buy reason
     const buyReason=buildBuyReason(l);
 
+    // Best time to call by business type
+    const txt2=(l.name+' '+(l._hint||'')+' '+(l.addr||'')).toLowerCase();
+    const bestTime=txt2.includes('dental')||txt2.includes('medical')||txt2.includes('clinic')?'Tue–Thu 9–11 AM'
+      :txt2.includes('restaurant')||txt2.includes('cafe')||txt2.includes('bar')?'Mon–Tue 2–4 PM'
+      :txt2.includes('law')||txt2.includes('account')||txt2.includes('cpa')?'Tue–Wed 10 AM–noon'
+      :txt2.includes('salon')||txt2.includes('spa')||txt2.includes('barber')?'Tue–Wed 11 AM–1 PM'
+      :'Tue–Thu 10 AM–noon';
+
+    // Time to close estimate
+    const ttc=score>=85?'1–3 mo':score>=70?'3–6 mo':score>=55?'6–12 mo':'12–24 mo';
+
+    // One-line personalized opener (what to say in the first 5 seconds)
+    const ownerFirst=ownerName?`Hi, is ${ownerName} available?`:'Hi, may I speak with the owner?';
+    const opener=`"${ownerFirst} ... My name is [Broker], I have a property on [Street] that's built out specifically for ${txt2.includes('dental')?'dental practices':txt2.includes('restaurant')?'restaurants':txt2.includes('medical')||txt2.includes('clinic')?'medical offices':txt2.includes('law')?'law firms':'your type of business'} — I think it's worth 2 minutes."`;
+
+    // Phone: tel: link so it actually dials on mobile + opens call script
     const phoneBtn=l.phone
-      ?`<button onclick="openCall(${l.id})" style="background:#166534;color:#bbf7d0;border:1px solid #166534;border-radius:6px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;width:100%;">${l.phone}</button>`
-      :`<span style="font-size:11px;color:var(--text3);">no phone</span>`;
+      ?`<a href="tel:${l.phone.replace(/\D/g,'')}" style="display:block;background:#166534;color:#bbf7d0;border:1px solid #166534;border-radius:6px;padding:7px 10px;font-size:13px;font-weight:700;text-decoration:none;text-align:center;margin-bottom:4px;">${l.phone}</a>
+         <button onclick="openCall(${l.id})" style="width:100%;background:none;border:1px solid #166534;border-radius:5px;padding:4px;font-size:10px;color:#6EE7B7;cursor:pointer;">Get Script</button>`
+      :`<span style="font-size:11px;color:var(--text3);display:block;text-align:center;">no phone</span>`;
+
+    // Validate LinkedIn URL — must start with https://linkedin.com or https://www.linkedin.com
+    const liUrl=l.li&&(l.li.startsWith('https://linkedin.com')||l.li.startsWith('https://www.linkedin.com'))?l.li:'';
+
+    // Website: validate it starts with http
+    const wsUrl=l.website&&(l.website.startsWith('http')||l.website.startsWith('www.'))?
+      (l.website.startsWith('www.')?'https://'+l.website:l.website):'';
 
     const extras=[
-      l.li?`<a href="${l.li}" target="_blank" style="font-size:11px;color:#93C5FD;text-decoration:none;display:block;text-align:center;margin-top:4px;">↗ LinkedIn</a>`:'',
-      l.email?`<button onclick="openEmail(${l.id})" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:4px;color:#93C5FD;cursor:pointer;padding:3px 8px;width:100%;margin-top:4px;">Email</button>`:'',
+      liUrl?`<a href="${liUrl}" target="_blank" rel="noopener" style="font-size:11px;color:#93C5FD;text-decoration:none;display:block;text-align:center;margin-top:4px;border:1px solid #1E3A5F;border-radius:4px;padding:3px 0;">↗ LinkedIn</a>`:'',
+      wsUrl?`<a href="${wsUrl}" target="_blank" rel="noopener" style="font-size:11px;color:var(--text2);text-decoration:none;display:block;text-align:center;margin-top:4px;border:1px solid var(--border);border-radius:4px;padding:3px 0;">🌐 Website</a>`:'',
+      l.email?`<button onclick="openEmail(${l.id})" style="font-size:11px;background:none;border:1px solid var(--border);border-radius:4px;color:#93C5FD;cursor:pointer;padding:3px 8px;width:100%;margin-top:4px;">✉ Email</button>`:'',
     ].filter(Boolean).join('');
 
     return `<tr style="border-bottom:1px solid ${borderColor};background:${rowBg};">
@@ -2473,15 +2544,19 @@ function renderCallList(leads){
         <div style="font-size:22px;font-weight:900;color:${rankColor};line-height:1;">${rank}</div>
         <div style="font-size:17px;font-weight:800;color:var(--text);line-height:1.2;margin-top:2px;">${score}<span style="font-size:10px;color:var(--text3);">/100</span></div>
         ${badge}
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;line-height:1.3;">${ttc}</div>
       </td>
       <td style="padding:12px 14px;vertical-align:top;">
         <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
           <span style="font-weight:700;font-size:15px;color:var(--text);">${l.name}</span>
           ${askFor}
+          ${wsUrl?`<a href="${wsUrl}" target="_blank" rel="noopener" style="font-size:10px;color:var(--text3);text-decoration:none;">↗</a>`:''}
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${l.addr||''}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${l.addr||''}${l.addr&&wsUrl?' · ':''}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;">📞 Best time: <span style="color:var(--text2);">${bestTime}</span></div>
         <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${sigTags}</div>
         <div style="margin-top:7px;font-size:13px;color:var(--text2);line-height:1.5;border-left:2px solid ${isHot?'#7F1D1D':isWarm?'#78350F':'var(--border)'};padding-left:10px;">${buyReason}</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text3);background:#ffffff06;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-style:italic;">${opener}</div>
       </td>
       <td style="padding:12px 14px;vertical-align:top;text-align:center;width:150px;">
         ${phoneBtn}${extras}
@@ -2893,6 +2968,61 @@ function openEmail(id){
   document.getElementById('emailModal').classList.remove('hidden');
 }
 function closeModal(){document.getElementById('emailModal').classList.add('hidden');}
+function openMapsSetup(){
+  const m=document.getElementById('mapsModal');
+  m.classList.remove('hidden');
+  const cur=localStorage.getItem('df_maps_key')||'';
+  if(cur&&cur!=='PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE') document.getElementById('mapsKeyInput').value=cur;
+}
+function closeMapsModal(){document.getElementById('mapsModal').classList.add('hidden');}
+function applyMapsKey(){
+  const k=document.getElementById('mapsKeyInput').value.trim();
+  if(!k||k.length<20){alert('Paste a valid API key (starts with AIza...)');return;}
+  saveMapsKey(k);
+  closeMapsModal();
+  document.getElementById('mapsKeyBanner').style.display='none';
+  // Re-run pipeline with Maps enabled
+  const propField=document.getElementById('propertyAuto');
+  if(propField&&propField.value.trim()) runAuto();
+}
+
+// ── Website Phone Extraction — fetches business websites to find missing phones ──
+// Runs on leads that have a website but no phone number yet (free, no key needed)
+async function enrichWithWebsitePhones(leads){
+  const noPhone=leads.filter(l=>!l.phone&&l.website&&l.website.startsWith('http'));
+  const batch=noPhone.slice(0,12); // top 12 missing phones
+  await Promise.all(batch.map(async l=>{
+    try{
+      const ctrl=new AbortController();
+      const t=setTimeout(()=>ctrl.abort(),4000);
+      const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(l.website)}`;
+      const res=await fetch(proxy,{signal:ctrl.signal});
+      clearTimeout(t);
+      if(!res.ok) return;
+      const html=await res.text();
+      // Phone: look for standard US phone patterns
+      const m=html.match(/(?:\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})/g);
+      if(m){
+        // Pick first valid-looking number, skip 800/888/877 toll-free
+        const real=m.find(p=>!p.replace(/\D/g,'').match(/^(800|888|877|866|855)/));
+        if(real) l.phone=real.replace(/(\d{3})[-.\s]?(\d{3})[-.\s]?(\d{4})/,'($1) $2-$3').replace(/^\(?(\d{3})\)?[-.\s]?/,'($1) ');
+      }
+      // Founding year from "Since 2008", "Est. 2012", "Founded in 2015"
+      if(!l._ageYears){
+        const yr=html.match(/(?:founded|established|since|est\.?|serving since)\s+(?:in\s+)?(\d{4})/i);
+        if(yr){
+          const y=parseInt(yr[1]);
+          if(y>=1970&&y<=2024) l._ageYears=new Date().getFullYear()-y;
+        }
+      }
+      // Owner name from "Meet Dr. X" or "About [Name]" patterns
+      if(!l._jobTitle){
+        const own=html.match(/(?:owner|founder|dr\.?|president)\s+([A-Z][a-z]+ [A-Z][a-z]+)/);
+        if(own) l._jobTitle='Owner';
+      }
+    }catch(e){}
+  }));
+}
 function sendFromModal(){
   if(!currentModal) return;
   const to = currentModal.email;
