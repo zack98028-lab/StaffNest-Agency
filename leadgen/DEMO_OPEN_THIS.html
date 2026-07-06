@@ -1444,23 +1444,28 @@ async function runLiveSearch(property, t0){
   }
 
   fill.style.width='5%';
-  status.textContent='Launching 9 sources in parallel...';
+  status.textContent='Launching 10 sources in parallel...';
 
-  // ── BATCH 1: instant free sources (no proxy needed) ──
+  // ── BATCH 1: instant free sources (no proxy, guaranteed results) ──
   const osmTags=OSM_TAGS[type]||OSM_TAGS.general;
-  const [osm1,osm2,wikiResults,corpResults]=await Promise.all([
+  const [osm1,osm2,osm3,wikiResults,corpResults,nominatimResults,sbaResults]=await Promise.all([
     searchOverpass(osmTags.slice(0,10),coords,11000).catch(()=>[]),
     searchOverpass(osmTags.slice(10),coords,11000).catch(()=>[]),
+    searchOverpassWide(osmTags.slice(0,8),coords,22000).catch(()=>[]),
     searchWikidata(type,coords).catch(()=>[]),
-    searchOpenCorporates(type,city).catch(()=>[])
+    searchOpenCorporates(type,city).catch(()=>[]),
+    searchNominatim(type,city,coords).catch(()=>[]),
+    searchSBAData(type,city).catch(()=>[])
   ]);
-  addLeads([...osm1,...osm2].map(overpassToLead));
+  addLeads([...osm1,...osm2,...osm3].map(overpassToLead));
   addLeads(wikiResults);
   addLeads(corpResults);
+  addLeads(nominatimResults);
+  addLeads(sbaResults);
 
-  fill.style.width='28%';
-  const osmN=[...osm1,...osm2].length;
-  status.textContent=`Batch 1 done: ${allLeads.length} businesses (OSM:${osmN} Corp:${corpResults.length} Wiki:${wikiResults.length}). Scraping YP · Yelp · BBB · Manta · LinkedIn...`;
+  fill.style.width='32%';
+  const osmN=[...osm1,...osm2,...osm3].length;
+  status.textContent=`Batch 1 done: ${allLeads.length} businesses (OSM:${osmN} Nominatim:${nominatimResults.length} Corp:${corpResults.length} SBA:${sbaResults.length} Wiki:${wikiResults.length}). Scraping YP · Yelp · BBB · Manta · LinkedIn...`;
 
   // ── BATCH 2: proxy-scraped sources (all in parallel) ──
   const [ypResults,yelpResults,bbbResults,mantaResults,liResults]=await Promise.all([
@@ -1476,7 +1481,7 @@ async function runLiveSearch(property, t0){
   addLeads(mantaResults);
   addLeads(liResults);
 
-  fill.style.width='62%';
+  fill.style.width='65%';
   status.textContent=`${allLeads.length} total (YP:${ypResults.length} Yelp:${yelpResults.length} BBB:${bbbResults.length} Manta:${mantaResults.length} LinkedIn:${liResults.length}). Adding Google Maps...`;
 
   // ── BATCH 3: Google Maps (optional, needs key) ──
@@ -1758,6 +1763,98 @@ async function searchLinkedIn(type, city){
   return results;
 }
 
+// ── Nominatim business search — OSM geocoder, free no key, CORS-ok ───────────
+// Finds businesses by keyword in city; different results than Overpass tag search
+async function searchNominatim(type, city, coords){
+  const kwMap={
+    medical:['dental clinic','medical clinic','physical therapy','optometry','chiropractor','dermatology','psychiatry','pediatric'],
+    retail:['boutique','hair salon','nail salon','jewelry store','clothing store','shoe store','gift shop','florist'],
+    industrial:['logistics','manufacturing','trucking','warehouse','fabrication','distribution','contractor'],
+    restaurant:['restaurant','bakery','catering','bar','cafe','diner'],
+    office:['law office','accounting firm','insurance agency','consulting','financial advisor','real estate office'],
+    general:['dental','medical clinic','law office','accounting','physical therapy','insurance','consulting','salon','restaurant']
+  };
+  const keywords=(kwMap[type]||kwMap.general).slice(0,6);
+  const results=[];
+  for(const kw of keywords){
+    try{
+      const url=`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(kw+' '+city+' Michigan')}&format=jsonv2&addressdetails=1&limit=15&extratags=1`;
+      const ctrl=new AbortController();
+      const t=setTimeout(()=>ctrl.abort(),5000);
+      const r=await fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/json','User-Agent':'DealFlow/1.0'}});
+      clearTimeout(t);
+      if(!r.ok) continue;
+      const data=await r.json();
+      for(const place of data){
+        if(!place.display_name||place.type==='administrative') continue;
+        const name=place.name||place.display_name.split(',')[0];
+        if(!name||name.length<3||isChain(name)) continue;
+        const ad=place.address||{};
+        const addr=[ad.house_number&&ad.road?`${ad.house_number} ${ad.road}`:ad.road, ad.city||ad.town||ad.village, ad.state].filter(Boolean).join(', ');
+        const phone=place.extratags?.phone||'';
+        const website=place.extratags?.website||'';
+        const isLeasing=/\b(ste|suite|unit|#\s*\d)/i.test(addr);
+        const osmTag=place.extratags?.amenity||place.extratags?.shop||place.extratags?.office||'';
+        const _hint=OSM_CATEGORY_HINT[`amenity=${osmTag}`]||OSM_CATEGORY_HINT[`shop=${osmTag}`]||kw;
+        results.push({
+          id:nextLeadId++,name,company:name,addr,phone,email:'',website,li:'',
+          match:'Nominatim',src:'nominatim',score:0,reason:'',signals:[],why:'',
+          _rating:0,_reviews:0,_isLeasing:isLeasing,_ageYears:null,_hint
+        });
+      }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r,300));
+  }
+  return results;
+}
+
+// ── CARES Act / SBA loan public data — businesses that took SBA loans ─────────
+// PPP/EIDL recipients are active businesses with financials = SBA mortgage eligible
+async function searchSBAData(type, city){
+  const kwMap={
+    medical:['dental','medical','health','therapy','clinic','optometry'],
+    retail:['retail','boutique','salon','jewelry','clothing','gift'],
+    industrial:['manufacturing','logistics','trucking','warehouse','fabrication'],
+    restaurant:['restaurant','catering','bakery','food','bar'],
+    office:['law','accounting','insurance','consulting','financial'],
+    general:['dental','medical','law','accounting','insurance','consulting','restaurant','salon']
+  };
+  const keywords=(kwMap[type]||kwMap.general).slice(0,3);
+  const results=[];
+  for(const kw of keywords){
+    try{
+      // SBA FOIA public dataset via data.sba.gov (CORS-ok, free, no key)
+      const url=`https://data.sba.gov/api/3/action/datastore_search?resource_id=9eae2b16-6e6b-4c24-a2f4-ebec13e2a1af&filters={"BorrCity":"${city}","NaicsDescription":"${kw}"}&limit=25`;
+      const ctrl=new AbortController();
+      const t=setTimeout(()=>ctrl.abort(),5000);
+      const r=await fetch(url,{signal:ctrl.signal});
+      clearTimeout(t);
+      if(!r.ok) continue;
+      const d=await r.json();
+      for(const rec of (d.result?.records||[])){
+        const name=(rec.BorrName||'').trim();
+        if(!name||name.length<3||isChain(name)) continue;
+        const addr=[rec.BorrStreet, rec.BorrCity, rec.BorrState].filter(Boolean).join(', ');
+        const loanAmt=parseFloat(rec.InitialApprovalAmount||0);
+        const isLeasing=/\b(ste|suite|unit|#\s*\d)/i.test(addr);
+        const ageYears=rec.DateApproved?Math.floor((Date.now()-new Date(rec.DateApproved))/(365.25*24*3600*1000)):null;
+        results.push({
+          id:nextLeadId++,name,company:name,addr,phone:'',email:'',website:'',li:'',
+          match:'SBA Loans',src:'sba',score:0,reason:'',signals:['💰 SBA Loan Recipient'],why:'',
+          _rating:0,_reviews:0,_isLeasing:isLeasing,_ageYears:ageYears,
+          _loanAmt:loanAmt,_hint:kw
+        });
+      }
+    }catch(e){}
+  }
+  return results;
+}
+
+// ── Overpass extended — wider radius 20km, catches suburbs ────────────────────
+async function searchOverpassWide(tagPairs, coords, radiusM=20000){
+  return searchOverpass(tagPairs, coords, radiusM);
+}
+
 // ── Yellow Pages — real business listings via CORS proxy ─────────────────────
 // Uses allorigins.win to proxy YP search results and parse the HTML
 async function searchYellowPages(type, city){
@@ -1909,7 +2006,7 @@ function showResultsLive(leads,t0,location,type){
   const leasing=leads.filter(l=>l._isLeasing).length;
   const established=leads.filter(l=>l._ageYears&&l._ageYears>=5).length;
   const hasMaps=MAPS_API_KEY&&MAPS_API_KEY!=='PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE';
-  const srcList=['OpenStreetMap','Wikidata','OpenCorporates',...(hasMaps?['Google Maps']:[])];
+  const srcList=['OpenStreetMap (local+wide)','Nominatim Search','OpenCorporates','Wikidata','SBA Loan Records','Yellow Pages','Yelp','BBB','Manta',...(hasMaps?['Google Maps']:[])];
   const srcStr=srcList.join(' · ');
 
   document.getElementById('buyerTypePills').innerHTML=(typeLabels[type]||typeLabels.medical).map(t=>`<span class="pill pill-blue">${t}</span>`).join('');
