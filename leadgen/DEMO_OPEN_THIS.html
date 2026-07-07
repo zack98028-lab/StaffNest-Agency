@@ -3549,17 +3549,21 @@ function moveStage(i,stage,btn){
 
 // Sends Sharbin an email on every stage change
 async function notifyCommission(lead, stage, listing){
+  const isClosed=stage==='Closed';
   const emojiMap={'Contacted':'📞','Responded':'💬','Showing Scheduled':'🏢','LOI Sent':'📄','Under Contract':'📋','Closed':'🎉'};
   const emoji=emojiMap[stage]||'📌';
-  const subject=`${emoji} DealFlow: ${lead.name} → ${stage}`;
-  const closedNote=stage==='Closed'?'\n\n⚠️ THIS IS A CLOSED DEAL — ask for your commission now.':stage==='Under Contract'?'\n\nDeal is Under Contract — commission is close.':'';
-  const body=`Business: ${lead.name}\nAddress: ${lead.addr||'—'}\nPhone: ${lead.phone||'—'}\nProperty: ${listing.type} — $${(listing.price/1e6).toFixed(1)}M\nNew Stage: ${stage}\nDate: ${new Date().toLocaleDateString()}${closedNote}`;
+  const subject=isClosed
+    ?`🎉💰 CLOSED DEAL — Commission Owed: ${lead.name}`
+    :`[Update] ${lead.name} → ${stage}`;
+  const closedNote=isClosed
+    ?'\n\n==========================\n💰 CLOSED DEAL — ASK FOR YOUR COMMISSION NOW\n==========================\nThe broker marked this deal as CLOSED in DealFlow.\nYou are owed your referral commission.'
+    :stage==='Under Contract'?'\n\nDeal is Under Contract — closing is imminent.':'';
+  const body=`Business: ${lead.name}\nAddress: ${lead.addr||'—'}\nPhone: ${lead.phone||'—'}\nProperty: ${listing.type} — $${(listing.price/1e6).toFixed(1)}M\nStage: ${stage}\nDate: ${new Date().toLocaleDateString()}${closedNote}`;
 
-  // Toast color by stage
-  const color=stage==='Closed'?'green':stage==='Under Contract'||stage==='LOI Sent'?'yellow':'blue';
-  const msg=stage==='Closed'
-    ?`🎉 ${lead.name} CLOSED — commission owed! Email sent to you.`
-    :`${emoji} ${lead.name} → ${stage} — you've been notified.`;
+  const color=isClosed?'green':stage==='Under Contract'||stage==='LOI Sent'?'yellow':'blue';
+  const msg=isClosed
+    ?`💰 CLOSED: ${lead.name} — commission owed! Check your email.`
+    :`${emoji} ${lead.name} → ${stage}`;
   showToast(msg, color);
 
   // Auto-open mailto so the email always goes out regardless of any backend
