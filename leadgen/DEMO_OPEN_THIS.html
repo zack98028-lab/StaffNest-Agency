@@ -1208,62 +1208,61 @@ function enrichAndScore(lead, propType){
   // ── FIT: does this business type need this specific kind of space? ──
   let fit=8;
   if(propType==='medical'){
-    if(txt.includes('dental')||txt.includes('orthodon')||txt.includes('endodont')||txt.includes('periodont')||txt.includes('prosthodont')) fit=50;
-    else if(txt.includes('oral surgery')||txt.includes('oral surgeon')) fit=50;
-    else if(txt.includes('plastic surg')||txt.includes('cosmetic surg')||txt.includes('cosmetic clinic')) fit=47;
-    else if(txt.includes('cardiol')||txt.includes('orthopedic')||txt.includes('orthopaedic')) fit=45;
-    else if(txt.includes('urology')||txt.includes('gastroenter')||txt.includes('ophthal')) fit=45;
-    else if(txt.includes('physical therapy')||txt.includes('physio')||txt.includes('chiro')||txt.includes('rehab')) fit=43;
-    else if(txt.includes('dermatol')) fit=44;
-    else if(txt.includes('pediatric')||txt.includes('family med')||txt.includes('family practice')||txt.includes('primary care')) fit=41;
-    else if(txt.includes('psychiatr')||txt.includes('mental health')||txt.includes('behavioral health')||txt.includes('counseling')) fit=39;
-    else if(txt.includes('optom')||txt.includes('eye care')||txt.includes('vision care')||txt.includes('optician')) fit=41;
-    else if(txt.includes('podiat')||txt.includes('audiolog')||txt.includes('sleep')||txt.includes('pain management')) fit=40;
-    else if(txt.includes('neurol')||txt.includes('oncol')||txt.includes('radiol')) fit=42;
-    else if(txt.includes('clinic')||txt.includes('medical')||txt.includes('health center')||txt.includes('care center')) fit=29;
-    else if(txt.includes('pharmacy')||txt.includes('acupuncture')||txt.includes('integrative')||txt.includes('functional')) fit=23;
-    else if(isProfEntity) fit=32;
-    else fit=10;
+    if(txt.includes('dental')||txt.includes('orthodon')||txt.includes('endodont')||txt.includes('periodont')||txt.includes('prosthodont')) fit=78;
+    else if(txt.includes('oral surgery')||txt.includes('oral surgeon')) fit=78;
+    else if(txt.includes('plastic surg')||txt.includes('cosmetic surg')||txt.includes('cosmetic clinic')) fit=72;
+    else if(txt.includes('cardiol')||txt.includes('orthopedic')||txt.includes('orthopaedic')) fit=70;
+    else if(txt.includes('urology')||txt.includes('gastroenter')||txt.includes('ophthal')) fit=70;
+    else if(txt.includes('physical therapy')||txt.includes('physio')||txt.includes('chiro')||txt.includes('rehab')) fit=68;
+    else if(txt.includes('dermatol')) fit=70;
+    else if(txt.includes('pediatric')||txt.includes('family med')||txt.includes('family practice')||txt.includes('primary care')) fit=66;
+    else if(txt.includes('psychiatr')||txt.includes('mental health')||txt.includes('behavioral health')||txt.includes('counseling')) fit=62;
+    else if(txt.includes('optom')||txt.includes('eye care')||txt.includes('vision care')||txt.includes('optician')) fit=66;
+    else if(txt.includes('podiat')||txt.includes('audiolog')||txt.includes('sleep')||txt.includes('pain management')) fit=64;
+    else if(txt.includes('neurol')||txt.includes('oncol')||txt.includes('radiol')) fit=66;
+    else if(txt.includes('clinic')||txt.includes('medical')||txt.includes('health center')||txt.includes('care center')) fit=48;
+    else if(txt.includes('pharmacy')||txt.includes('acupuncture')||txt.includes('integrative')||txt.includes('functional')) fit=36;
+    else if(isProfEntity) fit=50;
+    else fit=16;
   } else if(propType==='retail'){
-    if(txt.includes('boutique')||txt.includes('fashion')||txt.includes('apparel')) fit=44;
-    else if(txt.includes('salon')||txt.includes('spa')||txt.includes('barber')||txt.includes('nail')) fit=42;
-    else if(txt.includes('jewelry')||txt.includes('jewel')||txt.includes('watch')) fit=41;
-    else if(txt.includes('gift')||txt.includes('home decor')||txt.includes('furniture')) fit=38;
-    else if(txt.includes('sport')||txt.includes('outdoor')||txt.includes('pet')) fit=36;
-    else fit=28+(isGroupPractice?6:0);
+    if(txt.includes('boutique')||txt.includes('fashion')||txt.includes('apparel')) fit=70;
+    else if(txt.includes('salon')||txt.includes('spa')||txt.includes('barber')||txt.includes('nail')) fit=68;
+    else if(txt.includes('jewelry')||txt.includes('jewel')||txt.includes('watch')) fit=66;
+    else if(txt.includes('gift')||txt.includes('home decor')||txt.includes('furniture')) fit=60;
+    else if(txt.includes('sport')||txt.includes('outdoor')||txt.includes('pet')) fit=56;
+    else fit=42+(isGroupPractice?8:0);
   } else if(propType==='industrial'){
-    if(txt.includes('logistic')||txt.includes('freight')||txt.includes('trucking')||txt.includes('transport')) fit=45;
-    else if(txt.includes('manufactur')||txt.includes('fabricat')||txt.includes('machine shop')) fit=44;
-    else if(txt.includes('warehouse')||txt.includes('distribution')||txt.includes('fulfillment')) fit=43;
-    else if(txt.includes('construct')||txt.includes('contractor')||txt.includes('hvac')||txt.includes('plumbing')) fit=38;
-    else fit=28;
+    if(txt.includes('logistic')||txt.includes('freight')||txt.includes('trucking')||txt.includes('transport')) fit=74;
+    else if(txt.includes('manufactur')||txt.includes('fabricat')||txt.includes('machine shop')) fit=72;
+    else if(txt.includes('warehouse')||txt.includes('distribution')||txt.includes('fulfillment')) fit=70;
+    else if(txt.includes('construct')||txt.includes('contractor')||txt.includes('hvac')||txt.includes('plumbing')) fit=60;
+    else fit=42;
   } else if(propType==='restaurant'){
-    if(txt.includes('restaurant')||txt.includes('bistro')||txt.includes('eatery')) fit=46;
-    else if(txt.includes('cater')||txt.includes('banquet')||txt.includes('event')) fit=44;
-    else if(txt.includes('cafe')||txt.includes('bakery')||txt.includes('coffee')) fit=40;
-    else if(txt.includes('bar')||txt.includes('pub')||txt.includes('tavern')) fit=38;
-    else fit=28;
+    if(txt.includes('restaurant')||txt.includes('bistro')||txt.includes('eatery')) fit=76;
+    else if(txt.includes('cater')||txt.includes('banquet')||txt.includes('event')) fit=72;
+    else if(txt.includes('cafe')||txt.includes('bakery')||txt.includes('coffee')) fit=66;
+    else if(txt.includes('bar')||txt.includes('pub')||txt.includes('tavern')) fit=62;
+    else fit=42;
   } else if(propType==='office'){
-    if(txt.includes('law')||txt.includes('legal')||txt.includes('attorney')) fit=46;
-    else if(txt.includes('account')||txt.includes('cpa')||txt.includes('bookkeep')) fit=44;
-    else if(txt.includes('consult')||txt.includes('advisory')||txt.includes('strategy')) fit=42;
-    else if(txt.includes('financ')||txt.includes('wealth')||txt.includes('invest')) fit=41;
-    else if(txt.includes('engineer')||txt.includes('architect')||txt.includes('design')) fit=40;
-    else if(txt.includes('insurance')||txt.includes('real estate')||txt.includes('mortgage')) fit=38;
-    else if(txt.includes('marketing')||txt.includes('advertis')||txt.includes('media')) fit=36;
-    else if(isProfEntity) fit=35;
-    else fit=25;
+    if(txt.includes('law')||txt.includes('legal')||txt.includes('attorney')) fit=74;
+    else if(txt.includes('account')||txt.includes('cpa')||txt.includes('bookkeep')) fit=72;
+    else if(txt.includes('consult')||txt.includes('advisory')||txt.includes('strategy')) fit=68;
+    else if(txt.includes('financ')||txt.includes('wealth')||txt.includes('invest')) fit=66;
+    else if(txt.includes('engineer')||txt.includes('architect')||txt.includes('design')) fit=62;
+    else if(txt.includes('insurance')||txt.includes('real estate')||txt.includes('mortgage')) fit=60;
+    else if(txt.includes('marketing')||txt.includes('advertis')||txt.includes('media')) fit=56;
+    else if(isProfEntity) fit=54;
+    else fit=36;
   } else {
-    // general / mixed-use: any established leasing business is a candidate
-    // Score based on business stability signals rather than type match
-    if(isProfEntity&&isGroupPractice) fit=42;
-    else if(isProfEntity) fit=38;
-    else if(isGroupPractice) fit=35;
-    else if(txt.includes('dental')||txt.includes('medical')||txt.includes('law')||txt.includes('account')) fit=40;
-    else if(txt.includes('physical therapy')||txt.includes('chiro')||txt.includes('consult')) fit=36;
-    else if(txt.includes('salon')||txt.includes('restaurant')||txt.includes('retail')) fit=32;
-    else if(isLeasing) fit=30; // leasing anything = still relevant for general pitch
-    else fit=22;
+    // general / mixed-use
+    if(isProfEntity&&isGroupPractice) fit=64;
+    else if(isProfEntity) fit=58;
+    else if(isGroupPractice) fit=54;
+    else if(txt.includes('dental')||txt.includes('medical')||txt.includes('law')||txt.includes('account')) fit=62;
+    else if(txt.includes('physical therapy')||txt.includes('chiro')||txt.includes('consult')) fit=56;
+    else if(txt.includes('salon')||txt.includes('restaurant')||txt.includes('retail')) fit=50;
+    else if(isLeasing) fit=46;
+    else fit=34;
   }
 
   // ── BUILDOUT STICKINESS: how expensive is it for this business to MOVE? ──────
@@ -1298,9 +1297,10 @@ function enrichAndScore(lead, propType){
   let intent=0;
   // Baseline: any real verified business in the right category gets a floor
   // Without this, OSM leads with no reviews/rating score too low to appear
-  if(fit>=43) intent+=18;       // exact type match (dental for medical, law for office, etc.)
-  else if(fit>=35) intent+=12;  // strong type match
-  else if(fit>=25) intent+=6;   // reasonable match
+  if(fit>=70) intent+=22;        // perfect type match — dental on medical, law on office
+  else if(fit>=55) intent+=16;  // strong match
+  else if(fit>=42) intent+=10;  // good match
+  else if(fit>=30) intent+=5;   // reasonable match
   if(isLeasing) intent+=22;        // renting = lease renewal pressure = #1 signal
   if(reviews>200) intent+=12;
   else if(reviews>100) intent+=8;
@@ -1375,12 +1375,12 @@ function enrichAndScore(lead, propType){
     intent+=3;
   }
 
-  const total=Math.min(97,Math.max(35,Math.round(fit*0.58+intent+ageBonus+stickiness+multiSourceBonus)));
+  const total=Math.min(97,Math.max(35,Math.round(fit*0.72+intent+ageBonus+stickiness+multiSourceBonus)));
   lead.score=total;
   lead.signals=[...new Set(lead.signals)].slice(0,5);
 
   // Tier classification — what the broker sees
-  lead._tier = total>=77 ? 'hot' : total>=57 ? 'warm' : 'cold';
+  lead._tier = total>=85 ? 'hot' : total>=65 ? 'warm' : 'cold';
 
   // Human-readable reason
   const fitTier=fit>=45?'Top-fit specialty':fit>=38?'Strong match':fit>=28?'Good fit':'Potential buyer';
@@ -1504,12 +1504,21 @@ async function runLiveSearch(property, t0){
     .slice(0,60);
 
   // Clearbit: fill in missing websites for top leads (free, no key)
-  fill.style.width='85%';
+  fill.style.width='83%';
   status.textContent='Enriching top leads with Clearbit...';
   await enrichWithClearbit(scored.slice(0,20));
 
+  // Cross-reference: look up each lead by name on Yelp, YP, BBB, DDG, website
+  // This is what pushes scores from 70s into 85-97 range
+  fill.style.width='87%';
+  status.textContent='Cross-referencing top leads across Yelp · YP · BBB · Google · websites...';
+  await crossReferenceEnrich(scored.slice(0,25), city);
+
+  // Re-sort after enrichment since scores may have jumped
+  scored.sort((a,b)=>b.score-a.score);
+
   // Website phone extraction: pull phones from business sites for top leads missing numbers
-  fill.style.width='91%';
+  fill.style.width='93%';
   status.textContent='Extracting phone numbers from business websites...';
   await enrichWithWebsitePhones(scored.slice(0,30));
 
@@ -1974,6 +1983,216 @@ async function enrichWithGoogleNews(leads,city){
 }
 
 // ── Clearbit Autocomplete — free domain/website enrichment (no key needed) ────
+// ── tryProxies: try 3 different CORS proxies in sequence until one works ──────
+async function tryProxies(url, timeoutMs=5000){
+  const proxies=[
+    u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u=>`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(u)}`
+  ];
+  for(const mkProxy of proxies){
+    try{
+      const ctrl=new AbortController();
+      const t=setTimeout(()=>ctrl.abort(),timeoutMs);
+      const r=await fetch(mkProxy(url),{signal:ctrl.signal});
+      clearTimeout(t);
+      if(r.ok){const txt=await r.text(); if(txt.length>100) return txt;}
+    }catch(e){}
+  }
+  return null;
+}
+
+// ── Cross-reference enrichment: look up each business by name on multiple sites ──
+// This is the key to 90+ scores: find the same business on Yelp, YP, BBB,
+// Google Knowledge Graph, and their own website. Each source adds signals.
+async function crossReferenceEnrich(leads, city){
+  // Process top leads in parallel batches of 5
+  const top=leads.slice(0,25);
+  for(let i=0;i<top.length;i+=5){
+    await Promise.all(top.slice(i,i+5).map(l=>crossReferenceOne(l,city)));
+  }
+}
+
+async function crossReferenceOne(l, city){
+  const name=l.name||l.company||'';
+  if(!name||name.length<4) return;
+  const nameEnc=encodeURIComponent(name);
+  const cityEnc=encodeURIComponent(city);
+
+  // 1. Yelp business lookup by name
+  if(!l._rating||l._reviews<10){
+    try{
+      const yelpUrl=`https://www.yelp.com/search?find_desc=${nameEnc}&find_loc=${cityEnc}+MI`;
+      const html=await tryProxies(yelpUrl,4500);
+      if(html){
+        const doc=new DOMParser().parseFromString(html,'text/html');
+        // Yelp embeds JSON-LD with rating + reviewCount
+        for(const s of doc.querySelectorAll('script[type="application/ld+json"]')){
+          try{
+            const d=JSON.parse(s.textContent);
+            const items=[...(d['@graph']||[d])].filter(x=>x['@type']&&/LocalBusiness|Restaurant|Medical|Dentist/i.test(x['@type']));
+            for(const item of items){
+              if(!item.name) continue;
+              const sim=nameSimilarity(item.name,name);
+              if(sim<0.5) continue;
+              if(item.aggregateRating){
+                const r=parseFloat(item.aggregateRating.ratingValue||0);
+                const n=parseInt(item.aggregateRating.reviewCount||0);
+                if(r>0&&n>l._reviews){l._rating=r;l._reviews=n;l.match+='+Yelp✓';}
+              }
+              if(item.telephone&&!l.phone) l.phone=item.telephone;
+              if(item.url&&!l.website) l.website=item.url;
+              if(item.address){
+                const ad=item.address;
+                const addrStr=[ad.streetAddress,ad.addressLocality,ad.addressRegion].filter(Boolean).join(', ');
+                if(addrStr.length>5&&!l.addr) l.addr=addrStr;
+                if(/\b(ste|suite|unit|#\s*\d)/i.test(addrStr)) l._isLeasing=true;
+              }
+            }
+          }catch(e){}
+        }
+        // Fallback: parse star rating from text
+        const ratingM=html.match(/(\d\.\d)\s*star/i);
+        const reviewM=html.match(/(\d[\d,]+)\s*review/i);
+        if(ratingM&&!l._rating) l._rating=parseFloat(ratingM[1]);
+        if(reviewM&&!l._reviews) l._reviews=parseInt(reviewM[1].replace(/,/g,''));
+      }
+    }catch(e){}
+  }
+
+  // 2. Yellow Pages lookup by name — get phone, category, years
+  if(!l.phone||!l._ageYears){
+    try{
+      const ypUrl=`https://www.yellowpages.com/search?search_terms=${nameEnc}&geo_location_terms=${cityEnc}+MI`;
+      const html=await tryProxies(ypUrl,4500);
+      if(html){
+        const doc=new DOMParser().parseFromString(html,'text/html');
+        // Find listing that matches business name
+        for(const card of doc.querySelectorAll('.srp-listing,.result')){
+          const cardName=(card.querySelector('.business-name a,.n a')?.textContent||'').trim();
+          if(!cardName||nameSimilarity(cardName,name)<0.5) continue;
+          const phone=(card.querySelector('.phones,.phone,.business-phone')?.textContent||'').trim();
+          if(phone&&!l.phone) l.phone=phone.replace(/\s+/g,'');
+          const website=card.querySelector('a.track-visit-website')?.href||'';
+          if(website&&!l.website) l.website=website;
+          const yrsText=(card.querySelector('.years-in-business')?.textContent||'');
+          const yrsM=yrsText.match(/(\d+)/);
+          if(yrsM&&!l._ageYears) l._ageYears=parseInt(yrsM[1]);
+          if(!l.match.includes('YP')) l.match+='+YP✓';
+          break;
+        }
+      }
+    }catch(e){}
+  }
+
+  // 3. BBB lookup — accreditation + years in business
+  if(!l._bbbVerified){
+    try{
+      const bbbUrl=`https://www.bbb.org/search?find_text=${nameEnc}&find_loc=${cityEnc}+MI`;
+      const html=await tryProxies(bbbUrl,4500);
+      if(html){
+        const doc=new DOMParser().parseFromString(html,'text/html');
+        for(const card of doc.querySelectorAll('[class*="SearchResult"],[class*="result-"]')){
+          const cardName=(card.querySelector('[class*="BusinessName"],[class*="business-name"],h3')?.textContent||'').trim();
+          if(!cardName||nameSimilarity(cardName,name)<0.5) continue;
+          const accredited=/accredited/i.test(card.textContent);
+          const rating=(card.querySelector('[class*="Rating"],[class*="rating"]')?.textContent||'').trim();
+          const yrsM=(card.textContent.match(/(\d+)\s*year/i)||[])[1];
+          if(accredited){l._bbbVerified=true;l.signals.push('✅ BBB Accredited');l.match+='+BBB✓';}
+          if(yrsM&&!l._ageYears) l._ageYears=parseInt(yrsM);
+          if(rating&&/^[A-F]/.test(rating)) l._bbbRating=rating.trim()[0];
+          break;
+        }
+      }
+    }catch(e){}
+  }
+
+  // 4. Google Knowledge Panel via DuckDuckGo instant answer
+  try{
+    const ddgUrl=`https://api.duckduckgo.com/?q=${nameEnc}+${cityEnc}+Michigan&format=json&no_redirect=1&no_html=1`;
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(),4000);
+    const r=await fetch(ddgUrl,{signal:ctrl.signal});
+    clearTimeout(t);
+    if(r.ok){
+      const d=await r.json();
+      if(d.AbstractText&&d.AbstractText.length>20){
+        // Extract founding year, employee count, description
+        const yrM=d.AbstractText.match(/founded\s+in\s+(\d{4})|established\s+(\d{4})|since\s+(\d{4})/i);
+        if(yrM){
+          const yr=parseInt(yrM[1]||yrM[2]||yrM[3]);
+          if(yr>1900&&!l._ageYears) l._ageYears=new Date().getFullYear()-yr;
+        }
+        const empM=d.AbstractText.match(/(\d[\d,]+)\s+employee/i);
+        if(empM) l._employees=parseInt(empM[1].replace(/,/g,''));
+        if(d.AbstractURL&&!l.website) l.website=d.AbstractURL;
+        if(!l.match.includes('DDG')) l.match+='+DDG✓';
+      }
+    }
+  }catch(e){}
+
+  // 5. Website deep-dive — already have website from prior sources, extract signals
+  if(l.website&&l.website.startsWith('http')&&!l._webEnriched){
+    try{
+      const html=await tryProxies(l.website,4000);
+      if(html){
+        l._webEnriched=true;
+        // Phone extraction
+        if(!l.phone){
+          const phones=(html.match(/(?:\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4})/g)||[]);
+          const real=phones.find(p=>!p.replace(/\D/g,'').match(/^(800|888|877|866|855|000)/));
+          if(real) l.phone=real;
+        }
+        // Founding year
+        if(!l._ageYears){
+          const m=html.match(/(?:since|est\.?|founded|established|serving since)\s+(\d{4})/i);
+          if(m){const yr=parseInt(m[1]);if(yr>1950&&yr<2024)l._ageYears=new Date().getFullYear()-yr;}
+        }
+        // Leasing signals: "our office", "our suite", "currently renting"
+        if(!l._isLeasing&&/our\s+(office|suite|clinic|location)\s+is\s+(located|at|in)\s+/i.test(html)) l._isLeasing=true;
+        // Staff/employee count signals
+        const staffM=html.match(/team\s+of\s+(\d+)|(\d+)\s+(?:staff|employees|providers|physicians|dentists)/i);
+        if(staffM) l._employees=parseInt(staffM[1]||staffM[2]);
+        // Owner name from "Dr. X" or "meet the team" pages
+        if(!l._ownerName){
+          const drM=html.match(/(?:Dr\.|Dr )\s*([A-Z][a-z]+ [A-Z][a-z]+)/);
+          if(drM) l._ownerName=drM[0];
+        }
+      }
+    }catch(e){}
+  }
+
+  // Re-score after enrichment (add bonus points for newly found signals)
+  let bonus=0;
+  if(l._bbbVerified) bonus+=8;
+  if(l._reviews>200) bonus+=10;
+  else if(l._reviews>100) bonus+=7;
+  else if(l._reviews>50) bonus+=4;
+  else if(l._reviews>20) bonus+=2;
+  if(l._rating>=4.5) bonus+=5;
+  else if(l._rating>=4.0) bonus+=3;
+  if(l._ageYears>=10) bonus+=5;
+  else if(l._ageYears>=5) bonus+=3;
+  if(l._isLeasing&&!l.signals.some(s=>s.includes('Leasing'))) bonus+=12;
+  if(l._employees&&l._employees>=5) bonus+=3;
+  if(bonus>0){
+    l.score=Math.min(97,l.score+bonus);
+    l._tier=l.score>=85?'hot':l.score>=65?'warm':'cold';
+  }
+}
+
+// Fuzzy name similarity (Dice coefficient) — avoids matching wrong businesses
+function nameSimilarity(a, b){
+  a=a.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+  b=b.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+  if(a===b) return 1;
+  if(a.includes(b)||b.includes(a)) return 0.85;
+  const bigrams=s=>{const r=new Set();for(let i=0;i<s.length-1;i++)r.add(s.slice(i,i+2));return r;};
+  const A=bigrams(a),B=bigrams(b);
+  let inter=0;for(const g of A)if(B.has(g))inter++;
+  return(2*inter)/(A.size+B.size)||0;
+}
+
 async function enrichWithClearbit(leads){
   for(const l of leads){
     if(l.website) continue;
