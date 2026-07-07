@@ -2251,7 +2251,7 @@ function showResultsLive(leads,t0,location,type){
   document.getElementById('seqStatus').textContent=leads.length+' live leads';
   // Show Maps key banner only if no key configured
   const banner=document.getElementById('mapsKeyBanner');
-  if(banner) banner.style.display=hasMaps?'none':'flex';
+  if(banner) banner.style.display='none';
   window.scrollTo(0,0);
 }
 
