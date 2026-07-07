@@ -1342,54 +1342,100 @@ function enrichAndScore(lead, propType){
     lead.signals.push('🔥 Named Owner');
   }
 
-  // ── FINANCIAL READINESS + LEASE CYCLE: business age from OpenCorporates ──────
-  // Commercial leases are typically 3yr, 5yr, or 10yr. We model expiry from
-  // incorporation year — if first lease is expiring NOW, they're highly motivated.
+  // ── TYPE-SPECIFIC LEASE TERM MODELING ────────────────────────────────────────
+  // Each business type has a typical lease length. Dental offices sign 7-10yr.
+  // Restaurants sign 10-20yr. Retail 3-5yr. We model the most likely expiry
+  // window using incorporation year + type-specific terms.
   const CURRENT_YEAR = new Date().getFullYear();
+  const LEASE_TERMS = {
+    dental:[7,10], orthodon:[7,10], 'oral surg':[7,10],
+    restaurant:[10,15], bistro:[10,15], catering:[7,10],
+    'physical therapy':[5,7], physio:[5,7], chiro:[5,7],
+    medical:[5,7], clinic:[5,7], surgery:[7,10],
+    veterina:[5,10], salon:[3,5], spa:[3,5], barber:[3,5],
+    law:[5,7], account:[5,7], consult:[3,5],
+    retail:[3,5], boutique:[3,5], jewelry:[3,5],
+    logistic:[5,7], manufactur:[7,10], warehouse:[5,10],
+  };
+  const matchedTerms=Object.entries(LEASE_TERMS).find(([k])=>txt.includes(k));
+  const [shortTerm,longTerm]=matchedTerms?matchedTerms[1]:[5,7];
+
   let ageBonus=0;
   if(ageYears!==null){
-    // Mortgage eligibility bonuses
     if(ageYears>=10) ageBonus=14;
     else if(ageYears>=7) ageBonus=11;
     else if(ageYears>=5) ageBonus=8;
     else if(ageYears>=3) ageBonus=4;
     else if(ageYears>=1) ageBonus=1;
 
-    // Lease cycle modeling — when is their lease most likely expiring?
-    // Assumes first lease signed at incorporation; standard terms 3/5/10yr
     const incYear = CURRENT_YEAR - ageYears;
-    const lease3end = incYear + 3;
-    const lease5end = incYear + 5;
-    const lease10end = incYear + 10;
-    // Second cycle
-    const lease3r2 = lease3end + 3;
-    const lease5r2 = lease5end + 5;
-
-    // Score each candidate expiry — within 1yr of current is HOT
-    const leasePriority = (yr) => {
-      const d = yr - CURRENT_YEAR;
-      if(d===0||d===-1) return 3; // expiring this yr or just expired = hottest
-      if(d===1) return 2;          // expiring next yr = hot
-      if(d===-2||d===2) return 1;  // close window = warm
+    // Generate all plausible expiry years using type-specific terms
+    const candidates=[];
+    for(let cycle=0;cycle<4;cycle++){
+      candidates.push(incYear + shortTerm*(cycle+1));
+      candidates.push(incYear + longTerm*(cycle+1));
+    }
+    const leasePriority=(yr)=>{
+      const d=yr-CURRENT_YEAR;
+      if(d===0||d===-1) return 4;  // expiring NOW = top signal
+      if(d===1) return 3;
+      if(d===-2||d===2) return 2;
+      if(d===3||d===-3) return 1;
       return 0;
     };
-    const candidates = [lease3end, lease5end, lease10end, lease3r2, lease5r2];
-    const bestYr = candidates.reduce((best,yr)=>leasePriority(yr)>leasePriority(best)?yr:best, candidates[0]);
-    const bestPriority = leasePriority(bestYr);
+    const bestYr=candidates.reduce((b,yr)=>leasePriority(yr)>leasePriority(b)?yr:b,candidates[0]);
+    const bestP=leasePriority(bestYr);
+    lead._leaseExpiry=bestYr;
 
-    if(bestPriority>=2 && !lead.signals.some(s=>s.includes('⏰'))){
-      const sigStr = bestYr<=CURRENT_YEAR ? `⏰ Lease ~${CURRENT_YEAR}` : `⏰ Lease ~${bestYr}`;
-      lead.signals.push(sigStr);
-      intent += bestPriority===3 ? 16 : 10;
-    } else if(bestPriority===1 && !lead.signals.some(s=>s.includes('⏰'))){
-      lead.signals.push('⏰ Lease Signal');
-      intent += 6;
+    if(bestP>=3&&!lead.signals.some(s=>s.includes('⏰'))){
+      lead.signals.push(bestYr<=CURRENT_YEAR?`⏰ Lease Expired ~${bestYr}`:`⏰ Lease Due ~${bestYr}`);
+      intent+=bestP===4?20:14;
+      lead._leaseHot=true;
+    } else if(bestP>=1&&!lead.signals.some(s=>s.includes('⏰'))){
+      lead.signals.push(`⏰ Lease Window ~${bestYr}`);
+      intent+=bestP*4;
     }
 
-    // Professional longevity badge
-    if(ageYears>=5 && !lead.signals.some(s=>s.includes('yr')||s.includes('5yr'))){
-      lead.signals.push(ageYears>=10?'📈 Established':ageYears>=7?'📈 5yr Practice':'📈 5yr Mark');
+    if(ageYears>=5&&!lead.signals.some(s=>s.includes('yr')||s.includes('5yr'))){
+      lead.signals.push(ageYears>=10?`📈 ${ageYears}yr Established`:ageYears>=7?`📈 ${ageYears}yr Practice`:`📈 ${ageYears}yr Business`);
     }
+  }
+
+  // ── REVENUE PROXY + MORTGAGE ELIGIBILITY ─────────────────────────────────────
+  // Estimate annual revenue from reviews (proven demand signal).
+  // A dental office with 300 reviews × ~$800 avg visit × ~4 visits/reviewer/yr ≈ $960K+
+  // We use conservative multipliers per type.
+  const REV_MULTIPLIER={dental:3200,orthodon:4500,'oral surg':5000,restaurant:800,
+    cafe:500,bakery:600,'physical therapy':2200,chiro:2000,medical:2800,
+    salon:600,spa:800,law:4000,account:3000,consult:3500,retail:500,
+    logistic:8000,manufactur:10000};
+  const revKey=Object.keys(REV_MULTIPLIER).find(k=>txt.includes(k));
+  if(revKey&&reviews>0){
+    const estRevenue=Math.round(reviews*(REV_MULTIPLIER[revKey]||2000));
+    lead._estRevenue=estRevenue;
+    // SBA 7(a) requires $250K+ revenue; SBA 504 (real estate) works at $500K+
+    if(estRevenue>=500000&&!lead.signals.some(s=>s.includes('SBA'))){
+      lead.signals.push(`💰 Est. $${(estRevenue/1000).toFixed(0)}K revenue`);
+      intent+=8;
+    } else if(estRevenue>=250000&&!lead.signals.some(s=>s.includes('SBA'))){
+      lead.signals.push(`💰 Est. $${(estRevenue/1000).toFixed(0)}K revenue`);
+      intent+=4;
+    }
+  }
+
+  // ── SBA 504 LOAN PAYMENT ESTIMATE ────────────────────────────────────────────
+  // SBA 504: buyer puts 10% down, 40% SBA debenture at ~6.5%, 50% bank at ~7.5%
+  // vs. current market rent for that sq footage — if owning is cheaper, it's a slam dunk
+  lead._sba504Monthly=null;
+  if(propType!=='general'){
+    const propPrice=window._currentPropPrice||1200000; // parsed from description
+    const down=propPrice*0.10;
+    const sbaAmt=propPrice*0.40;
+    const bankAmt=propPrice*0.50;
+    const sbaPmt=sbaAmt*(0.065/12)/Math.pow(1-(1/(1+0.065/12)),240); // 20yr
+    const bankPmt=bankAmt*(0.075/12)/Math.pow(1-(1/(1+0.075/12)),300); // 25yr
+    lead._sba504Monthly=Math.round(sbaPmt+bankPmt);
+    lead._sba504Down=Math.round(down);
   }
 
   // SBA eligibility signal (3+ yr business, right type = SBA 7a or 504 eligible)
@@ -1526,6 +1572,16 @@ async function runLiveSearch(property, t0){
     .filter(l=>l.score>=30)
     .sort((a,b)=>b.score-a.score)
     .slice(0,60);
+
+  // Hot-zone clustering: if 5+ same-type businesses exist near this property,
+  // that type is proven demand — boost all of them slightly
+  const typeCount=allLeads.filter(l=>(l._hint||l.name||'').toLowerCase().includes(
+    type==='medical'?'dent':type==='restaurant'?'restaur':type==='office'?'law':type==='retail'?'salon':type
+  )).length;
+  if(typeCount>=5){
+    allLeads.forEach(l=>{if(!l._hotZone){l._hotZone=true;l.signals=l.signals||[];}});
+    console.log(`Hot zone detected: ${typeCount} ${type} businesses near property`);
+  }
 
   // Clearbit: fill in missing websites for top leads (free, no key)
   fill.style.width='83%';
@@ -2689,6 +2745,15 @@ async function runAuto(){
   const walker=document.querySelector('.walker');
   if(walker){const clone=walker.cloneNode(true);walker.parentNode.replaceChild(clone,walker);}
 
+  // Parse price from description for SBA calculations
+  const priceM=property.match(/\$\s*([\d,.]+)\s*([MmKk])?/);
+  if(priceM){
+    let p=parseFloat(priceM[1].replace(/,/g,''));
+    if(priceM[2]&&/m/i.test(priceM[2])) p*=1000000;
+    else if(priceM[2]&&/k/i.test(priceM[2])) p*=1000;
+    window._currentPropPrice=p>50000?p:p*1000000;
+  }
+
   // LIVE MODE — always runs (OSM + Wikidata + OpenCorporates are free, no key needed)
   // Google Maps is added on top if a key is pasted in
   try{
@@ -2856,9 +2921,14 @@ function renderCallList(leads){
     // Time to close estimate
     const ttc=score>=85?'1–3 mo':score>=70?'3–6 mo':score>=55?'6–12 mo':'12–24 mo';
 
-    // One-line personalized opener (what to say in the first 5 seconds)
+    // One-line personalized opener with SBA numbers if available
     const ownerFirst=ownerName?`Hi, is ${ownerName} available?`:'Hi, may I speak with the owner?';
-    const opener=`"${ownerFirst} ... My name is [Broker], I have a property on [Street] that's built out specifically for ${txt2.includes('dental')?'dental practices':txt2.includes('restaurant')?'restaurants':txt2.includes('medical')||txt2.includes('clinic')?'medical offices':txt2.includes('law')?'law firms':'your type of business'} — I think it's worth 2 minutes."`;
+    // Hyper-personalized opener using every signal we have on this specific business
+    const leaseNote=l._leaseHot&&l._leaseExpiry?` Your lease ${l._leaseExpiry<=new Date().getFullYear()?'likely just came up':'is coming up around '+l._leaseExpiry} — ideal timing.`:'';
+    const reviewNote=l._reviews>100?` ${l._reviews} reviews tells me you're busy.`:'';
+    const sbaNote=l._sba504Monthly?` SBA 504: ~$${l._sba504Monthly.toLocaleString()}/mo, ~10% down.`:'';
+    const opener=`"${ownerFirst} ... I'm [Broker], commercial real estate. I have a property built out specifically for ${txt2.includes('dental')?'dental practices':txt2.includes('restaurant')?'restaurants':txt2.includes('medical')||txt2.includes('clinic')?'medical offices':txt2.includes('law')?'law firms':'your type of business'} in ${city}.${leaseNote}${reviewNote}${sbaNote} Worth 2 minutes?"`;
+    const sbaTag=l._sba504Monthly?`<div style="margin-top:5px;font-size:10px;color:#6EE7B7;background:#052e16;border:1px solid #166534;border-radius:4px;padding:3px 6px;display:inline-block;">💰 SBA 504: ~$${l._sba504Monthly.toLocaleString()}/mo · ~$${l._sba504Down?Math.round(l._sba504Down/1000)+'K':'—'} down</div>`:'';
 
     // Phone: tel: link so it actually dials on mobile + opens call script
     const phoneBtn=l.phone
@@ -2896,6 +2966,7 @@ function renderCallList(leads){
         <div style="font-size:10px;color:var(--text3);margin-top:3px;">📞 Best time: <span style="color:var(--text2);">${bestTime}</span></div>
         <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${sigTags}</div>
         <div style="margin-top:7px;font-size:13px;color:var(--text2);line-height:1.5;border-left:2px solid ${isHot?'#7F1D1D':isWarm?'#78350F':'var(--border)'};padding-left:10px;">${buyReason}</div>
+        ${sbaTag}
         <div style="margin-top:8px;font-size:11px;color:var(--text3);background:#ffffff06;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-style:italic;">${opener}</div>
       </td>
       <td style="padding:12px 14px;vertical-align:top;text-align:center;width:150px;">
@@ -3394,52 +3465,82 @@ function closeCallModal(){document.getElementById('callModal').classList.add('hi
 function generateCallScript(l){
   const brokerName=(document.getElementById('fromName')?.value?.trim())||'[YOUR NAME]';
   const isNamedOwner=l.src==='linkedin'||/owner|founder|president|ceo|principal|partner/i.test(l._jobTitle||'');
-  const firstName=l.name?.split(' ')[0]||'';
+  const ownerName=l._ownerName||'';
+  const firstName=ownerName?ownerName.split(' ')[0]:isNamedOwner?l.name?.split(' ')[0]:'';
   const company=l.company||l.name||'your business';
   const isLeasing=l._isLeasing;
   const ageYears=l._ageYears;
+  const reviews=l._reviews||0;
+  const rating=l._rating||0;
+  const sba=l._sba504Monthly;
+  const revenue=l._estRevenue;
+  const leaseExpiry=l._leaseExpiry;
+  const leaseHot=l._leaseHot;
 
   const propRaw=document.getElementById('propertyAuto')?.value?.trim()||'commercial property';
   const propType=detectPropertyType(propRaw);
   const city=extractLocation(propRaw).split(',')[0];
+  const propPrice=window._currentPropPrice||1200000;
 
-  const openingLine=isNamedOwner&&firstName
-    ? `Hi, is ${firstName} available?`
-    : `Hi, may I speak with the owner or manager?`;
+  // Build hyper-personalized hook using every signal we have
+  const hooks=[];
+  if(leaseHot&&leaseExpiry) hooks.push(`Your lease ${leaseExpiry<=new Date().getFullYear()?'likely just expired':'is likely coming up around '+leaseExpiry} — perfect timing to look at owning.`);
+  if(reviews>100) hooks.push(`${reviews} reviews tells me you're running a busy, established operation — exactly the kind of business that benefits most from owning vs. renting.`);
+  if(ageYears>=5) hooks.push(`${ageYears} years in business means you almost certainly qualify for SBA financing — 10% down, 20-year term.`);
+  if(revenue>=500000) hooks.push(`A practice your size is generating serious revenue — the mortgage payment is likely less than what you're paying in rent right now.`);
+  if(rating>=4.5) hooks.push(`${rating} stars — you're one of the top-rated in the area. Owning your space protects that reputation from landlord risk.`);
+  const hook=hooks[0]||`I work with ${propType==='medical'?'dental and medical practices':propType==='office'?'professional service firms':propType==='restaurant'?'restaurant operators':propType==='retail'?'retail business owners':'established business owners'} in ${city} who are ready to own their space.`;
 
   const pitchByType={
-    medical:`I specialize in medical and dental real estate in ${city}. I have an off-market medical office — fully built out with exam rooms, private offices, and a waiting area. For a practice like ${company}, owning almost always beats leasing: you stop paying someone else's mortgage and start building your own equity.`,
-    retail:`I work with retail and service business owners in ${city}. I have a prime storefront available — high visibility, parking, move-in ready. For a business like ${company}, owning locks in your cost and means no landlord can raise your rent or push you out.`,
-    industrial:`I work with operators in logistics and manufacturing in ${city}. I have an industrial/warehouse property — dock access, clear height, good truck circulation. For a business like ${company}, owning the building is usually the smartest move once the operation is stable.`,
-    restaurant:`I work with restaurant and food business owners in ${city}. I have a commercial kitchen-ready space — full hood, grease trap, dining room. For ${company}, owning means no landlord can force you out, and every payment builds equity instead of going to rent.`,
-    office:`I'm a commercial broker in ${city} working with professional service firms ready to own their space. I have an off-market office building — private suites, conference room, parking. For a firm like ${company}, the monthly ownership cost is often close to what you're paying in rent right now.`,
-    general:`I'm a commercial real estate broker in ${city} working with established business owners who are ready to stop renting. I have an off-market commercial property — the pitch is simple: similar monthly cost as a lease, but you own it and build equity every month.`
+    medical:`I have an off-market medical office in ${city} — fully built out with exam rooms, private offices, and a waiting area. For ${company}, this property is essentially turn-key.`,
+    retail:`I have a prime retail storefront in ${city} — high visibility, parking, move-in ready. For ${company}, owning locks in your cost permanently.`,
+    industrial:`I have an industrial property in ${city} — dock access, clear height, solid truck circulation. For ${company}, owning the building is the smartest move once the operation is stable.`,
+    restaurant:`I have a kitchen-ready commercial space in ${city} — full hood, grease trap, dining area. For ${company}, owning means no landlord can ever push you out.`,
+    office:`I have an off-market office building in ${city} — private suites, conference room, parking. For a firm like ${company}, the monthly ownership cost is often within $200 of what you're paying in rent.`,
+    general:`I have an off-market commercial property in ${city}. Similar monthly cost as a lease, but you own it and build equity every month.`
   };
-  const pitch=pitchByType[propType]||pitchByType.general;
+
+  const sbaLine=sba?`With SBA 504: ~$${sba.toLocaleString()}/month, ~$${Math.round(propPrice*0.10/1000)}K down.`:'SBA 504 financing available — as little as 10% down.';
 
   const bullets=[];
-  if(isLeasing) bullets.push(`• You're currently in leased space — I can pull a side-by-side showing ownership cost vs. your current rent.`);
-  if(ageYears>=3) bullets.push(`• At ${ageYears} years in business you likely qualify for an SBA 504 loan — as little as 10% down.`);
-  bullets.push(`• Property is vacant — flexible timing, no waiting on a current tenant.`);
-  bullets.push(`• 15 minutes is all I need — just numbers, no commitment.`);
+  if(isLeasing) bullets.push(`• Currently leasing — I'll pull an ownership vs. rent comparison for your exact space.`);
+  if(ageYears>=3) bullets.push(`• ${ageYears} years in business → you qualify for SBA 504. ${sbaLine}`);
+  else bullets.push(`• ${sbaLine}`);
+  if(leaseHot) bullets.push(`• Lease timing is ideal — you have negotiating leverage RIGHT NOW.`);
+  bullets.push(`• Property is vacant — close in 60–90 days, no waiting.`);
+  bullets.push(`• 15 minutes, no obligation — I just want to show you the math.`);
 
-  return `${openingLine}
+  const openingLine=firstName
+    ? `Hi, is ${firstName} in?`
+    : `Hi, may I speak with the owner?`;
 
-[When connected:]
+  return `━━━ OPENING ━━━
+${openingLine}
 
-Hi${isNamedOwner&&firstName?' '+firstName:''}, my name is ${brokerName} — I'm a commercial real estate broker. ${pitch}
+[Connected — introduce yourself:]
+Hi${firstName?' '+firstName:''}, my name is ${brokerName} — I'm a commercial real estate broker in ${city}.
 
-Real quick:
+${hook}
 
+${pitchByType[propType]||pitchByType.general}
+
+━━━ THE NUMBERS ━━━
 ${bullets.join('\n')}
 
-Are you currently leasing your space?
+━━━ QUALIFYING QUESTION ━━━
+"Are you currently leasing your space?"
 
-[YES — this is your warm lead:]
-Perfect. Can we get 15 minutes on the calendar this week? I'll pull ownership vs. lease numbers for your exact situation — no obligation, just want to show you the math.
+[YES → Warm Lead]
+"Perfect — can I grab 15 minutes this week? I'll pull the ownership vs. lease math for your exact situation. No commitment, just the numbers."
 
-[They already own:]
-Got it — would it be okay if I stayed in touch? Sometimes I get buildings that make sense as a second location or an investment play.
+[They own already]
+"Understood — mind if I stay in touch? I occasionally get second-location or investment-grade buildings that match what you're doing."
+
+[Not interested]
+"No worries at all. Would it be okay if I sent you a quick one-page comparison? Just so you have the numbers if anything changes with your lease."
+
+━━━ FOLLOW-UP TEXT (send after call) ━━━
+Hi${firstName?' '+firstName:''}, it's ${brokerName} — the broker from earlier. Here's the property I mentioned: [LINK]. ${sbaLine} Happy to run the numbers for your specific situation. -${brokerName.split(' ')[0]}`;
 
 [Not interested:]
 Totally fair. Could I send you a one-pager to keep on file? Takes 30 seconds and you'll have it if anything changes.
