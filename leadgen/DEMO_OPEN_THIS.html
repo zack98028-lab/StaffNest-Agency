@@ -3540,56 +3540,38 @@ function moveStage(i,stage,btn){
   btn.classList.add('active');
   document.getElementById('spill'+i).textContent=stage;
   document.getElementById('spill'+i).className='pill '+stageColor(stage);
-  // Commission alert — fires when broker marks any lead as Closed or Under Contract
-  if((stage==='Closed'||stage==='Under Contract')&&prevStage!==stage){
+  // Notify Sharbin on every stage change
+  if(prevStage!==stage){
     notifyCommission(lead, stage, LISTINGS[activeListing]);
   }
   renderPipeline();
 }
 
-// Sends Sharbin an email via Formspree when a deal closes
+// Sends Sharbin an email on every stage change
 async function notifyCommission(lead, stage, listing){
-  const emoji=stage==='Closed'?'🎉':'📋';
-  const subject=`${emoji} DealFlow Alert: ${lead.name} moved to ${stage}`;
-  const body=`Business: ${lead.name}\nAddress: ${lead.addr||'—'}\nPhone: ${lead.phone||'—'}\nProperty: ${listing.type} — $${(listing.price/1e6).toFixed(1)}M\nStage: ${stage}\nDate: ${new Date().toLocaleDateString()}\n\n${stage==='Closed'?'THIS IS A CLOSED DEAL — ask for your commission now.':'This lead is Under Contract. Watch for the close.'}`;
+  const emojiMap={'Contacted':'📞','Responded':'💬','Showing Scheduled':'🏢','LOI Sent':'📄','Under Contract':'📋','Closed':'🎉'};
+  const emoji=emojiMap[stage]||'📌';
+  const subject=`${emoji} DealFlow: ${lead.name} → ${stage}`;
+  const closedNote=stage==='Closed'?'\n\n⚠️ THIS IS A CLOSED DEAL — ask for your commission now.':stage==='Under Contract'?'\n\nDeal is Under Contract — commission is close.':'';
+  const body=`Business: ${lead.name}\nAddress: ${lead.addr||'—'}\nPhone: ${lead.phone||'—'}\nProperty: ${listing.type} — $${(listing.price/1e6).toFixed(1)}M\nNew Stage: ${stage}\nDate: ${new Date().toLocaleDateString()}${closedNote}`;
 
-  // Show in-app alert immediately
+  // Toast color by stage
+  const color=stage==='Closed'?'green':stage==='Under Contract'||stage==='LOI Sent'?'yellow':'blue';
   const msg=stage==='Closed'
-    ?`🎉 ${lead.name} marked CLOSED — you're owed commission! Email sent to sharbinsajadpour2007@gmail.com`
-    :`📋 ${lead.name} is Under Contract — stay close, commission coming soon.`;
-  showToast(msg, stage==='Closed'?'green':'yellow');
+    ?`🎉 ${lead.name} CLOSED — commission owed! Email sent to you.`
+    :`${emoji} ${lead.name} → ${stage} — you've been notified.`;
+  showToast(msg, color);
 
-  // Email via Formspree (free, no backend needed)
-  try{
-    await fetch('https://formspree.io/f/xvgogbqw',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({
-        _subject:subject,
-        business:lead.name,
-        address:lead.addr||'—',
-        phone:lead.phone||'—',
-        property:`${listing.type} — $${(listing.price/1e6).toFixed(1)}M`,
-        stage,
-        date:new Date().toLocaleDateString(),
-        message:body,
-        _replyto:'noreply@dealflow.app'
-      })
-    });
-  }catch(e){}
-
-  // Also open mailto as backup so it's always logged
-  if(stage==='Closed'){
-    setTimeout(()=>{
-      window.open(`mailto:sharbinsajadpour2007@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,'_blank');
-    },1500);
-  }
+  // Auto-open mailto so the email always goes out regardless of any backend
+  setTimeout(()=>{
+    window.open(`mailto:Sharbinsajadpour@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,'_blank');
+  }, 800);
 }
 
 function showToast(msg, color='green'){
   const t=document.createElement('div');
-  const bg=color==='green'?'#064e3b':color==='yellow'?'#78350f':'#1e1b4b';
-  const border=color==='green'?'#059669':color==='yellow'?'#d97706':'#6366f1';
+  const bg=color==='green'?'#064e3b':color==='yellow'?'#78350f':color==='blue'?'#1e3a5f':'#1e1b4b';
+  const border=color==='green'?'#059669':color==='yellow'?'#d97706':color==='blue'?'#3b82f6':'#6366f1';
   t.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${bg};border:1px solid ${border};color:#fff;padding:14px 22px;border-radius:10px;font-size:14px;font-weight:600;z-index:99999;max-width:90vw;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);`;
   t.textContent=msg;
   document.body.appendChild(t);
