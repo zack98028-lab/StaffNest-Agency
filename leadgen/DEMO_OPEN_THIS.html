@@ -242,7 +242,7 @@ textarea{resize:vertical;}
       </svg>
     </div>
     <div style="font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px;">DealFlow</div>
-    <div style="color:var(--text2);font-size:13px;margin-bottom:28px;">CRE Lead Engine — Michigan</div>
+    <div style="color:var(--text2);font-size:13px;margin-bottom:28px;">CRE Lead Engine — Nationwide</div>
     <div id="loginError" style="background:#2a0a0a;border:1px solid #5a1a1a;color:#ff6b6b;border-radius:8px;padding:10px;font-size:13px;margin-bottom:14px;display:none;">Wrong password. Try again.</div>
     <input type="text" id="loginUser" placeholder="Your name (e.g. Sharbin or Broker)" style="margin-bottom:10px;text-align:center;" />
     <input type="password" id="loginPass" placeholder="Password" style="margin-bottom:18px;text-align:center;" onkeydown="if(event.key==='Enter')doLogin()" />
@@ -264,7 +264,7 @@ textarea{resize:vertical;}
     </div>
     <div>
       <div style="font-weight:800;font-size:16px;letter-spacing:-.4px;font-family:'Inter',sans-serif;">DealFlow</div>
-      <div style="color:var(--text3);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:1px;">CRE Intelligence · Michigan</div>
+      <div style="color:var(--text3);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-top:1px;">CRE Intelligence · Nationwide</div>
     </div>
   </div>
   <div class="nav-tabs">
@@ -980,10 +980,34 @@ function detectPropertyType(desc){
 
 function extractLocation(desc){
   const d=desc.toLowerCase();
+  // Check known cities first (fast)
   for(const city of Object.keys(CITY_COORDS)){
-    if(d.includes(city)) return city.replace(/\b\w/g,c=>c.toUpperCase())+', Michigan';
+    if(d.includes(city)) return city.replace(/\b\w/g,c=>c.toUpperCase());
   }
-  return 'Ann Arbor, Michigan';
+  // Try to extract any "City, ST" or "City, State" pattern from description
+  const m=desc.match(/([A-Z][a-zA-Z\s]{2,20}),\s*([A-Z]{2}|[A-Z][a-z]+)/);
+  if(m) return m[1].trim();
+  return 'Ann Arbor';
+}
+
+async function geocodeCity(cityName){
+  // Check known cache first
+  const key=cityName.toLowerCase();
+  if(CITY_COORDS[key]) return CITY_COORDS[key];
+  // Geocode via Nominatim — works for any US city, free
+  try{
+    const url=`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName+', USA')}&format=json&limit=1&countrycodes=us`;
+    const r=await fetch(url,{headers:{'Accept':'application/json','User-Agent':'DealFlow/1.0'}});
+    if(r.ok){
+      const d=await r.json();
+      if(d[0]){
+        const coords={lat:parseFloat(d[0].lat),lng:parseFloat(d[0].lon)};
+        CITY_COORDS[key]=coords; // cache it
+        return coords;
+      }
+    }
+  }catch(e){}
+  return CITY_COORDS['ann arbor'];
 }
 
 function extractCoords(desc){
@@ -1126,7 +1150,7 @@ async function searchOpenCorporates(type, city){
   const results = [];
   for(const kw of keywords){
     try{
-      const url = `https://api.opencorporates.com/v0.4/companies/search?q=${encodeURIComponent(kw)}&jurisdiction_code=us_mi&registered_address=${encodeURIComponent(city)}&current_status=Active&per_page=20`;
+      const url = `https://api.opencorporates.com/v0.4/companies/search?q=${encodeURIComponent(kw)}&registered_address=${encodeURIComponent(city)}&current_status=Active&per_page=20`;
       const r = await fetch(url, {headers:{Accept:'application/json'}});
       if(!r.ok) continue;
       const d = await r.json();
@@ -1405,7 +1429,7 @@ function enrichAndScore(lead, propType){
 async function runLiveSearch(property, t0){
   const type=detectPropertyType(property);
   const location=extractLocation(property);
-  const coords=extractCoords(property);
+  const coords=await geocodeCity(location);
   const city=location.split(',')[0];
   const fill=document.getElementById('walkBarFill');
   const status=document.getElementById('walkStatus');
@@ -1547,7 +1571,7 @@ async function searchYelp(type, city){
   const results=[];
   for(const kw of keywords){
     try{
-      const url=`https://www.yelp.com/search?find_desc=${encodeURIComponent(kw)}&find_loc=${encodeURIComponent(city+', MI')}`;
+      const url=`https://www.yelp.com/search?find_desc=${encodeURIComponent(kw)}&find_loc=${encodeURIComponent(city)}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
       const ctrl=new AbortController();
       const t=setTimeout(()=>ctrl.abort(),4000);
@@ -1598,7 +1622,7 @@ async function searchBBB(type, city){
   const results=[];
   for(const kw of keywords){
     try{
-      const url=`https://www.bbb.org/search?find_text=${encodeURIComponent(kw)}&find_loc=${encodeURIComponent(city+', Michigan')}`;
+      const url=`https://www.bbb.org/search?find_text=${encodeURIComponent(kw)}&find_loc=${encodeURIComponent(city)}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
       const ctrl=new AbortController();
       const t=setTimeout(()=>ctrl.abort(),4000);
@@ -1668,7 +1692,7 @@ async function searchManta(type, city){
   const results=[];
   for(const cat of cats){
     try{
-      const url=`https://www.manta.com/mb/MI/${citySlug}/${cat}/`;
+      const url=`https://www.manta.com/search?search_source=nav&search=${encodeURIComponent(cat+' '+city)}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
       const ctrl=new AbortController();
       const t=setTimeout(()=>ctrl.abort(),4000);
@@ -1701,7 +1725,7 @@ async function searchManta(type, city){
       for(const card of doc.querySelectorAll('article,[class*="listing"],[class*="result"],[class*="company"]')){
         const name=(card.querySelector('h2,h3,[class*="name"],[class*="title"]')?.textContent||'').trim();
         if(!name||name.length<3||name.length>80||isChain(name)) continue;
-        const addr=(card.querySelector('[class*="address"],address,.location')?.textContent||city+', MI').trim().replace(/\s+/g,' ');
+        const addr=(card.querySelector('[class*="address"],address,.location')?.textContent||city).trim().replace(/\s+/g,' ');
         const phone=(card.querySelector('[href^="tel:"],[class*="phone"]')?.textContent||'').trim();
         const isLeasing=/\b(ste|suite|unit|#\s*\d)/i.test(addr);
         results.push({id:nextLeadId++,name,company:name,addr,phone,email:'',website:'',li:'',
@@ -1759,7 +1783,7 @@ async function searchLinkedIn(type, city){
         seen.add(name.toLowerCase());
         results.push({
           id:nextLeadId++, name, company:company||name,
-          addr:city+', Michigan',
+          addr:city,
           phone:'', email:'', website:'', li:liUrl,
           match:'LinkedIn', src:'linkedin', score:0, reason:'', signals:[], why:'',
           _rating:0, _reviews:0, _isLeasing:false, _ageYears:null,
@@ -1787,7 +1811,7 @@ async function searchNominatim(type, city, coords){
   const results=[];
   for(const kw of keywords){
     try{
-      const url=`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(kw+' '+city+' Michigan')}&format=jsonv2&addressdetails=1&limit=15&extratags=1`;
+      const url=`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(kw+' '+city)}&format=jsonv2&addressdetails=1&limit=15&extratags=1&countrycodes=us`;
       const ctrl=new AbortController();
       const t=setTimeout(()=>ctrl.abort(),5000);
       const r=await fetch(url,{signal:ctrl.signal,headers:{'Accept':'application/json','User-Agent':'DealFlow/1.0'}});
@@ -1879,7 +1903,7 @@ async function searchYellowPages(type, city){
   const results=[];
   for(const kw of keywords){
     try{
-      const ypUrl=`https://www.yellowpages.com/search?search_terms=${encodeURIComponent(kw)}&geo_location_terms=${encodeURIComponent(city+', MI')}`;
+      const ypUrl=`https://www.yellowpages.com/search?search_terms=${encodeURIComponent(kw)}&geo_location_terms=${encodeURIComponent(city)}`;
       const proxy=`https://api.allorigins.win/raw?url=${encodeURIComponent(ypUrl)}`;
       const ctrl=new AbortController();
       const t=setTimeout(()=>ctrl.abort(),4000);
@@ -2022,7 +2046,7 @@ async function crossReferenceOne(l, city){
   // 1. Yelp business lookup by name
   if(!l._rating||l._reviews<10){
     try{
-      const yelpUrl=`https://www.yelp.com/search?find_desc=${nameEnc}&find_loc=${cityEnc}+MI`;
+      const yelpUrl=`https://www.yelp.com/search?find_desc=${nameEnc}&find_loc=${cityEnc}`;
       const html=await tryProxies(yelpUrl,4500);
       if(html){
         const doc=new DOMParser().parseFromString(html,'text/html');
@@ -2063,7 +2087,7 @@ async function crossReferenceOne(l, city){
   // 2. Yellow Pages lookup by name — get phone, category, years
   if(!l.phone||!l._ageYears){
     try{
-      const ypUrl=`https://www.yellowpages.com/search?search_terms=${nameEnc}&geo_location_terms=${cityEnc}+MI`;
+      const ypUrl=`https://www.yellowpages.com/search?search_terms=${nameEnc}&geo_location_terms=${cityEnc}`;
       const html=await tryProxies(ypUrl,4500);
       if(html){
         const doc=new DOMParser().parseFromString(html,'text/html');
@@ -2088,7 +2112,7 @@ async function crossReferenceOne(l, city){
   // 3. BBB lookup — accreditation + years in business
   if(!l._bbbVerified){
     try{
-      const bbbUrl=`https://www.bbb.org/search?find_text=${nameEnc}&find_loc=${cityEnc}+MI`;
+      const bbbUrl=`https://www.bbb.org/search?find_text=${nameEnc}&find_loc=${cityEnc}`;
       const html=await tryProxies(bbbUrl,4500);
       if(html){
         const doc=new DOMParser().parseFromString(html,'text/html');
