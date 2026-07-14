@@ -1574,13 +1574,20 @@ async function runLiveSearch(property, t0){
     .slice(0,60);
 
   // Hot-zone clustering: if 5+ same-type businesses exist near this property,
-  // that type is proven demand — boost all of them slightly
-  const typeCount=allLeads.filter(l=>(l._hint||l.name||'').toLowerCase().includes(
-    type==='medical'?'dent':type==='restaurant'?'restaur':type==='office'?'law':type==='retail'?'salon':type
-  )).length;
+  // that type is proven demand — boost ALL matching leads' scores by 3-5 pts
+  const hintKey=type==='medical'?'dent':type==='restaurant'?'restaur':type==='office'?'law':type==='retail'?'salon':type;
+  const typeCount=scored.filter(l=>(l._hint||l.name||'').toLowerCase().includes(hintKey)).length;
   if(typeCount>=5){
-    allLeads.forEach(l=>{if(!l._hotZone){l._hotZone=true;l.signals=l.signals||[];}});
-    console.log(`Hot zone detected: ${typeCount} ${type} businesses near property`);
+    scored.forEach(l=>{
+      if(!l._hotZone){
+        l._hotZone=true;
+        l._hotZoneCount=typeCount;
+        // Proven demand cluster: +4 pts, capped at 97
+        l.score=Math.min(97, l.score+4);
+        l._tier=l.score>=85?'hot':l.score>=65?'warm':'cold';
+      }
+    });
+    console.log(`🔥 Hot zone: ${typeCount} ${type} businesses → +4 score boost applied`);
   }
 
   // Clearbit: fill in missing websites for top leads (free, no key)
@@ -2929,6 +2936,7 @@ function renderCallList(leads){
     const sbaNote=l._sba504Monthly?` SBA 504: ~$${l._sba504Monthly.toLocaleString()}/mo, ~10% down.`:'';
     const opener=`"${ownerFirst} ... I'm [Broker], commercial real estate. I have a property built out specifically for ${txt2.includes('dental')?'dental practices':txt2.includes('restaurant')?'restaurants':txt2.includes('medical')||txt2.includes('clinic')?'medical offices':txt2.includes('law')?'law firms':'your type of business'} in ${city}.${leaseNote}${reviewNote}${sbaNote} Worth 2 minutes?"`;
     const sbaTag=l._sba504Monthly?`<div style="margin-top:5px;font-size:10px;color:#6EE7B7;background:#052e16;border:1px solid #166534;border-radius:4px;padding:3px 6px;display:inline-block;">💰 SBA 504: ~$${l._sba504Monthly.toLocaleString()}/mo · ~$${l._sba504Down?Math.round(l._sba504Down/1000)+'K':'—'} down</div>`:'';
+    const hotZoneTag=l._hotZone?`<div style="margin-top:5px;margin-left:6px;font-size:10px;color:#FDE68A;background:#451a03;border:1px solid #92400e;border-radius:4px;padding:3px 6px;display:inline-block;">🔥 Hot Zone · ${l._hotZoneCount}+ nearby</div>`:'';
 
     // Phone: tel: link so it actually dials on mobile + opens call script
     const phoneBtn=l.phone
@@ -2966,7 +2974,7 @@ function renderCallList(leads){
         <div style="font-size:10px;color:var(--text3);margin-top:3px;">📞 Best time: <span style="color:var(--text2);">${bestTime}</span></div>
         <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">${sigTags}</div>
         <div style="margin-top:7px;font-size:13px;color:var(--text2);line-height:1.5;border-left:2px solid ${isHot?'#7F1D1D':isWarm?'#78350F':'var(--border)'};padding-left:10px;">${buyReason}</div>
-        ${sbaTag}
+        <div style="display:flex;flex-wrap:wrap;align-items:center;">${sbaTag}${hotZoneTag}</div>
         <div style="margin-top:8px;font-size:11px;color:var(--text3);background:#ffffff06;border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-style:italic;">${opener}</div>
       </td>
       <td style="padding:12px 14px;vertical-align:top;text-align:center;width:150px;">
