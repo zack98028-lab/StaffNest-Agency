@@ -305,10 +305,11 @@ textarea{resize:vertical;}
       <div class="rstep" id="rs4"><div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Step 5</div>Draft Outreach</div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-bottom:10px;">
+    <div style="display:flex;gap:8px;margin-bottom:6px;">
       <input type="text" id="crexiUrl" placeholder="Paste Crexi listing URL to auto-import property details..." style="flex:1;" />
-      <button class="btn btn-ghost" onclick="fakeImport()">Import</button>
+      <button class="btn btn-ghost" onclick="fakeImport()">Import URL</button>
     </div>
+    <div id="importStatus" style="font-size:11px;color:var(--text3);margin-bottom:6px;min-height:14px;"></div>
     <textarea id="propertyAuto" rows="3" style="margin-bottom:14px;" placeholder="Or type the property details: type, sq ft, city, price, features...">8,500 sq ft office building, Ann Arbor Michigan, asking $1.2M, previously built out as a medical office, ample parking, near University of Michigan campus, built 2005, zoned B-2 commercial. Vacant and ready for immediate occupancy.</textarea>
     <div id="progWrap" class="hidden"><div class="prog-wrap"><div class="prog-fill" id="progFill" style="width:0%"></div></div></div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
@@ -2732,11 +2733,101 @@ function runDemo(){
   },steps.length*400+200);
 }
 
-function fakeImport(){
+async function fakeImport(){
   const url=document.getElementById('crexiUrl').value.trim();
-  if(!url)return;
-  const btn=event.target;btn.textContent='...';btn.disabled=true;
-  setTimeout(()=>{document.getElementById('propertyAuto').value='12,200 sq ft retail strip center, Ypsilanti Michigan, asking $2.1M. 5 units, 4 currently leased. Corner lot on Michigan Ave, 35,000 VPD traffic count, built 2001, zoned C-3. Cap rate 6.9%. Anchor tenant is auto parts store with 3 years remaining.';btn.textContent='Import URL';btn.disabled=false;},1400);
+  if(!url){alert('Paste a Crexi listing URL first.');return;}
+  const btn=event.target;
+  btn.textContent='Fetching...';btn.disabled=true;
+  const statusEl=document.getElementById('importStatus');
+  if(statusEl) statusEl.textContent='Pulling listing data...';
+
+  try {
+    const desc = await scrapeCrexi(url);
+    document.getElementById('propertyAuto').value = desc;
+    btn.textContent='Import URL';btn.disabled=false;
+    if(statusEl) statusEl.textContent='';
+    showToast('Property imported — review details then click Run Pipeline','#22c55e');
+  } catch(e) {
+    btn.textContent='Import URL';btn.disabled=false;
+    if(statusEl) statusEl.textContent='';
+    showToast('Could not auto-import — paste property details manually','#ef4444');
+    console.warn('Crexi import failed:',e);
+  }
+}
+
+async function scrapeCrexi(url){
+  // Try fetching via CORS proxies, then parse out key fields
+  const proxies=[
+    u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u=>`https://thingproxy.freeboard.io/fetch/${u}`,
+  ];
+  let html='';
+  for(const proxy of proxies){
+    try{
+      const r=await fetch(proxy(url),{signal:AbortSignal.timeout(8000)});
+      if(r.ok){ html=await r.text(); if(html.length>500) break; }
+    }catch(e){ continue; }
+  }
+  if(!html) throw new Error('All proxies failed');
+
+  // 1) Try __NEXT_DATA__ (Crexi is Next.js — richest source)
+  const nextMatch=html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+  if(nextMatch){
+    try{
+      const data=JSON.parse(nextMatch[1]);
+      const props=data?.props?.pageProps?.property||data?.props?.pageProps?.listing||
+                  data?.props?.pageProps?.data?.property||findDeep(data,'property')||{};
+      const parts=[];
+      const sf=props.buildingSize||props.squareFeet||props.buildingSF||props.size;
+      if(sf) parts.push(`${Number(sf).toLocaleString()} sq ft`);
+      const ptype=props.propertyType||props.type||props.assetType;
+      if(ptype) parts.push(ptype);
+      const addr=props.address||props.streetAddress||props.fullAddress||
+                 (props.city&&props.state?`${props.city}, ${props.state}`:'');
+      if(addr) parts.push(typeof addr==='object'?(addr.street||'')+' '+(addr.city||'')+' '+(addr.state||''):addr);
+      const price=props.askingPrice||props.price||props.listPrice;
+      if(price) parts.push(`asking $${(price/1e6).toFixed(2)}M`);
+      const cap=props.capRate||props.capRateActual;
+      if(cap) parts.push(`cap rate ${cap}%`);
+      const yr=props.yearBuilt||props.builtYear;
+      if(yr) parts.push(`built ${yr}`);
+      const desc2=props.description||props.remarks||'';
+      if(parts.length>=3) return parts.join(', ')+(desc2?'. '+desc2.slice(0,300):'');
+    }catch(e){}
+  }
+
+  // 2) Parse og: / meta tags
+  const ogDesc=(html.match(/<meta[^>]+property="og:description"[^>]+content="([^"]+)"/)||[])[1]||'';
+  const ogTitle=(html.match(/<meta[^>]+property="og:title"[^>]+content="([^"]+)"/)||[])[1]||'';
+  if(ogDesc&&ogDesc.length>40) return (ogTitle?ogTitle+' — ':'')+ogDesc;
+
+  // 3) Pull visible text chunks and assemble description
+  const stripped=html.replace(/<script[\s\S]*?<\/script>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ');
+  // Look for size, price, address patterns
+  const sfM=stripped.match(/(\d[\d,]+)\s*(?:sq\.?\s*ft|SF|square feet)/i);
+  const priceM2=stripped.match(/\$\s*([\d,.]+)\s*[MmKk]?\s*(?:asking|list|price|million)?/i);
+  const capM=stripped.match(/cap\s*rate[:\s]*([\d.]+)%/i);
+  const cityM=stripped.match(/([A-Z][a-z]+(?:\s[A-Z][a-z]+)*),\s*([A-Z]{2})\b/);
+  const parts2=[];
+  if(sfM) parts2.push(`${sfM[1]} sq ft`);
+  if(cityM) parts2.push(`${cityM[1]}, ${cityM[2]}`);
+  if(priceM2) parts2.push(`asking ${priceM2[0].trim()}`);
+  if(capM) parts2.push(`cap rate ${capM[1]}%`);
+  if(parts2.length>=2) return parts2.join(', ');
+
+  throw new Error('Could not parse listing');
+}
+
+// Helper: recursively find first object in nested JSON that has a given key
+function findDeep(obj,key,depth=0){
+  if(depth>6||!obj||typeof obj!=='object') return null;
+  if(obj[key]) return obj[key];
+  for(const v of Object.values(obj)){
+    const found=findDeep(v,key,depth+1);
+    if(found) return found;
+  }
+  return null;
 }
 
 async function runAuto(){
