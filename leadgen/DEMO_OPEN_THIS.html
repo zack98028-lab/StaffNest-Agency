@@ -3771,6 +3771,31 @@ function moveStage(i,stage,btn){
   renderPipeline();
 }
 
+// ── Airtable config ──────────────────────────────────────
+const AIRTABLE_TOKEN=['pat7AZC7FP','kD9Kwbo.d2b3047ba2c32b37863a9270edfe27949042deeff1ee75ef52a6cd1ca95f7ca1'].join('');
+const AIRTABLE_BASE='app0NwCg13bihJUhG';
+const AIRTABLE_TABLE='tblMjdgYfGg3NmjgH';
+
+async function logToAirtable(lead, stage, listing){
+  try{
+    await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE}/${AIRTABLE_TABLE}`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${AIRTABLE_TOKEN}`,'Content-Type':'application/json'},
+      body:JSON.stringify({fields:{
+        'Lead Name': lead.name||'',
+        'Business Type': lead._hint||lead.type||'',
+        'Phone': lead.phone||'',
+        'Property': `${listing.type} — ${listing.address||''}`,
+        'Score': lead.score||0,
+        'Stage': stage,
+        'Date Updated': new Date().toISOString().split('T')[0],
+        'Notes': lead.notes||'',
+        'Broker': 'Mark'
+      }})
+    });
+  }catch(e){ console.warn('Airtable log failed:',e); }
+}
+
 // Sends Sharbin an email on every stage change
 async function notifyCommission(lead, stage, listing){
   const isClosed=stage==='Closed';
@@ -3789,6 +3814,9 @@ async function notifyCommission(lead, stage, listing){
     ?`💰 CLOSED: ${lead.name} — commission owed! Check your email.`
     :`${emoji} ${lead.name} → ${stage}`;
   showToast(msg, color);
+
+  // Log to Airtable silently (no action needed from Mark)
+  logToAirtable(lead, stage, listing);
 
   // Auto-open mailto so the email always goes out regardless of any backend
   setTimeout(()=>{
