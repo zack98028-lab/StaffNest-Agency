@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- base wash -->
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#03180c"/>
+      <stop offset="42%"  stop-color="#062f17"/>
+      <stop offset="72%"  stop-color="#0a4022"/>
+      <stop offset="100%" stop-color="#04210f"/>
+    </linearGradient>
+
+    <!-- warm key light, upper right -->
+    <radialGradient id="key" cx="76%" cy="12%" r="62%">
+      <stop offset="0%"   stop-color="#a3e635" stop-opacity=".55"/>
+      <stop offset="35%"  stop-color="#22c55e" stop-opacity=".28"/>
+      <stop offset="100%" stop-color="#16a34a" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- cool fill, lower left -->
+    <radialGradient id="fill" cx="10%" cy="92%" r="66%">
+      <stop offset="0%"   stop-color="#10b981" stop-opacity=".34"/>
+      <stop offset="55%"  stop-color="#047857" stop-opacity=".16"/>
+      <stop offset="100%" stop-color="#065f46" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- soft blobs -->
+    <radialGradient id="b1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#4ade80" stop-opacity=".40"/>
+      <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="b2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#14532d" stop-opacity=".85"/>
+      <stop offset="100%" stop-color="#14532d" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="b3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#86efac" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#86efac" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- light shaft -->
+    <linearGradient id="shaft" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%"   stop-color="#d9f99d" stop-opacity=".16"/>
+      <stop offset="60%"  stop-color="#bbf7d0" stop-opacity=".05"/>
+      <stop offset="100%" stop-color="#bbf7d0" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="52"/>
+    </filter>
+    <filter id="softer" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="88"/>
+    </filter>
+
+    <!-- fine grain so it doesn't read as flat vector -->
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="7"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+
+    <!-- vignette -->
+    <radialGradient id="vig" cx="50%" cy="45%" r="78%">
+      <stop offset="55%"  stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity=".55"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#base)"/>
+
+  <!-- depth blobs -->
+  <g filter="url(#softer)">
+    <ellipse cx="1290" cy="150" rx="470" ry="330" fill="url(#b1)"/>
+    <ellipse cx="200"  cy="880" rx="520" ry="360" fill="url(#b2)"/>
+    <ellipse cx="820"  cy="480" rx="600" ry="300" fill="url(#b3)"/>
+  </g>
+  <g filter="url(#soft)">
+    <ellipse cx="1480" cy="640" rx="300" ry="240" fill="url(#b2)"/>
+    <ellipse cx="430"  cy="230" rx="330" ry="200" fill="url(#b1)" opacity=".55"/>
+  </g>
+
+  <!-- light shafts, angled like window light -->
+  <g opacity=".85">
+    <polygon points="980,-60 1230,-60 700,1060 470,1060"  fill="url(#shaft)"/>
+    <polygon points="1280,-60 1420,-60 940,1060 800,1060" fill="url(#shaft)" opacity=".7"/>
+    <polygon points="1520,-60 1600,-60 1180,1060 1090,1060" fill="url(#shaft)" opacity=".5"/>
+  </g>
+
+  <!-- lighting passes -->
+  <rect width="1600" height="1000" fill="url(#key)"/>
+  <rect width="1600" height="1000" fill="url(#fill)"/>
+
+  <!-- grain -->
+  <rect width="1600" height="1000" filter="url(#grain)" opacity=".045"/>
+
+  <!-- vignette -->
+  <rect width="1600" height="1000" fill="url(#vig)"/>
+</svg>

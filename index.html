@@ -174,12 +174,13 @@
     .hero-bg {
       position: absolute; inset: -30px;
       z-index: -2;
-      background-image: url('hero.jpg');
+      /* hero.svg ships with the site. Drop a hero.jpg in this folder
+         and the script below will swap to it automatically. */
+      background-image: url('hero.svg');
       background-size: cover;
       background-position: center 35%;
-      /* fallback gradient shows if hero.jpg is missing */
       background-color: #052e16;
-      filter: blur(14px) saturate(1.05);
+      filter: blur(7px) saturate(1.05);
       transform: scale(1.08);
       will-change: filter;
     }
@@ -199,7 +200,7 @@
     /* Dark scrim so text stays readable over any photo */
     .hero-scrim {
       position: absolute; inset: 0; z-index: -1;
-      background: linear-gradient(180deg, rgba(3,20,10,.80) 0%, rgba(3,24,12,.72) 45%, rgba(3,20,10,.88) 100%);
+      background: linear-gradient(180deg, rgba(3,20,10,.52) 0%, rgba(3,24,12,.38) 45%, rgba(3,20,10,.70) 100%);
     }
     @media (prefers-reduced-motion: reduce) {
       .hero-bg { filter: blur(0) !important; transform: scale(1); }
@@ -2196,15 +2197,14 @@
 
   // If hero.jpg is missing, fall back to the gradient
   var hasPhoto = true;
+  // hero.svg is the default. If a real hero.jpg exists, prefer it.
   var probe = new Image();
-  probe.onerror = function () {
-    hasPhoto = false;
-    bg.classList.add('no-photo');
-    bg.parentElement.classList.add('no-photo');
+  probe.onload = function () {
+    bg.style.backgroundImage = "url('hero.jpg')";
   };
   probe.src = 'hero.jpg';
 
-  var MAX_BLUR = 14;   // px at the very top
+  var MAX_BLUR = 7;    // px at the very top, sharpens to 0 on scroll
   var ticking = false;
 
   function update() {
