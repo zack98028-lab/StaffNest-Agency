@@ -27,7 +27,7 @@
     display:flex; align-items:center; gap:22px;
   }
   .brand{display:flex; align-items:center; gap:13px; text-decoration:none; color:#fff}
-  .brand-mark{flex-shrink:0}
+  .brand-mark{flex-shrink:0;border-radius:50%;background:#fff;object-fit:contain;padding:3px}
   .brand-txt .n{font-size:1.32rem; font-weight:800; letter-spacing:-.01em; line-height:1.1}
   .brand-txt .t{
     font-size:.62rem; font-weight:700; letter-spacing:.19em;
@@ -76,17 +76,33 @@
     flex:1; display:flex; flex-direction:column; align-items:center; gap:9px;
     position:relative; min-width:0;
   }
+  /* grey track sitting under everything */
   .tstep::before{
-    content:''; position:absolute; top:8px; left:-50%; width:100%; height:2px;
-    background:var(--mid); z-index:0;
+    content:''; position:absolute; top:8px; left:-50%; width:100%; height:2.5px;
+    background:var(--mid); z-index:0; border-radius:2px;
   }
-  .tstep:first-child::before{display:none}
-  .tstep.done::before,.tstep.current::before{background:var(--green)}
+  /* green fill that grows left-to-right as you advance, shrinks on Back */
+  .tstep::after{
+    content:''; position:absolute; top:8px; left:-50%; width:0; height:2.5px;
+    background:var(--green); z-index:0; border-radius:2px;
+    transition:width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .tstep:first-child::before,.tstep:first-child::after{display:none}
+  .tstep.done::after,.tstep.current::after{width:100%}
+
   .tdot{
     width:18px;height:18px;border-radius:50%;border:2.5px solid #cfd6d1;background:#fff;
-    position:relative;z-index:1;flex-shrink:0;transition:all .25s;
+    position:relative;z-index:1;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .3s, border-color .3s, box-shadow .3s;
   }
   .tstep.done .tdot{background:var(--green);border-color:var(--green)}
+  /* checkmark appears only on completed steps */
+  .tstep.done .tdot::after{
+    content:'✓'; color:#fff; font-size:10.5px; font-weight:900; line-height:1;
+    animation:pop .28s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
   .tstep.current .tdot{background:var(--green);border-color:var(--green);box-shadow:0 0 0 5px rgba(22,163,74,.16)}
   .tlabel{font-size:.76rem;font-weight:700;color:#9aa39c;text-align:center;line-height:1.25}
   .tstep.done .tlabel{color:#4b5563}
@@ -99,7 +115,7 @@
   }
   main::before{
     content:''; position:absolute; inset:0; pointer-events:none; opacity:.5;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='190' viewBox='0 0 190 190'%3E%3Cg fill='none' stroke='%23c8d6cb' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M30 34 q11 -15 22 0 q-11 13 -22 0z'/%3E%3Cpath d='M41 34 v13'/%3E%3Ccircle cx='138' cy='28' r='7'/%3E%3Cpath d='M118 96 q10 -13 20 0 q-10 12 -20 0z'/%3E%3Cpath d='M128 96 v12'/%3E%3Cpath d='M24 128 q7 -9 14 0 q-7 8 -14 0z'/%3E%3Cpath d='M150 150 q9 -12 18 0 q-9 11 -18 0z'/%3E%3Cpath d='M159 150 v11'/%3E%3Ccircle cx='72' cy='163' r='5.5'/%3E%3Cpath d='M62 66 h16 M66 74 h12'/%3E%3Cpath d='M150 108 h14 M153 115 h9'/%3E%3Ccircle cx='95' cy='45' r='4'/%3E%3C/g%3E%3C/svg%3E");
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cg fill='none' stroke='%23c5d4c8' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M34 52 q13 -17 26 0 q-13 15 -26 0z'/%3E%3Cpath d='M47 52 v15'/%3E%3Cpath d='M196 40 a13 13 0 0 1 25 -4 a10 10 0 0 1 13 12 h-42 a11 11 0 0 1 4 -8z'/%3E%3Ccircle cx='128' cy='34' r='7'/%3E%3Cpath d='M252 96 q11 -14 22 0 q-11 13 -22 0z'/%3E%3Cpath d='M263 96 v13'/%3E%3Cpath d='M96 108 h18 M100 116 h11'/%3E%3Cpath d='M28 148 a11 11 0 0 1 21 -3 a8 8 0 0 1 11 10 h-35 a9 9 0 0 1 3 -7z'/%3E%3Cpath d='M170 132 l5 -11 l5 11 l11 5 l-11 5 l-5 11 l-5 -11 l-11 -5z'/%3E%3Ccircle cx='276' cy='168' r='5'/%3E%3Cpath d='M118 188 q12 -16 24 0 q-12 14 -24 0z'/%3E%3Cpath d='M130 188 v14'/%3E%3Cpath d='M212 208 h16 M216 216 h9'/%3E%3Cpath d='M46 224 a12 12 0 0 1 23 -3 a9 9 0 0 1 12 11 h-38 a10 10 0 0 1 3 -8z'/%3E%3Ccircle cx='168' cy='262' r='6.5'/%3E%3Cpath d='M258 252 q10 -13 20 0 q-10 12 -20 0z'/%3E%3Cpath d='M268 252 v12'/%3E%3Cpath d='M74 278 l4 -9 l4 9 l9 4 l-9 4 l-4 9 l-4 -9 l-9 -4z'/%3E%3Ccircle cx='224' cy='128' r='3.5'/%3E%3Ccircle cx='62' cy='96' r='3'/%3E%3Cpath d='M148 76 h13 M151 83 h8'/%3E%3C/g%3E%3C/svg%3E");
   }
   .card{position:relative; z-index:1; width:100%; max-width:620px; text-align:center}
 
@@ -144,6 +160,15 @@
   }
   .back:hover{color:var(--navy)}
   .err{color:#c2410c;font-size:.95rem;margin-top:18px;min-height:1.2em}
+  .hint{
+    text-align:left;font-size:.86rem;color:var(--muted);line-height:1.55;margin-top:11px;
+  }
+  /* conditional reveals */
+  .reveal{
+    max-height:0;overflow:hidden;opacity:0;
+    transition:max-height .4s ease,opacity .3s ease,margin .3s ease;
+  }
+  .reveal.on{max-height:260px;opacity:1;margin-top:32px}
 
   /* option grids */
   .opts{display:grid;grid-template-columns:1fr 1fr;gap:11px;text-align:left}
@@ -161,6 +186,7 @@
   }
   .opt.sel .tick{background:var(--green);border-color:var(--green)}
   .opts.solo{grid-template-columns:1fr 1fr 1fr}
+  .opts.solo.two{grid-template-columns:1fr 1fr}
   .opts.solo .opt{flex-direction:column;text-align:center;gap:5px;padding:22px 14px}
   .opts.solo .opt b{font-size:1.32rem;font-weight:900;color:var(--navy)}
   .opts.solo .opt span{font-size:.82rem;color:var(--muted);font-weight:500}
@@ -202,13 +228,7 @@
 <header>
   <div class="head-in">
     <a class="brand" href="index.html">
-      <svg class="brand-mark" width="42" height="42" viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="32" cy="32" r="29" fill="#fff"/>
-        <g fill="none" stroke="#052e16" stroke-width="3.2" stroke-linecap="round">
-          <path d="M17 39 Q32 53 47 39"/><path d="M23 39 Q32 47 41 39"/>
-        </g>
-        <path d="M32 15 L41 30 L32 25.5 L23 30 Z" fill="#16a34a"/>
-      </svg>
+      <img class="brand-mark" src="IMG_1181.png" alt="ServiceNest Staffing" width="46" height="46">
       <span class="brand-txt">
         <span class="n">ServiceNest</span>
         <span class="t">Staffing</span>
@@ -237,9 +257,9 @@
 <div class="track">
   <div class="track-in" id="track">
     <div class="tstep current" data-p="0"><span class="tdot"></span><span class="tlabel">Your details</span></div>
-    <div class="tstep" data-p="1"><span class="tdot"></span><span class="tlabel">Your needs</span></div>
-    <div class="tstep" data-p="2"><span class="tdot"></span><span class="tlabel">Schedule</span></div>
-    <div class="tstep" data-p="3"><span class="tdot"></span><span class="tlabel">Timeline</span></div>
+    <div class="tstep" data-p="1"><span class="tdot"></span><span class="tlabel">What you need</span></div>
+    <div class="tstep" data-p="2"><span class="tdot"></span><span class="tlabel">Hours</span></div>
+    <div class="tstep" data-p="3"><span class="tdot"></span><span class="tlabel">Start date</span></div>
     <div class="tstep" data-p="4"><span class="tdot"></span><span class="tlabel">Finish</span></div>
   </div>
 </div>
@@ -296,7 +316,7 @@
 
   <!-- 5 SERVICES -->
   <section class="step" data-phase="1" id="s5">
-    <div class="eyebrow">Your Needs</div>
+    <div class="eyebrow">What You Need</div>
     <h1>What kind of help do you need?</h1>
     <p class="sub">Select everything that applies. Most owners pick two or three.</p>
     <div class="opts" id="svcGrid">
@@ -309,8 +329,15 @@
       <div class="opt" onclick="pick(this)"><span class="tick">✓</span> CRM &amp; data entry</div>
       <div class="opt" onclick="pick(this)"><span class="tick">✓</span> Social media</div>
       <div class="opt" onclick="pick(this)"><span class="tick">✓</span> Cold outreach</div>
-      <div class="opt" onclick="pick(this)"><span class="tick">✓</span> Something else</div>
+      <div class="opt" id="optOther" onclick="pick(this);toggleOther()"><span class="tick">✓</span> Something else</div>
     </div>
+
+    <div class="reveal" id="otherWrap">
+      <label class="fl" for="qOther">Tell us what you need — be specific</label>
+      <input class="fi" id="qOther" type="text" placeholder="e.g. Editing our YouTube videos, bookkeeping in QuickBooks, managing our Amazon listings">
+      <p class="hint">The more specific you are, the better we can match. "Admin help" tells us nothing — "chasing down unpaid invoices and updating our CRM" tells us exactly who to look for.</p>
+    </div>
+
     <button class="btn" onclick="nextSvc()">Continue</button>
     <button class="back" onclick="back()">← Back</button>
     <p class="err" id="e5"></p>
@@ -318,16 +345,26 @@
 
   <!-- 6 HOURS -->
   <section class="step" data-phase="2" id="s6">
-    <div class="eyebrow">Schedule</div>
+    <div class="eyebrow">Hours</div>
     <h1>How many hours a week?</h1>
     <p class="sub">You can change this later — nothing is locked in.</p>
     <div class="opts solo" id="hrGrid">
-      <div class="opt" onclick="one(this,'hrGrid')"><b>20 hrs</b><span>per week</span></div>
-      <div class="opt" onclick="one(this,'hrGrid')"><b>40 hrs</b><span>per week</span></div>
-      <div class="opt" onclick="one(this,'hrGrid')"><b>Custom</b><span>you decide</span></div>
+      <div class="opt" onclick="pickHours(this,'20')"><b>20 hrs</b><span>per week</span></div>
+      <div class="opt" onclick="pickHours(this,'40')"><b>40 hrs</b><span>per week</span></div>
+      <div class="opt" onclick="pickHours(this,'custom')"><b>Custom</b><span>you decide</span></div>
     </div>
-    <label class="fl" for="qSchedule" style="margin-top:30px">What hours, roughly?</label>
-    <input class="fi" id="qSchedule" type="text" placeholder="e.g. Mon–Fri 9am–5pm EST">
+
+    <div class="reveal" id="customWrap">
+      <label class="fl" for="qCustomHrs">How many hours per week?</label>
+      <input class="fi" id="qCustomHrs" type="text" inputmode="numeric" placeholder="e.g. 15">
+    </div>
+
+    <div class="reveal" id="schedWrap">
+      <label class="fl" for="qSchedule">What hours, roughly?</label>
+      <input class="fi" id="qSchedule" type="text" placeholder="e.g. Mon–Fri 9am–5pm EST">
+      <p class="hint">Include your time zone so we match someone who can actually cover it.</p>
+    </div>
+
     <button class="btn" onclick="nextHrs()">Continue</button>
     <button class="back" onclick="back()">← Back</button>
     <p class="err" id="e6"></p>
@@ -335,13 +372,12 @@
 
   <!-- 7 TIMELINE -->
   <section class="step" data-phase="3" id="s7">
-    <div class="eyebrow">Timeline</div>
+    <div class="eyebrow">Start Date</div>
     <h1>When do you want them to start?</h1>
     <p class="sub">We can usually have someone working within a week.</p>
-    <div class="opts solo" id="whenGrid">
+    <div class="opts solo two" id="whenGrid">
       <div class="opt" onclick="one(this,'whenGrid')"><b>ASAP</b><span>this week</span></div>
-      <div class="opt" onclick="one(this,'whenGrid')"><b>2 Weeks</b><span>soon</span></div>
-      <div class="opt" onclick="one(this,'whenGrid')"><b>Exploring</b><span>no rush</span></div>
+      <div class="opt" onclick="one(this,'whenGrid')"><b>1–2 Weeks</b><span>soon</span></div>
     </div>
     <label class="fl" for="qCount" style="margin-top:30px">How many VAs do you need?</label>
     <input class="fi" id="qCount" type="text" placeholder="e.g. 1 to start">
@@ -355,7 +391,7 @@
     <div class="eyebrow">Last One</div>
     <h1>Anything specific we should know?</h1>
     <p class="sub">Optional, but the more you tell us the better we match. Software you use, industry experience, language, personality.</p>
-    <textarea class="fi" id="qSpecial" placeholder="e.g. Must know BookingKoala and HouseCall Pro, has worked in home services before, great on the phone, available 8am–5pm EST..."></textarea>
+    <textarea class="fi" id="qSpecial" placeholder="e.g. Needs to be comfortable on the phone with customers, experience with our CRM, strong written English, has worked with US clients before..."></textarea>
     <button class="btn" id="submitBtn" onclick="submitQuiz()">Get My VA Matches →</button>
     <button class="back" onclick="back()">← Back</button>
     <p class="err" id="e8"></p>
@@ -368,8 +404,8 @@
       <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <h1>You're all set.</h1>
-    <p class="sub">We've got everything we need. Sharbin will reach out shortly with two or three candidate profiles, resumes and voice memos included.</p>
-    <a class="btn" href="tel:+17343065475" style="text-decoration:none;line-height:1.2">Or call now: (734) 306-5475</a>
+    <p class="sub">We've got everything we need. ServiceNest Staffing will give you a call shortly to go over candidate profiles, resumes and voice memos included.</p>
+    <a class="btn" href="tel:+17343065475" style="text-decoration:none;line-height:1.2">(734) 306-5475</a>
     <button class="back" onclick="location.href='index.html'">← Back to home</button>
   </section>
 
@@ -430,15 +466,43 @@
     el.classList.add('sel');
   }
 
+  /* "Something else" reveals a free-text box */
+  function toggleOther(){
+    var on = document.getElementById('optOther').classList.contains('sel');
+    document.getElementById('otherWrap').classList.toggle('on', on);
+    if(on) setTimeout(function(){document.getElementById('qOther').focus()},220);
+  }
+
+  /* Hours: pick first, then the schedule field appears.
+     Custom also reveals a number box. */
+  var hoursChoice = '';
+  function pickHours(el, val){
+    one(el,'hrGrid');
+    hoursChoice = val;
+    document.getElementById('customWrap').classList.toggle('on', val === 'custom');
+    document.getElementById('schedWrap').classList.add('on');
+    var focusId = val === 'custom' ? 'qCustomHrs' : 'qSchedule';
+    setTimeout(function(){document.getElementById(focusId).focus()},260);
+  }
+
   function nextSvc(){
     if(!document.querySelectorAll('#svcGrid .opt.sel').length){
       document.getElementById('e5').textContent = 'Pick at least one so we know what to look for.'; return
+    }
+    if(document.getElementById('optOther').classList.contains('sel')
+       && !document.getElementById('qOther').value.trim()){
+      document.getElementById('e5').textContent = 'You picked "Something else" — tell us what it is.';
+      document.getElementById('qOther').focus(); return
     }
     clearErr(); show(at+1);
   }
   function nextHrs(){
     if(!document.querySelectorAll('#hrGrid .opt.sel').length){
       document.getElementById('e6').textContent = 'How many hours a week were you thinking?'; return
+    }
+    if(hoursChoice === 'custom' && !document.getElementById('qCustomHrs').value.trim()){
+      document.getElementById('e6').textContent = 'Roughly how many hours per week?';
+      document.getElementById('qCustomHrs').focus(); return
     }
     clearErr(); show(at+1);
   }
@@ -466,7 +530,10 @@
       Email: document.getElementById('qEmail').value.trim(),
       Business: document.getElementById('qBusiness').value.trim(),
       'Help Needed': selText('#svcGrid .opt.sel'),
-      'Hours Per Week': selText('#hrGrid .opt.sel'),
+      'Other / Specifics': document.getElementById('qOther').value.trim() || 'n/a',
+      'Hours Per Week': hoursChoice === 'custom'
+        ? (document.getElementById('qCustomHrs').value.trim() + ' hrs/week (custom)')
+        : selText('#hrGrid .opt.sel'),
       'Preferred Schedule': document.getElementById('qSchedule').value.trim() || 'Not specified',
       'Start Timeline': selText('#whenGrid .opt.sel'),
       'How Many VAs': document.getElementById('qCount').value.trim() || 'Not specified',
