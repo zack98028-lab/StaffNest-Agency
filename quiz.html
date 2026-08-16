@@ -221,6 +221,15 @@
     .opts.solo .opt b{font-size:1.1rem}
     main{padding:34px 18px 54px}
     .foot-in{justify-content:center;text-align:center}
+    /* iPhone: readable floor + real tap targets */
+    .opt{min-height:56px;font-size:1rem}
+    .btn{min-height:56px;font-size:1.05rem}
+    .back{min-height:44px}
+    .menu a{min-height:48px;display:flex;align-items:center}
+    .foot-in,.foot-in *{font-size:12.5px}
+    .hint{font-size:.88rem}
+    /* iOS zooms any input under 16px on focus - keep them at/above it */
+    input.fi,textarea.fi{font-size:16px}
   }
 </style>
 </head>

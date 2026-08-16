@@ -926,6 +926,38 @@
     @media (max-width: 960px) {
       .ind-grid { grid-template-columns: repeat(2,1fr); }
     }
+    /* ══ iPHONE / SMALL SCREEN PASS ═══════════════════════════════
+       Raises the readable-text floor and makes every link a real
+       tap target (Apple HIG asks for ~44px). Layout untouched.      */
+    @media (max-width: 640px) {
+      /* nothing smaller than ~11.5px on a phone */
+      .top-bar, .top-bar * { font-size: 11.5px !important; line-height: 1.5 }
+      .logo-sub { font-size: 10.5px !important; letter-spacing: .08em !important }
+      .section-label { font-size: 12px !important }
+      .ind-pill { font-size: 12px !important; padding: 8px 14px !important }
+      .hero-trust p, .stat-item span { font-size: 12px !important; line-height: 1.5 }
+      .ind-slim p, .ind-mini p { font-size: 13px !important }
+      .cta-sub, .comparison-table td, .comparison-table th { font-size: 12.5px !important }
+      footer, footer * { font-size: 12.5px !important }
+
+      /* real tap targets */
+      header nav a,
+      .mobile-menu a,
+      footer a,
+      .phone-big a,
+      .top-bar a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      .ind-slim, .ind-mini, .ind-card { min-height: 88px }
+
+      /* buttons never get cramped */
+      .btn, .hero-btn, .quiz-next-btn { min-height: 50px; padding: 15px 26px }
+
+      /* stop long emails/numbers from forcing width */
+      a[href^="mailto:"], a[href^="tel:"] { word-break: break-word }
+    }
   </style>
 </head>
 <body>
