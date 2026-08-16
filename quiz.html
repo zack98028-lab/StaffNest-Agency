@@ -571,6 +571,12 @@
   }
 
   function done(){
+    /* Google Ads conversion — fires only on a completed quiz submission,
+       not on page load, so every counted conversion is a real lead. */
+    if (typeof gtag === 'function') {
+      gtag('event', 'ads_conversion_Submit_lead_form_1', {});
+    }
+
     document.querySelectorAll('.step').forEach(function(s){s.classList.remove('on')});
     document.getElementById('sDone').classList.add('on');
     syncTrack(4);
