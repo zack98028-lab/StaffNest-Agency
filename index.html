@@ -926,46 +926,64 @@
     @media (max-width: 960px) {
       .ind-grid { grid-template-columns: repeat(2,1fr); }
     }
-    /* ══ THE PROCESS — vertical timeline ══════════════════════════ */
-    .proc { max-width: 760px; margin: 8px auto 0; }
-    .proc-step {
-      position: relative; display: flex; gap: 26px; align-items: flex-start;
-      padding-bottom: 38px;
+    /* ══ THE PROCESS — light cards on deep green ═══════════════════ */
+    .how-it-works { background: #052e16 !important; }
+    .how-it-works .section-label { color: #86efac !important }
+    .how-it-works .section-title { color: #fff !important }
+    .how-it-works .section-sub { color: rgba(255,255,255,.72) !important }
+    .how-it-works .section-header { text-align: center }
+
+    .proc {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 24px; margin-top: 46px;
     }
-    /* connecting line down through the numbers */
-    .proc-step::before {
-      content: ''; position: absolute; left: 27px; top: 62px; bottom: -6px;
-      width: 2px; background: linear-gradient(#bbf7d0, #d9efe0);
+    .proc-card {
+      flex: 0 1 316px; background: #fbf9f4; border-radius: 6px;
+      padding: 44px 32px 40px; text-align: center;
+      transition: transform .2s, box-shadow .2s; cursor: default;
     }
-    .proc-step:last-child { padding-bottom: 0 }
-    .proc-step:last-child::before { display: none }
+    .proc-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,.22) }
     .proc-num {
-      flex-shrink: 0; width: 56px; height: 56px; border-radius: 16px;
-      background: #052e16; color: #fff; font-weight: 900; font-size: 1.12rem;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; z-index: 1; letter-spacing: .02em;
-      box-shadow: 0 6px 18px rgba(5,46,22,.16);
+      font-size: 3.15rem; font-weight: 900; color: #14261a;
+      letter-spacing: -.03em; line-height: 1; margin-bottom: 22px;
     }
-    .proc-step:nth-child(2) .proc-num { background: #16a34a }
-    .proc-body { padding-top: 5px }
-    .proc-body h3 {
-      font-size: 1.24rem; color: var(--navy); font-weight: 800;
-      margin-bottom: 8px; letter-spacing: -.01em;
+    .proc-num span { color: #16a34a }
+    .proc-card h3 {
+      font-size: 1.13rem; font-weight: 800; color: #14261a;
+      text-transform: uppercase; letter-spacing: .045em; margin-bottom: 14px;
     }
-    .proc-body p { color: var(--muted); font-size: 1rem; line-height: 1.68; max-width: 52em }
+    .proc-card p { font-size: .93rem; color: #5b6b60; line-height: 1.68 }
     .proc-flag {
-      display: inline-block; margin-top: 12px; background: #f0fdf4;
-      border: 1px solid #bbf7d0; color: #15803d; border-radius: 100px;
-      padding: 5px 14px; font-size: .78rem; font-weight: 800;
-      letter-spacing: .03em; text-transform: uppercase;
+      display: inline-block; margin-top: 15px; background: #052e16;
+      color: #86efac; border-radius: 100px; padding: 6px 15px;
+      font-size: .68rem; font-weight: 800; letter-spacing: .07em;
+      text-transform: uppercase;
     }
+    .how-it-works .process-note {
+      background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.16);
+      color: rgba(255,255,255,.78); margin-top: 46px;
+    }
+    .how-it-works .process-note strong { color: #fff }
     @media (max-width: 560px) {
-      .proc-step { gap: 17px; padding-bottom: 30px }
-      .proc-step::before { left: 22px; top: 52px }
-      .proc-num { width: 46px; height: 46px; border-radius: 13px; font-size: .98rem }
-      .proc-body h3 { font-size: 1.08rem }
-      .proc-body p { font-size: .95rem }
+      .proc-card { flex: 1 1 100%; padding: 34px 24px 30px }
+      .proc-num { font-size: 2.7rem; margin-bottom: 16px }
     }
+
+    /* ══ CTA BANNER — real photo behind it ════════════════════════ */
+    .cta-banner {
+      position: relative; overflow: hidden;
+      background: #04240f !important;
+    }
+    .cta-banner::before {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: url('hero.jpg') center 40%/cover no-repeat;
+      transform: scaleX(-1);
+    }
+    .cta-banner::after {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(90deg, rgba(3,22,11,.92) 0%, rgba(4,30,15,.76) 50%, rgba(3,22,11,.90) 100%);
+    }
+    .cta-banner > * { position: relative; z-index: 1 }
 
     /* ══ iPHONE / SMALL SCREEN PASS ═══════════════════════════════
        Raises the readable-text floor and makes every link a real
@@ -1377,41 +1395,31 @@
       <p class="section-sub">We do the sourcing and vetting. You stay in control of who actually joins your team.</p>
     </div>
     <div class="proc">
-      <div class="proc-step">
-        <div class="proc-num">01</div>
-        <div class="proc-body">
-          <h3>Tell Us What You Need</h3>
-          <p>Take the two-minute quiz or give us a call. Tell us the tasks, the hours, and anything specific to your industry.</p>
-        </div>
+      <div class="proc-card">
+        <div class="proc-num">01<span>.</span></div>
+        <h3>Tell Us What You Need</h3>
+        <p>Take the two-minute quiz or give us a call. Tell us the tasks, the hours, and anything specific to your industry.</p>
       </div>
-      <div class="proc-step">
-        <div class="proc-num">02</div>
-        <div class="proc-body">
-          <h3>We Send Candidates</h3>
-          <p>You get resumes <em>and</em> voice memos from each candidate, so you hear how they actually sound before you spend a minute on a call.</p>
-          <span class="proc-flag">Most agencies don't do this</span>
-        </div>
+      <div class="proc-card">
+        <div class="proc-num">02<span>.</span></div>
+        <h3>We Send Candidates</h3>
+        <p>You get resumes <em>and</em> voice memos from each candidate, so you hear how they actually sound before you spend a minute on a call.</p>
+        <span class="proc-flag">Most agencies don't do this</span>
       </div>
-      <div class="proc-step">
-        <div class="proc-num">03</div>
-        <div class="proc-body">
-          <h3>You Choose Who to Meet</h3>
-          <p>Pick only the candidates you want to interview. If none of them feel right, we go back and find you more.</p>
-        </div>
+      <div class="proc-card">
+        <div class="proc-num">03<span>.</span></div>
+        <h3>You Choose Who to Meet</h3>
+        <p>Pick only the candidates you want to interview. If none of them feel right, we go back and find you more.</p>
       </div>
-      <div class="proc-step">
-        <div class="proc-num">04</div>
-        <div class="proc-body">
-          <h3>Interview and Hire</h3>
-          <p>You run the interview and make the call. When you find the right fit, we handle the contract and onboarding.</p>
-        </div>
+      <div class="proc-card">
+        <div class="proc-num">04<span>.</span></div>
+        <h3>Interview and Hire</h3>
+        <p>You run the interview and make the call. When you find the right fit, we handle the contract and onboarding.</p>
       </div>
-      <div class="proc-step">
-        <div class="proc-num">05</div>
-        <div class="proc-body">
-          <h3>They Start, We Stay On It</h3>
-          <p>Your VA gets to work and we keep managing them behind the scenes — time tracking, check-ins, and performance. If it stops working, we replace them free.</p>
-        </div>
+      <div class="proc-card">
+        <div class="proc-num">05<span>.</span></div>
+        <h3>They Start, We Stay On It</h3>
+        <p>Your VA gets to work and we keep managing them behind the scenes — time tracking, check-ins, and performance. If it stops working, we replace them free.</p>
       </div>
     </div>
 
@@ -1448,7 +1456,7 @@
           <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> We handle all re-screening and matching</li>
           <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Clear, simple agreement — no surprises</li>
         </ul>
-        <button onclick="openModal()" class="btn btn-secondary">Get Started</button>
+        <button onclick="openModal()" class="btn btn-secondary">Show Me Candidates</button>
         <p class="guarantee-fine">Clear terms, fair pricing — we earn your trust by delivering results.</p>
       </div>
     </div>
@@ -1595,7 +1603,7 @@
           <li><a href="#how-it-works">How It Works</a></li>
           <li><a href="#industries">VA Services</a></li>
           <li><a href="#pricing">Pricing</a></li>
-          <li><a href="#" onclick="openModal()">Get Started</a></li>
+          <li><a href="#" onclick="openModal()">Get Matched</a></li>
           <li><a href="#testimonials">Client Reviews</a></li>
         </ul>
       </div>
@@ -2475,7 +2483,7 @@
     var hero = bg.parentElement;
     var h = hero.offsetHeight || 1;
     // fully sharp by the time you've scrolled 55% of the hero
-    var progress = Math.min(window.scrollY / (h * 0.78), 1);
+    var progress = Math.min(window.scrollY / (h * 0.32), 1);
     var blur = MAX_BLUR * (1 - progress);
     bg.style.filter = 'blur(' + blur.toFixed(2) + 'px) saturate(1.05)';
     bg.style.transform = 'scale(' + (1.08 - 0.08 * progress).toFixed(4) + ')';
