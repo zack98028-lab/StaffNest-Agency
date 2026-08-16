@@ -926,6 +926,47 @@
     @media (max-width: 960px) {
       .ind-grid { grid-template-columns: repeat(2,1fr); }
     }
+    /* ══ THE PROCESS — vertical timeline ══════════════════════════ */
+    .proc { max-width: 760px; margin: 8px auto 0; }
+    .proc-step {
+      position: relative; display: flex; gap: 26px; align-items: flex-start;
+      padding-bottom: 38px;
+    }
+    /* connecting line down through the numbers */
+    .proc-step::before {
+      content: ''; position: absolute; left: 27px; top: 62px; bottom: -6px;
+      width: 2px; background: linear-gradient(#bbf7d0, #d9efe0);
+    }
+    .proc-step:last-child { padding-bottom: 0 }
+    .proc-step:last-child::before { display: none }
+    .proc-num {
+      flex-shrink: 0; width: 56px; height: 56px; border-radius: 16px;
+      background: #052e16; color: #fff; font-weight: 900; font-size: 1.12rem;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1; letter-spacing: .02em;
+      box-shadow: 0 6px 18px rgba(5,46,22,.16);
+    }
+    .proc-step:nth-child(2) .proc-num { background: #16a34a }
+    .proc-body { padding-top: 5px }
+    .proc-body h3 {
+      font-size: 1.24rem; color: var(--navy); font-weight: 800;
+      margin-bottom: 8px; letter-spacing: -.01em;
+    }
+    .proc-body p { color: var(--muted); font-size: 1rem; line-height: 1.68; max-width: 52em }
+    .proc-flag {
+      display: inline-block; margin-top: 12px; background: #f0fdf4;
+      border: 1px solid #bbf7d0; color: #15803d; border-radius: 100px;
+      padding: 5px 14px; font-size: .78rem; font-weight: 800;
+      letter-spacing: .03em; text-transform: uppercase;
+    }
+    @media (max-width: 560px) {
+      .proc-step { gap: 17px; padding-bottom: 30px }
+      .proc-step::before { left: 22px; top: 52px }
+      .proc-num { width: 46px; height: 46px; border-radius: 13px; font-size: .98rem }
+      .proc-body h3 { font-size: 1.08rem }
+      .proc-body p { font-size: .95rem }
+    }
+
     /* ══ iPHONE / SMALL SCREEN PASS ═══════════════════════════════
        Raises the readable-text floor and makes every link a real
        tap target (Apple HIG asks for ~44px). Layout untouched.      */
@@ -965,11 +1006,11 @@
 <!-- ── TOP BAR ───────────────────────────────────────────────────── -->
 <div class="top-bar">
   <div class="container">
-    <strong>Starting at $6/hr</strong> — No staffing fees, ever &nbsp;<span>|</span>&nbsp;
-    Speak with a staffing expert:&nbsp;
+    <strong>Starting at $6/hr</strong><span class="tb-full"> — No staffing fees, ever</span> &nbsp;<span>|</span>&nbsp;
+    <span class="tb-full">Speak with a staffing expert:&nbsp;</span>
     <a href="tel:+17343065475">(734) 306-5475</a>
-    <span>|</span>
-    Mon–Fri 9am–9pm EST
+    <span class="tb-full"><span>|</span>
+    Mon–Fri 9am–9pm EST</span>
   </div>
 </div>
 
@@ -1271,7 +1312,7 @@
     </div>
     <div style="text-align:center;margin-top:32px">
       <p style="color:var(--muted);font-size:.9rem;margin-bottom:16px">If your business can delegate work remotely, we can find you the right VA.</p>
-      <button class="btn btn-secondary" onclick="openModal()">Get Started</button>
+      <button class="btn btn-secondary" onclick="openModal()">See If We're a Fit</button>
     </div>
   </div>
 </section>
@@ -1321,7 +1362,7 @@
         </tbody>
       </table>
       <div style="text-align:center;margin-top:32px">
-        <button class="btn btn-secondary" onclick="openModal()">Get Started</button>
+        <button class="btn btn-secondary" onclick="openModal()">Find Me a VA</button>
       </div>
     </div>
   </div>
@@ -1335,31 +1376,42 @@
       <h2 class="section-title">The Process</h2>
       <p class="section-sub">We do the sourcing and vetting. You stay in control of who actually joins your team.</p>
     </div>
-    <div class="steps-grid steps-5">
-      <div class="step-card">
-        <div class="step-number">01</div>
-        <h3>Tell Us What You Need</h3>
-        <p>Take the two-minute quiz or give us a call. Tell us the tasks, the hours, and anything specific to your industry.</p>
+    <div class="proc">
+      <div class="proc-step">
+        <div class="proc-num">01</div>
+        <div class="proc-body">
+          <h3>Tell Us What You Need</h3>
+          <p>Take the two-minute quiz or give us a call. Tell us the tasks, the hours, and anything specific to your industry.</p>
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-number">02</div>
-        <h3>We Send Candidates</h3>
-        <p>You get resumes <em>and</em> voice memos from each candidate, so you hear how they actually sound before you spend a minute on a call.</p>
+      <div class="proc-step">
+        <div class="proc-num">02</div>
+        <div class="proc-body">
+          <h3>We Send Candidates</h3>
+          <p>You get resumes <em>and</em> voice memos from each candidate, so you hear how they actually sound before you spend a minute on a call.</p>
+          <span class="proc-flag">Most agencies don't do this</span>
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-number">03</div>
-        <h3>You Choose Who to Meet</h3>
-        <p>Pick only the candidates you want to interview. If none of them feel right, we go back and find you more.</p>
+      <div class="proc-step">
+        <div class="proc-num">03</div>
+        <div class="proc-body">
+          <h3>You Choose Who to Meet</h3>
+          <p>Pick only the candidates you want to interview. If none of them feel right, we go back and find you more.</p>
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-number">04</div>
-        <h3>Interview and Hire</h3>
-        <p>You run the interview and make the call. When you find the right fit, we handle the contract and onboarding.</p>
+      <div class="proc-step">
+        <div class="proc-num">04</div>
+        <div class="proc-body">
+          <h3>Interview and Hire</h3>
+          <p>You run the interview and make the call. When you find the right fit, we handle the contract and onboarding.</p>
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-number">05</div>
-        <h3>They Start, We Stay On It</h3>
-        <p>Your VA gets to work and we keep managing them behind the scenes — time tracking, check-ins, and performance. If it stops working, we replace them free.</p>
+      <div class="proc-step">
+        <div class="proc-num">05</div>
+        <div class="proc-body">
+          <h3>They Start, We Stay On It</h3>
+          <p>Your VA gets to work and we keep managing them behind the scenes — time tracking, check-ins, and performance. If it stops working, we replace them free.</p>
+        </div>
       </div>
     </div>
 
@@ -1418,7 +1470,7 @@
         <div style="font-size:1.5rem;font-weight:700;color:rgba(255,255,255,.7);margin-top:4px">per hour</div>
         <div style="width:60px;height:3px;background:var(--teal);border-radius:2px;margin:20px auto"></div>
         <p style="font-size:.95rem;color:rgba(255,255,255,.65);line-height:1.7">You hire one VA or ten — the rate stays the same. Billed biweekly, two weeks paid up front, and you can scale hours up or down between periods.</p>
-        <button class="btn btn-primary" onclick="openModal()" style="margin-top:28px;font-size:1rem;padding:15px 40px">Get Started Now</button>
+        <button class="btn btn-primary" onclick="openModal()" style="margin-top:28px;font-size:1rem;padding:15px 40px">Take the 2-Minute Quiz</button>
       </div>
     </div>
 
@@ -1515,7 +1567,7 @@
     </div>
     <p class="cta-sub">Mon–Fri 9am–9pm EST &nbsp;·&nbsp; We respond within 2–4 business days</p>
     <div class="ctas" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="openModal()" style="font-size:1rem;padding:14px 34px">Get Started</button>
+      <button class="btn btn-primary" onclick="openModal()" style="font-size:1rem;padding:14px 34px">Match Me With a VA</button>
       <a href="tel:+17343065475" class="btn" style="font-size:1rem;padding:14px 34px;background:rgba(255,255,255,.15);color:white;border:2px solid rgba(255,255,255,.4);display:inline-flex;align-items:center;gap:8px;text-decoration:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg> Call (734) 306-5475</a>
     </div>
   </div>
