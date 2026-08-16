@@ -36,6 +36,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18121024607"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-18121024607');
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ServiceNest Staffing Agency — Hire Virtual Assistants at $6/hr</title>
@@ -926,15 +935,22 @@
     @media (max-width: 960px) {
       .ind-grid { grid-template-columns: repeat(2,1fr); }
     }
-    /* ══ THE PROCESS — light cards on deep green ═══════════════════ */
-    .how-it-works { background: #052e16 !important; }
-    .how-it-works .section-label { color: #86efac !important }
-    .how-it-works .section-title {
-      color: #fff !important; font-weight: 900 !important;
-      font-size: clamp(2.1rem, 5vw, 3.35rem) !important;
-      letter-spacing: -.035em !important;
+    /* ══ THE PROCESS — light, centered, compact ════════════════════ */
+    .how-it-works {
+      background: linear-gradient(180deg,#f4f8f5 0%,#eef4f0 100%) !important;
+      padding: 66px 0 72px !important;
     }
-    .how-it-works .section-sub { color: rgba(255,255,255,.72) !important }
+    .how-it-works .section-label {
+      color: #16a34a !important; font-weight: 800 !important; letter-spacing: .15em !important;
+    }
+    .how-it-works .section-title {
+      color: #052e16 !important; font-weight: 900 !important;
+      font-size: clamp(2rem, 4.6vw, 3.1rem) !important;
+      letter-spacing: -.035em !important; margin-bottom: 10px !important;
+    }
+    .how-it-works .section-sub {
+      color: #5b6b60 !important; max-width: 30em; margin: 0 auto !important;
+    }
     .how-it-works .section-header { text-align: center }
 
     .proc {
