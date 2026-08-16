@@ -929,7 +929,11 @@
     /* ══ THE PROCESS — light cards on deep green ═══════════════════ */
     .how-it-works { background: #052e16 !important; }
     .how-it-works .section-label { color: #86efac !important }
-    .how-it-works .section-title { color: #fff !important }
+    .how-it-works .section-title {
+      color: #fff !important; font-weight: 900 !important;
+      font-size: clamp(2.1rem, 5vw, 3.35rem) !important;
+      letter-spacing: -.035em !important;
+    }
     .how-it-works .section-sub { color: rgba(255,255,255,.72) !important }
     .how-it-works .section-header { text-align: center }
 
@@ -938,23 +942,44 @@
       gap: 24px; margin-top: 46px;
     }
     .proc-card {
-      flex: 0 1 316px; background: #fbf9f4; border-radius: 6px;
-      padding: 44px 32px 40px; text-align: center;
-      transition: transform .2s, box-shadow .2s; cursor: default;
+      flex: 0 1 316px; border-radius: 16px; position: relative; overflow: hidden;
+      padding: 46px 32px 40px; text-align: center; cursor: default;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.13);
+      backdrop-filter: blur(6px);
+      transition: transform .22s, background .22s, border-color .22s;
     }
-    .proc-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,.22) }
+    /* soft green glow bleeding in from the top-right of each card */
+    .proc-card::before {
+      content: ''; position: absolute; top: -70px; right: -70px;
+      width: 190px; height: 190px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(74,222,128,.20), transparent 68%);
+    }
+    /* ghosted oversized numeral watermark */
+    .proc-card::after {
+      content: attr(data-n); position: absolute; bottom: -34px; left: 14px;
+      font-size: 8rem; font-weight: 900; line-height: 1; pointer-events: none;
+      color: rgba(255,255,255,.035); letter-spacing: -.05em;
+    }
+    .proc-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255,255,255,.085);
+      border-color: rgba(134,239,172,.38);
+    }
+    .proc-card > * { position: relative; z-index: 1 }
     .proc-num {
-      font-size: 3.15rem; font-weight: 900; color: #14261a;
-      letter-spacing: -.03em; line-height: 1; margin-bottom: 22px;
+      font-size: 3.05rem; font-weight: 900; color: #fff;
+      letter-spacing: -.035em; line-height: 1; margin-bottom: 20px;
     }
-    .proc-num span { color: #16a34a }
+    .proc-num span { color: #4ade80 }
     .proc-card h3 {
-      font-size: 1.13rem; font-weight: 800; color: #14261a;
-      text-transform: uppercase; letter-spacing: .045em; margin-bottom: 14px;
+      font-size: 1.08rem; font-weight: 800; color: #fff;
+      text-transform: uppercase; letter-spacing: .055em; margin-bottom: 14px;
     }
-    .proc-card p { font-size: .93rem; color: #5b6b60; line-height: 1.68 }
+    .proc-card p { font-size: .93rem; color: rgba(255,255,255,.68); line-height: 1.7 }
     .proc-flag {
-      display: inline-block; margin-top: 15px; background: #052e16;
+      display: inline-block; margin-top: 16px;
+      background: rgba(74,222,128,.14); border: 1px solid rgba(134,239,172,.42);
       color: #86efac; border-radius: 100px; padding: 6px 15px;
       font-size: .68rem; font-weight: 800; letter-spacing: .07em;
       text-transform: uppercase;
@@ -1395,28 +1420,28 @@
       <p class="section-sub">We do the sourcing and vetting. You stay in control of who actually joins your team.</p>
     </div>
     <div class="proc">
-      <div class="proc-card">
+      <div class="proc-card" data-n="01">
         <div class="proc-num">01<span>.</span></div>
         <h3>Tell Us What You Need</h3>
         <p>Take the two-minute quiz or give us a call. Tell us the tasks, the hours, and anything specific to your industry.</p>
       </div>
-      <div class="proc-card">
+      <div class="proc-card" data-n="02">
         <div class="proc-num">02<span>.</span></div>
         <h3>We Send Candidates</h3>
         <p>You get resumes <em>and</em> voice memos from each candidate, so you hear how they actually sound before you spend a minute on a call.</p>
         <span class="proc-flag">Most agencies don't do this</span>
       </div>
-      <div class="proc-card">
+      <div class="proc-card" data-n="03">
         <div class="proc-num">03<span>.</span></div>
         <h3>You Choose Who to Meet</h3>
         <p>Pick only the candidates you want to interview. If none of them feel right, we go back and find you more.</p>
       </div>
-      <div class="proc-card">
+      <div class="proc-card" data-n="04">
         <div class="proc-num">04<span>.</span></div>
         <h3>Interview and Hire</h3>
         <p>You run the interview and make the call. When you find the right fit, we handle the contract and onboarding.</p>
       </div>
-      <div class="proc-card">
+      <div class="proc-card" data-n="05">
         <div class="proc-num">05<span>.</span></div>
         <h3>They Start, We Stay On It</h3>
         <p>Your VA gets to work and we keep managing them behind the scenes — time tracking, check-ins, and performance. If it stops working, we replace them free.</p>
