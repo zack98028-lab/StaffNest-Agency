@@ -1168,16 +1168,16 @@
     <!-- ── Feature: home & trade services (where most placements are) ── -->
     <div class="ind-feature">
       <div class="ind-feature-main" onclick="openModal()">
-        <span class="ind-tag">Most of our placements</span>
-        <h3>Cleaning, plumbing, HVAC and home services</h3>
+        <span class="ind-tag">How we match</span>
+        <h3>Tell us your industry and the software you run on.</h3>
         <p>
-          Our VAs have sat in these businesses. They answer the phone while the crew is on a job,
-          quote off Google Earth and Zillow, keep the calendar from double-booking, and chase the
-          Thumbtack lead that would otherwise go cold by Thursday.
+          We don't keep a pool of generalists and hope one sticks. We go find someone who has
+          already worked in a business like yours and already knows the tools on your screen,
+          so week one is real work instead of training.
         </p>
         <div class="ind-tools">
-          <span>BookingKoala</span><span>HouseCall Pro</span><span>Jobber</span>
-          <span>Quo / OpenPhone</span><span>Thumbtack</span><span>Google LSA</span>
+          <span>Your CRM</span><span>Your booking system</span><span>Your phone system</span>
+          <span>Your inbox</span><span>Your lead sources</span>
         </div>
       </div>
 
@@ -1187,8 +1187,8 @@
           <p>Listing updates, showing schedules, lead follow-up, inspection and appraisal coordination.</p>
         </div>
         <div class="ind-mini" onclick="openModal()">
-          <h4>Construction &amp; Trades</h4>
-          <p>RFIs, subcontractor scheduling, change orders, permits and inspections.</p>
+          <h4>Healthcare &amp; Dental</h4>
+          <p>Insurance verification, prior authorizations, referrals, records requests.</p>
         </div>
       </div>
     </div>
@@ -1196,8 +1196,8 @@
     <!-- ── Secondary row ── -->
     <div class="ind-row">
       <div class="ind-slim" onclick="openModal()">
-        <h4>Healthcare &amp; Dental</h4>
-        <p>Insurance verification, prior auths, referrals, records requests.</p>
+        <h4>Home &amp; Trade Services</h4>
+        <p>Dispatch, scheduling, quotes, and lead follow-up for crews in the field.</p>
       </div>
       <div class="ind-slim" onclick="openModal()">
         <h4>E-Commerce</h4>
@@ -2022,6 +2022,10 @@
 
   /* ── Modal ── */
   function openModal() {
+    // Full-page quiz replaced the modal. Every CTA on the site routes here.
+    window.location.href = 'quiz.html';
+  }
+  function openModalLegacy() {
     _mainQuizStarted = false;
     _mainDraftSent = false;
     goToStep(1);
