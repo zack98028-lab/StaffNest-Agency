@@ -250,6 +250,47 @@
       color: rgba(255,255,255,.62); font-size: .92rem; font-weight: 600;
       letter-spacing: .04em; font-style: italic; user-select: none;
     }
+
+    /* ── QUIZ PHASE TRACKER ─────────────────────────────────── */
+    .quiz-track {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 26px 34px 20px; gap: 4px;
+      border-bottom: 1px solid #eef0ee; background: #fbfcfb;
+    }
+    .qt-step {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      gap: 9px; position: relative; min-width: 0;
+    }
+    /* connecting line */
+    .qt-step::before {
+      content: ''; position: absolute; top: 8px; left: -50%; width: 100%;
+      height: 2px; background: #dfe4e0; z-index: 0;
+    }
+    .qt-step:first-child::before { display: none; }
+    .qt-step.done::before, .qt-step.current::before { background: #16a34a; }
+    .qt-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid #cfd6d1; background: #fff;
+      position: relative; z-index: 1; flex-shrink: 0;
+      transition: background .25s, border-color .25s, box-shadow .25s;
+    }
+    .qt-step.done .qt-dot { background: #16a34a; border-color: #16a34a; }
+    .qt-step.current .qt-dot {
+      background: #16a34a; border-color: #16a34a;
+      box-shadow: 0 0 0 5px rgba(22,163,74,.16);
+    }
+    .qt-label {
+      font-size: .74rem; font-weight: 700; color: #9aa39c;
+      letter-spacing: .01em; text-align: center; line-height: 1.25;
+    }
+    .qt-step.done .qt-label { color: #4b5563; }
+    .qt-step.current .qt-label { color: #052e16; }
+    @media (max-width: 560px) {
+      .quiz-track { padding: 18px 14px 14px; }
+      .qt-label { font-size: .62rem; }
+      .qt-dot { width: 14px; height: 14px; }
+      .qt-step::before { top: 6px; }
+    }
     .hero-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       padding: 17px 40px; border-radius: 40px;
@@ -1443,6 +1484,16 @@
       <div class="quiz-progress-bar" id="quizProgressBar" style="width:25%"></div>
     </div>
     <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <!-- Named phase tracker -->
+    <div class="quiz-track" id="quizTrack">
+      <div class="qt-step" data-phase="0"><span class="qt-dot"></span><span class="qt-label">Your details</span></div>
+      <div class="qt-step" data-phase="1"><span class="qt-dot"></span><span class="qt-label">Your needs</span></div>
+      <div class="qt-step" data-phase="2"><span class="qt-dot"></span><span class="qt-label">Schedule</span></div>
+      <div class="qt-step" data-phase="3"><span class="qt-dot"></span><span class="qt-label">Timeline</span></div>
+      <div class="qt-step" data-phase="4"><span class="qt-dot"></span><span class="qt-label">Finish</span></div>
+    </div>
+
     <div class="quiz-body">
 
       <!-- ── STEP 1: Services ── -->
@@ -1733,6 +1784,7 @@
     const el = document.getElementById(ids[step]);
     if (el) el.classList.add('active');
     document.getElementById('quizProgressBar').style.width = progressMap[step] || '100%';
+    updateTrack(ids[step]);
     currentStep = step;
     const modal = document.querySelector('.modal');
     if (modal) modal.scrollTop = 0;
@@ -1782,6 +1834,24 @@
     quizStep4:'10%', quizStep4b:'20%', quizStep4c:'30%', quizStep4d:'40%',
     quizStep1:'55%', quizStep2:'68%', quizStep3:'80%', quizStep5:'92%', quizSuccess:'100%'
   };
+
+  /* Which named phase each screen belongs to:
+     0 Your details · 1 Your needs · 2 Schedule · 3 Timeline · 4 Finish */
+  const _phaseById = {
+    quizStep4:0, quizStep4b:0, quizStep4c:0, quizStep4d:0,
+    quizStep1:1, quizStep2:2, quizStep3:3,
+    quizStep5:4, quizSuccess:4
+  };
+
+  function updateTrack(targetId) {
+    const phase = _phaseById[targetId];
+    if (phase === undefined) return;
+    document.querySelectorAll('#quizTrack .qt-step').forEach(function (el) {
+      const p = Number(el.dataset.phase);
+      el.classList.toggle('done', p < phase);
+      el.classList.toggle('current', p === phase);
+    });
+  }
   function requireSelectionMain(selector, container, thenFn) {
     const hasSelection = document.querySelectorAll(selector).length > 0;
     if (!hasSelection) {
@@ -1809,6 +1879,7 @@
     const el = document.getElementById(targetId);
     if (el) el.classList.add('active');
     document.getElementById('quizProgressBar').style.width = _progressById[targetId] || '50%';
+    updateTrack(targetId);
     const modal = document.querySelector('.modal');
     if (modal) modal.scrollTop = 0;
   }
