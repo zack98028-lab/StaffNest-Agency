@@ -180,7 +180,7 @@
       background-size: cover;
       background-position: center 35%;
       background-color: #052e16;
-      filter: blur(7px) saturate(1.05);
+      filter: blur(11px) saturate(1.05);
       transform: scale(1.08);
       will-change: filter;
     }
@@ -1161,14 +1161,13 @@
 <section class="industries" id="industries">
   <div class="container">
     <div class="section-header" style="text-align:center">
-      <span class="section-label">Industries</span>
+      <span class="section-label" style="font-weight:900;font-size:.95rem;letter-spacing:.16em">HOW WE MATCH</span>
       <h2 class="section-title">We don't send you a generic assistant.<br>We find someone who's already done the job.</h2>
       <p class="section-sub" style="margin:12px auto 0">Tell us your industry and the software you run on. We go find a VA who has worked in it before, so nobody's learning on your dime.</p>
     </div>
     <!-- ── Feature: home & trade services (where most placements are) ── -->
     <div class="ind-feature">
       <div class="ind-feature-main" onclick="openModal()">
-        <span class="ind-tag">How we match</span>
         <h3>Tell us your industry and the software you run on.</h3>
         <p>
           We don't keep a pool of generalists and hope one sticks. We go find someone who has
@@ -1183,12 +1182,12 @@
 
       <div class="ind-feature-side">
         <div class="ind-mini" onclick="openModal()">
-          <h4>Real Estate</h4>
-          <p>Listing updates, showing schedules, lead follow-up, inspection and appraisal coordination.</p>
+          <h4>Cleaning Companies</h4>
+          <p>Answering calls between jobs, booking and rescheduling, sending quotes, chasing leads before they go cold.</p>
         </div>
         <div class="ind-mini" onclick="openModal()">
-          <h4>Healthcare &amp; Dental</h4>
-          <p>Insurance verification, prior authorizations, referrals, records requests.</p>
+          <h4>Real Estate</h4>
+          <p>Listing updates, showing schedules, lead follow-up, inspection and appraisal coordination.</p>
         </div>
       </div>
     </div>
@@ -1196,13 +1195,24 @@
     <!-- ── Secondary row ── -->
     <div class="ind-row">
       <div class="ind-slim" onclick="openModal()">
-        <h4>Home &amp; Trade Services</h4>
-        <p>Dispatch, scheduling, quotes, and lead follow-up for crews in the field.</p>
+        <h4>Plumbing</h4>
+        <p>Dispatch, emergency call intake, technician scheduling, invoicing.</p>
+      </div>
+      <div class="ind-slim" onclick="openModal()">
+        <h4>HVAC</h4>
+        <p>Service scheduling, maintenance reminders, quotes, parts follow-up.</p>
+      </div>
+      <div class="ind-slim" onclick="openModal()">
+        <h4>Healthcare &amp; Dental</h4>
+        <p>Insurance verification, prior authorizations, referrals, records requests.</p>
       </div>
       <div class="ind-slim" onclick="openModal()">
         <h4>E-Commerce</h4>
         <p>Product listings, returns, marketplace accounts, fulfillment comms.</p>
       </div>
+    </div>
+
+    <div class="ind-row" style="margin-top:20px">
       <div class="ind-slim" onclick="openModal()">
         <h4>Legal</h4>
         <p>Court filings, billable hours, discovery, client intake.</p>
@@ -1210,6 +1220,14 @@
       <div class="ind-slim" onclick="openModal()">
         <h4>Finance &amp; Lending</h4>
         <p>Invoicing, reconciliation, expense reports, collections.</p>
+      </div>
+      <div class="ind-slim" onclick="openModal()">
+        <h4>Construction</h4>
+        <p>RFIs, subcontractor scheduling, change orders, permits.</p>
+      </div>
+      <div class="ind-slim" onclick="openModal()">
+        <h4>Landscaping</h4>
+        <p>Route scheduling, seasonal contracts, estimates, client comms.</p>
       </div>
     </div>
     <!-- Large industry pill list -->
@@ -1245,7 +1263,7 @@
         <tbody>
           <tr class="highlight">
             <td style="text-align:left;color:white">Average hourly cost</td>
-            <td style="color:#f59e0b;font-weight:800">From $6/hr</td>
+            <td style="color:#f59e0b;font-weight:800">$6–$10/hr</td>
             <td style="color:#ff6b6b;font-weight:800">$25–$50+/hr</td>
           </tr>
           <tr>
@@ -2364,7 +2382,7 @@
   };
   probe.src = 'hero.jpg';
 
-  var MAX_BLUR = 7;    // px at the very top, sharpens to 0 on scroll
+  var MAX_BLUR = 11;   // px at the very top, sharpens to 0 on scroll
   var ticking = false;
 
   function update() {
@@ -2373,7 +2391,7 @@
     var hero = bg.parentElement;
     var h = hero.offsetHeight || 1;
     // fully sharp by the time you've scrolled 55% of the hero
-    var progress = Math.min(window.scrollY / (h * 0.55), 1);
+    var progress = Math.min(window.scrollY / (h * 0.78), 1);
     var blur = MAX_BLUR * (1 - progress);
     bg.style.filter = 'blur(' + blur.toFixed(2) + 'px) saturate(1.05)';
     bg.style.transform = 'scale(' + (1.08 - 0.08 * progress).toFixed(4) + ')';
