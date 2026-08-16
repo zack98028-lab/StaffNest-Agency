@@ -339,6 +339,14 @@
     .how-it-works { padding: 90px 0; background: var(--white); }
     .section-header { margin-bottom: 56px; }
     .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; }
+    /* 5-step process: wraps to 3 + 2 on desktop, stacks on mobile */
+    .steps-grid.steps-5 { grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 26px; }
+    .process-note {
+      margin-top: 38px; text-align: center; max-width: 640px; margin-left: auto; margin-right: auto;
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
+      padding: 20px 26px; font-size: .97rem; color: #374151; line-height: 1.6;
+    }
+    .process-note strong { display: block; color: #052e16; font-size: 1.04rem; margin-bottom: 4px; }
     .step-card {
       background: var(--white);
       border-radius: 16px; padding: 36px 28px; position: relative;
@@ -876,12 +884,12 @@
         <h1>Virtual Assistants<span class="line2">FOR GROWING BUSINESSES</span></h1>
         <p class="hero-sub">Pre-screened, English-speaking virtual assistants from $6 an hour. About 70% less than hiring local.</p>
         <div class="hero-ctas">
-          <button class="hero-btn hero-btn-solid" onclick="openModal()">GET STARTED</button>
+          <button class="hero-btn hero-btn-solid" onclick="openModal()">TAKE A QUICK QUIZ</button>
           <a href="tel:+17343065475" class="hero-btn hero-btn-ghost"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg> (734) 306-5475</a>
         </div>
         <div class="hero-trust">
           <div class="avatars"><span>JM</span><span>SR</span><span>TK</span><span>AL</span></div>
-          <p><strong>15+ businesses</strong> already staffed through ServiceNest</p>
+          <p><strong>Trusted by growing businesses</strong> across the U.S.</p>
         </div>
       </div>
     </div>
@@ -1164,26 +1172,41 @@
 <section class="how-it-works" id="how-it-works">
   <div class="container">
     <div class="section-header">
-      <span class="section-label">Simple 3-Step Process</span>
-      <h2 class="section-title">Our Simple Process</h2>
-      <p class="section-sub">We do the hard work of finding, vetting, and matching you with the right virtual assistant so you don't have to.</p>
+      <span class="section-label">How It Works</span>
+      <h2 class="section-title">You Pick. You Interview. You Decide.</h2>
+      <p class="section-sub">We do the sourcing and vetting. You stay in control of who actually joins your team.</p>
     </div>
-    <div class="steps-grid">
+    <div class="steps-grid steps-5">
       <div class="step-card">
         <div class="step-number">01</div>
         <h3>Tell Us What You Need</h3>
-        <p>Fill out our quick intake form or give us a call. Tell us the tasks you need handled, your preferred hours, and any industry-specific requirements.</p>
+        <p>Take the two-minute quiz or give us a call. Tell us the tasks, the hours, and anything specific to your industry.</p>
       </div>
       <div class="step-card">
         <div class="step-number">02</div>
-        <h3>We Match You With the Right VA</h3>
-        <p>Our team hand-picks a pre-vetted virtual assistant based on your exact needs — skills, availability, and experience. No guesswork, no surprises.</p>
+        <h3>We Send Candidates</h3>
+        <p>You get resumes <em>and</em> voice memos from each candidate, so you hear how they actually sound before you spend a minute on a call.</p>
       </div>
       <div class="step-card">
         <div class="step-number">03</div>
-        <h3>Start Delegating Immediately</h3>
-        <p>Onboard your VA into your workflow and start delegating. Pay only for hours worked — starting at $6/hr, billed simply and directly. No staffing fee.</p>
+        <h3>You Choose Who to Meet</h3>
+        <p>Pick only the candidates you want to interview. No pressure to take whoever we send, and no fee if none of them are right.</p>
       </div>
+      <div class="step-card">
+        <div class="step-number">04</div>
+        <h3>Interview and Hire</h3>
+        <p>You run the interview and make the call. When you find the right fit, we handle the contract and onboarding.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">05</div>
+        <h3>They Start, We Stay On It</h3>
+        <p>Your VA gets to work and we keep managing them behind the scenes — time tracking, check-ins, and performance. If it stops working, we replace them free.</p>
+      </div>
+    </div>
+
+    <div class="process-note">
+      <strong>Flat hourly rate. No staffing fee, no placement fee, no hidden costs.</strong>
+      You pay for hours worked. That's the whole invoice.
     </div>
 
   </div>
@@ -1282,39 +1305,40 @@
   <div class="container">
     <div class="section-header" style="text-align:center">
       <span class="section-label">Client Reviews</span>
-      <h2 class="section-title">Business Owners Love ServiceNest Staffing</h2>
+      <h2 class="section-title">What Our Clients Say</h2>
+      <p class="section-sub" style="text-align:center;margin:0 auto">Real reviews from real business owners. Verified on Google.</p>
     </div>
     <div class="testi-grid">
       <div class="testi-card">
         <div class="stars">★★★★★</div>
-        <blockquote>"My VA handles my entire inbox, lead follow-ups, and listing updates — she even started flagging hot leads before I asked her to. I'm saving over $1,800 a month compared to my old local assistant. Best business decision I've made."</blockquote>
+        <blockquote>"They're quick and do things right. Super easy to work with and just make it straight forward. My VA is in training and I feel good about her."</blockquote>
         <div class="testi-author">
-          <div class="testi-avatar">JM</div>
+          <div class="testi-avatar">CE</div>
           <div>
-            <strong>James Mitchell</strong>
-            <span>Owner, Mitchell Real Estate Group</span>
+            <strong>Colin Elliott</strong>
+            <span>Verified Google Review</span>
           </div>
         </div>
       </div>
       <div class="testi-card">
         <div class="stars">★★★★★</div>
-        <blockquote>"I threw everything at her — customer emails, order issues, returns, social posts. She learned our systems in the first week and hasn't missed a beat since. I genuinely don't know how I ran the store without her."</blockquote>
+        <blockquote>"Did a great job with our needs as a company. Helped us get a VA staffed and onboarded within a fast deadline like we needed. Good support all the way."</blockquote>
         <div class="testi-author">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#e84393)">SR</div>
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#e84393)">MT</div>
           <div>
-            <strong>Sarah R.</strong>
-            <span>Founder, eCommerce Brand</span>
+            <strong>Maahik Trivedi</strong>
+            <span>Verified Google Review</span>
           </div>
         </div>
       </div>
       <div class="testi-card">
         <div class="stars">★★★★★</div>
-        <blockquote>"We needed someone to manage client scheduling, send invoices, and keep our project boards updated. Our VA does all of it — and comes to me with solutions I didn't even know I needed. The billing is simple and the support team actually picks up the phone."</blockquote>
+        <blockquote>"I run a private lending business. When I first came across getting a virtual assistant, I was hesitant, but now looking back it was the right call."</blockquote>
         <div class="testi-author">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#22d3a8,#15803d)">TK</div>
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#22d3a8,#15803d)">Z</div>
           <div>
-            <strong>Tim K.</strong>
-            <span>Owner, Digital Marketing Agency</span>
+            <strong>Zack</strong>
+            <span>Private Lending · Verified Google Review</span>
           </div>
         </div>
       </div>
