@@ -183,9 +183,8 @@
     .hero-bg {
       position: absolute; inset: -30px;
       z-index: -2;
-      /* hero.svg ships with the site. Drop a hero.jpg in this folder
-         and the script below will swap to it automatically. */
-      background-image: url('hero.svg');
+      /* Real photo is the default. hero.svg is the fallback if it fails. */
+      background-image: url('hero.jpg');
       background-size: cover;
       background-position: center 35%;
       background-color: #052e16;
@@ -2505,12 +2504,10 @@
   var bg = document.getElementById('heroBg');
   if (!bg) return;
 
-  // If hero.jpg is missing, fall back to the gradient
-  var hasPhoto = true;
-  // hero.svg is the default. If a real hero.jpg exists, prefer it.
+  // hero.jpg is the default (set in CSS). Only fall back if it fails to load.
   var probe = new Image();
-  probe.onload = function () {
-    bg.style.backgroundImage = "url('hero.jpg')";
+  probe.onerror = function () {
+    bg.style.backgroundImage = "url('hero.svg')";
   };
   probe.src = 'hero.jpg';
 
