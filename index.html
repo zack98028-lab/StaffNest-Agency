@@ -952,61 +952,73 @@
     }
     .how-it-works .section-header { text-align: center }
 
+    /* horizontal timeline — 5 steps on one connected line */
     .proc {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 24px; margin-top: 46px;
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 0 18px; margin-top: 56px; max-width: 1080px;
+      margin-left: auto; margin-right: auto;
     }
     .proc-card {
-      flex: 0 1 316px; border-radius: 16px; position: relative; overflow: hidden;
-      padding: 40px 30px 34px; text-align: center; cursor: default;
-      background: #fff;
-      border: 1px solid #e2eae5;
-      box-shadow: 0 2px 14px rgba(5,46,22,.05);
-      transition: transform .22s, box-shadow .22s, border-color .22s;
+      position: relative; text-align: center; padding: 0 6px;
+      background: none; border: 0;
     }
-    /* soft green wash bleeding in from the top-right of each card */
+    /* the connecting rail, drawn behind each dot */
     .proc-card::before {
-      content: ''; position: absolute; top: -70px; right: -70px;
-      width: 190px; height: 190px; border-radius: 50%; pointer-events: none;
-      background: radial-gradient(circle, rgba(22,163,74,.10), transparent 68%);
+      content: ''; position: absolute; top: 27px; left: -50%;
+      width: 100%; height: 3px; background: #cfe3d6; z-index: 0; border-radius: 2px;
     }
-    /* ghosted oversized numeral watermark */
-    .proc-card::after {
-      content: attr(data-n); position: absolute; bottom: -34px; left: 14px;
-      font-size: 8rem; font-weight: 900; line-height: 1; pointer-events: none;
-      color: rgba(5,46,22,.035); letter-spacing: -.05em;
-    }
-    .proc-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 28px rgba(5,46,22,.10);
-      border-color: #a7d8bb;
-    }
-    .proc-card > * { position: relative; z-index: 1 }
+    .proc-card:first-child::before { display: none }
     .proc-num {
-      font-size: 2.85rem; font-weight: 900; color: #052e16;
-      letter-spacing: -.035em; line-height: 1; margin-bottom: 16px;
+      position: relative; z-index: 1;
+      width: 56px; height: 56px; margin: 0 auto 22px;
+      border-radius: 50%; background: #052e16; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.22rem; font-weight: 900; letter-spacing: -.01em;
+      box-shadow: 0 0 0 6px #f1f6f3, 0 4px 14px rgba(5,46,22,.20);
+      transition: transform .22s, background .22s;
     }
-    .proc-num span { color: #16a34a }
+    .proc-card:hover .proc-num { transform: translateY(-4px); background: #16a34a }
+    .proc-num span { display: none }
     .proc-card h3 {
-      font-size: 1.02rem; font-weight: 800; color: #052e16;
-      text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;
+      font-size: .96rem; font-weight: 800; color: #052e16;
+      letter-spacing: .01em; margin-bottom: 10px; line-height: 1.3;
     }
-    .proc-card p { font-size: .92rem; color: #5b6b60; line-height: 1.65 }
+    .proc-card p { font-size: .875rem; color: #5f7167; line-height: 1.62 }
+    .proc-card em { color: #16a34a; font-style: normal; font-weight: 700 }
     .proc-flag {
-      display: inline-block; margin-top: 16px;
-      background: #052e16; border: 1px solid #052e16;
-      color: #86efac; border-radius: 100px; padding: 6px 15px;
-      font-size: .68rem; font-weight: 800; letter-spacing: .07em;
-      text-transform: uppercase;
+      display: inline-block; margin-top: 14px;
+      background: #ecfdf3; border: 1px solid #a7d8bb;
+      color: #15803d; border-radius: 100px; padding: 5px 13px;
+      font-size: .64rem; font-weight: 800; letter-spacing: .06em;
+      text-transform: uppercase; line-height: 1.4;
     }
     .how-it-works .process-note {
       background: #fff !important; border: 1px solid #d5e5db !important;
-      color: #5b6b60 !important; margin-top: 40px;
+      color: #5f7167 !important; margin-top: 52px;
     }
     .how-it-works .process-note strong { color: #052e16 !important }
-    @media (max-width: 560px) {
-      .proc-card { flex: 1 1 100%; padding: 34px 24px 30px }
-      .proc-num { font-size: 2.7rem; margin-bottom: 16px }
+
+    /* tablet: 3 + 2, rail hidden so there's no dangling line */
+    @media (max-width: 960px) {
+      .proc { grid-template-columns: repeat(3, 1fr); gap: 40px 20px }
+      .proc-card::before { display: none }
+    }
+    /* phone: vertical rail down the left */
+    @media (max-width: 620px) {
+      .proc { grid-template-columns: 1fr; gap: 0; max-width: 420px }
+      .proc-card {
+        text-align: left; padding: 0 0 30px 66px; min-height: 74px;
+      }
+      .proc-card::before {
+        display: block; top: 56px; left: 26px;
+        width: 3px; height: calc(100% - 56px);
+      }
+      .proc-card:first-child::before { display: block }
+      .proc-card:last-child::before { display: none }
+      .proc-num {
+        position: absolute; top: 0; left: 0; margin: 0;
+        width: 53px; height: 53px; font-size: 1.12rem;
+      }
     }
 
     /* ══ CTA BANNER — real photo behind it ════════════════════════ */
