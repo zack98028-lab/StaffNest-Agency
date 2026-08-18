@@ -959,52 +959,52 @@
     }
     .proc-card {
       flex: 0 1 316px; border-radius: 16px; position: relative; overflow: hidden;
-      padding: 46px 32px 40px; text-align: center; cursor: default;
-      background: rgba(255,255,255,.055);
-      border: 1px solid rgba(255,255,255,.13);
-      backdrop-filter: blur(6px);
-      transition: transform .22s, background .22s, border-color .22s;
+      padding: 40px 30px 34px; text-align: center; cursor: default;
+      background: #fff;
+      border: 1px solid #e2eae5;
+      box-shadow: 0 2px 14px rgba(5,46,22,.05);
+      transition: transform .22s, box-shadow .22s, border-color .22s;
     }
-    /* soft green glow bleeding in from the top-right of each card */
+    /* soft green wash bleeding in from the top-right of each card */
     .proc-card::before {
       content: ''; position: absolute; top: -70px; right: -70px;
       width: 190px; height: 190px; border-radius: 50%; pointer-events: none;
-      background: radial-gradient(circle, rgba(74,222,128,.20), transparent 68%);
+      background: radial-gradient(circle, rgba(22,163,74,.10), transparent 68%);
     }
     /* ghosted oversized numeral watermark */
     .proc-card::after {
       content: attr(data-n); position: absolute; bottom: -34px; left: 14px;
       font-size: 8rem; font-weight: 900; line-height: 1; pointer-events: none;
-      color: rgba(255,255,255,.035); letter-spacing: -.05em;
+      color: rgba(5,46,22,.035); letter-spacing: -.05em;
     }
     .proc-card:hover {
       transform: translateY(-5px);
-      background: rgba(255,255,255,.085);
-      border-color: rgba(134,239,172,.38);
+      box-shadow: 0 10px 28px rgba(5,46,22,.10);
+      border-color: #a7d8bb;
     }
     .proc-card > * { position: relative; z-index: 1 }
     .proc-num {
-      font-size: 3.05rem; font-weight: 900; color: #fff;
-      letter-spacing: -.035em; line-height: 1; margin-bottom: 20px;
+      font-size: 2.85rem; font-weight: 900; color: #052e16;
+      letter-spacing: -.035em; line-height: 1; margin-bottom: 16px;
     }
-    .proc-num span { color: #4ade80 }
+    .proc-num span { color: #16a34a }
     .proc-card h3 {
-      font-size: 1.08rem; font-weight: 800; color: #fff;
-      text-transform: uppercase; letter-spacing: .055em; margin-bottom: 14px;
+      font-size: 1.02rem; font-weight: 800; color: #052e16;
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: 12px;
     }
-    .proc-card p { font-size: .93rem; color: rgba(255,255,255,.68); line-height: 1.7 }
+    .proc-card p { font-size: .92rem; color: #5b6b60; line-height: 1.65 }
     .proc-flag {
       display: inline-block; margin-top: 16px;
-      background: rgba(74,222,128,.14); border: 1px solid rgba(134,239,172,.42);
+      background: #052e16; border: 1px solid #052e16;
       color: #86efac; border-radius: 100px; padding: 6px 15px;
       font-size: .68rem; font-weight: 800; letter-spacing: .07em;
       text-transform: uppercase;
     }
     .how-it-works .process-note {
-      background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.16);
-      color: rgba(255,255,255,.78); margin-top: 46px;
+      background: #fff !important; border: 1px solid #d5e5db !important;
+      color: #5b6b60 !important; margin-top: 40px;
     }
-    .how-it-works .process-note strong { color: #fff }
+    .how-it-works .process-note strong { color: #052e16 !important }
     @media (max-width: 560px) {
       .proc-card { flex: 1 1 100%; padding: 34px 24px 30px }
       .proc-num { font-size: 2.7rem; margin-bottom: 16px }
