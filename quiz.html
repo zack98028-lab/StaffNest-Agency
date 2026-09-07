@@ -501,6 +501,7 @@ fbq('track', 'PageView');
         errEl.textContent = "Please enter a full 10-digit phone number.";
         document.getElementById(fieldId).focus(); return
       }
+      sendPartial();   // valid number in hand — email it now, before they can drop off
     }
     clearErr(); show(at+1);
   }
@@ -565,12 +566,89 @@ fbq('track', 'PageView');
     }).join(', ') || 'Not specified';
   }
 
+  /* ── Partial-lead capture ──────────────────────────────────────────
+     Two extra emails so an abandoned quiz is still a reachable lead:
+       1. the moment a valid phone number is entered
+       2. when they leave the page without finishing
+     Guarded by flags so nobody gets spammed with duplicates. */
+  var partialSent = false, quizCompleted = false;
+
+  function val(id){
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function collectPartial(){
+    var d = {
+      Name:  val('qName')  || 'Not given',
+      Phone: val('qPhone') || 'Not given',
+      Email: val('qEmail') || 'Not given',
+      Business: val('qBusiness') || 'Not given'
+    };
+    try{
+      d['Help Needed']   = selText('#svcGrid .opt.sel');
+      d['Hours Per Week']= selText('#hrGrid .opt.sel');
+      d['Start Timeline']= selText('#whenGrid .opt.sel');
+      d['Preferred Schedule'] = val('qSchedule') || 'Not specified';
+      d['How Many VAs']  = val('qCount') || 'Not specified';
+      d['Special Requirements'] = val('qSpecial') || 'None';
+      d['Other / Specifics']    = val('qOther') || 'n/a';
+    }catch(err){}
+    return d;
+  }
+
+  function fire(payload, keepalive){
+    try{
+      fetch('https://formsubmit.co/ajax/serviceneststaffing@gmail.com', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify(payload),
+        keepalive: !!keepalive
+      }).catch(function(){});
+    }catch(err){}
+  }
+
+  function stepsDone(){
+    var n = (typeof at === 'number') ? at + 1 : 1;
+    return n + ' of 8 steps completed';
+  }
+
+  /* Fires as soon as we have a usable phone number. */
+  function sendPartial(){
+    if(partialSent || quizCompleted) return;
+    partialSent = true;
+    var d = collectPartial();
+    d._subject = 'Website Quiz — partially completed — ' + d.Name;
+    d.Status   = 'Partially completed — ' + stepsDone();
+    d.Source   = 'Full-page quiz';
+    fire(d, false);
+  }
+
+  /* Fires when they close/leave mid-quiz without finishing. */
+  function sendAbandon(){
+    if(quizCompleted) return;
+    if(!val('qPhone') && !val('qEmail')) return;   // nothing to reach them with
+    quizCompleted = true;                          // stop repeat sends
+    var d = collectPartial();
+    d._subject = 'Website Quiz — partially completed — ' + (d.Name !== 'Not given' ? d.Name : 'no name given');
+    d.Status   = 'Partially completed, left the page — ' + stepsDone();
+    d.Source   = 'Full-page quiz';
+    fire(d, true);
+  }
+
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'hidden') sendAbandon();
+  });
+  window.addEventListener('pagehide', sendAbandon);
+
   function submitQuiz(){
     var btn = document.getElementById('submitBtn');
     btn.disabled = true; btn.textContent = 'Sending...';
+    quizCompleted = true;
 
     var payload = {
-      _subject: 'New VA Request — ' + (document.getElementById('qBusiness').value.trim() || 'Website Quiz'),
+      _subject: 'Website Quiz — COMPLETED — ' + (document.getElementById('qBusiness').value.trim() || document.getElementById('qName').value.trim() || 'no business given'),
+      Status: 'Whole form completed (8 of 8 steps)',
       Name: document.getElementById('qName').value.trim(),
       Phone: document.getElementById('qPhone').value.trim(),
       Email: document.getElementById('qEmail').value.trim(),
