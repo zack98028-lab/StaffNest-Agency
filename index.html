@@ -227,6 +227,7 @@ fbq('track', 'PageView');
     }
     @media (prefers-reduced-motion: reduce) {
       .hero-bg { filter: blur(0) !important; transform: scale(1); }
+      .hero-scrim { opacity: 1 !important; }
     }
     .hero-inner {
       max-width: 940px; margin: 0 auto;
@@ -2645,6 +2646,7 @@ fbq('track', 'PageView');
   probe.src = 'hero.jpg';
 
   var MAX_BLUR = 11;   // px at the very top, sharpens to 0 on scroll
+  var scrim = document.querySelector('.hero-scrim');
   var ticking = false;
 
   function update() {
@@ -2655,8 +2657,16 @@ fbq('track', 'PageView');
     // fully sharp by the time you've scrolled 55% of the hero
     var progress = Math.min(window.scrollY / (h * 0.32), 1);
     var blur = MAX_BLUR * (1 - progress);
-    bg.style.filter = 'blur(' + blur.toFixed(2) + 'px) saturate(1.05)';
+    bg.style.filter = 'blur(' + blur.toFixed(2) + 'px) saturate(' + (1.05 + 0.12 * progress).toFixed(3) + ')';
     bg.style.transform = 'scale(' + (1.08 - 0.08 * progress).toFixed(4) + ')';
+
+    /* Lift the dark scrim as you scroll so the photo opens up.
+       Runs slower than the blur, and holds its full strength through the
+       first 20% so the headline never loses contrast while it's on screen. */
+    if (scrim) {
+      var lift = Math.min(Math.max((window.scrollY - h * 0.30) / (h * 0.70), 0), 1);
+      scrim.style.opacity = (1 - 0.38 * lift).toFixed(3);
+    }
   }
 
   function onScroll() {
