@@ -644,7 +644,19 @@ fbq('track', 'PageView');
       box-shadow: 0 2px 14px rgba(5,46,22,.08);
       flex: 0 0 358px; display: flex; flex-direction: column;
     }
-    .testi-card blockquote { flex: 1 }
+    .testi-card blockquote {
+      flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .testi-card.open blockquote { -webkit-line-clamp: unset; overflow: visible }
+    .testi-more {
+      background: none; border: 0; padding: 0; margin: 4px 0 16px;
+      color: #16a34a; font-weight: 800; font-size: .82rem; font-family: inherit;
+      cursor: pointer; align-self: flex-start; letter-spacing: .01em;
+    }
+    .testi-more:hover { text-decoration: underline }
+    .testi-card.open { background: #f7fdf9; border-color: #a7d8bb }
     @media (prefers-reduced-motion: reduce) {
       .testi-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto }
       .testi-marquee { mask-image: none; -webkit-mask-image: none }
@@ -1333,29 +1345,7 @@ fbq('track', 'PageView');
     <div class="testi-track">
       <div class="testi-card">
         <div class="stars">★★★★★</div>
-        <blockquote>"They're quick and do things right. Super easy to work with and just make it straight forward. My VA is in training and I feel good about her."</blockquote>
-        <div class="testi-author">
-          <div class="testi-avatar">CE</div>
-          <div>
-            <strong>Colin Elliott</strong>
-            <span>Verified Google Review</span>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="stars">★★★★★</div>
-        <blockquote>"Did a great job with our needs as a company. Helped us get a VA staffed and onboarded within a fast deadline like we needed. Good support all the way."</blockquote>
-        <div class="testi-author">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#e84393)">MT</div>
-          <div>
-            <strong>Maahik Trivedi</strong>
-            <span>Verified Google Review</span>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="stars">★★★★★</div>
-        <blockquote>"I run a private lending business. When I first came across getting a virtual assistant, I was hesitant, but now looking back it was the right call."</blockquote>
+        <blockquote>"I run a private lending business. When I first came across getting a virtual assistant, I was hesitant, but now looking back that was the best money spent. My virtual assistant Lena has 1.5x my revenue in the last 2 months. She's more like a partner than my VA. They find virtual assistants that have past experience working in similar areas that you need. Their virtual assistant service is very unique and way better for the customer vs other businesses. All other companies I reached out to always had hidden fees and raised the price. ServiceNest also always checks up on me frequently to ensure everything's going well. I wholeheartedly recommend this company and will continue using their virtual assistants for as long as I work. They make balance much easier."</blockquote>
         <div class="testi-author">
           <div class="testi-avatar" style="background:linear-gradient(135deg,#22d3a8,#15803d)">Z</div>
           <div>
@@ -1364,6 +1354,29 @@ fbq('track', 'PageView');
           </div>
         </div>
       </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"I hired three virtual assistants through this company, and they are now working across my various businesses. I've been extremely satisfied with their work and the level of service I've received. At one point, one of the VAs was no longer able to continue, but the company had a replacement in place within just two days. The new VA has been doing an excellent job, just like the other two. I would absolutely recommend this company to anyone looking for reliable, hardworking virtual assistants. Their responsiveness and commitment to finding the right fit have been excellent!"</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#a855f7,#6366f1)">KH</div>
+          <div>
+            <strong>Kelly Huegli</strong>
+            <span>Verified Google Review</span>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <blockquote>"Exceptional service through and through — very quick turnaround and I appreciated their help throughout the interview process. I am extremely satisfied with the virtual assistant that they placed me with and could not imagine my business without her!"</blockquote>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#e84393)">BM</div>
+          <div>
+            <strong>Braeden Murray</strong>
+            <span>Verified Google Review</span>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
     </div>
   </div>
@@ -2520,12 +2533,35 @@ fbq('track', 'PageView');
     const testiBox = testiTrack.parentElement;
     let testiResume;
     const pauseTesti = () => {
+      if (testiTrack.querySelector('.testi-card.open')) return;  // stay paused while reading
       testiTrack.style.animationPlayState = 'paused';
       clearTimeout(testiResume);
       testiResume = setTimeout(() => { testiTrack.style.animationPlayState = ''; }, 3500);
     };
     testiBox.addEventListener('touchstart', pauseTesti, { passive: true });
     testiBox.addEventListener('touchmove',  pauseTesti, { passive: true });
+
+    /* "Read more" on any review that overflows its clamp */
+    testiTrack.querySelectorAll('.testi-card').forEach(card => {
+      const q = card.querySelector('blockquote');
+      if (q.scrollHeight - q.clientHeight < 12) return;      // short enough, no button
+      const btn = document.createElement('button');
+      btn.className = 'testi-more';
+      btn.type = 'button';
+      btn.textContent = 'Read more';
+      q.insertAdjacentElement('afterend', btn);
+    });
+
+    testiBox.addEventListener('click', e => {
+      const btn = e.target.closest('.testi-more');
+      if (!btn) return;
+      const card = btn.closest('.testi-card');
+      const nowOpen = card.classList.toggle('open');
+      btn.textContent = nowOpen ? 'Show less' : 'Read more';
+      clearTimeout(testiResume);
+      testiTrack.style.animationPlayState =
+        testiTrack.querySelector('.testi-card.open') ? 'paused' : '';
+    });
   }
 
   /* ── Process timeline: fill the rail left-to-right once it scrolls in ── */
