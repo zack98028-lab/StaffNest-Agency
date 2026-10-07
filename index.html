@@ -447,21 +447,76 @@ fbq('track', 'PageView');
     .guarantee-list li svg { flex-shrink: 0; color: var(--sky); }
     .guarantee-fine { font-size: .8rem; color: var(--muted); margin-top: 10px; }
 
+    /* nav CTA — bright green so it actually gets seen */
+    .btn-nav-quiz {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: #04240f; border: 0; font-weight: 800;
+      padding: 11px 24px; font-size: .9rem; border-radius: 100px;
+      box-shadow: 0 0 0 0 rgba(34,197,94,.55), 0 4px 16px rgba(34,197,94,.42);
+      animation: nav-quiz-pulse 2.6s ease-out infinite;
+      transition: transform .2s, box-shadow .2s;
+      white-space: nowrap; cursor: pointer;
+    }
+    .btn-nav-quiz:hover {
+      transform: translateY(-2px); animation-play-state: paused;
+      box-shadow: 0 6px 22px rgba(34,197,94,.6);
+    }
+    @keyframes nav-quiz-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(34,197,94,.5),  0 4px 16px rgba(34,197,94,.42) }
+      70%  { box-shadow: 0 0 0 11px rgba(34,197,94,0), 0 4px 16px rgba(34,197,94,.42) }
+      100% { box-shadow: 0 0 0 0 rgba(34,197,94,0),   0 4px 16px rgba(34,197,94,.42) }
+    }
+    @media (prefers-reduced-motion: reduce) { .btn-nav-quiz { animation: none } }
+
     /* ─── STATS BAR ─────────────────────────────────────────────── */
     .stats-bar {
-      background: var(--blue); color: var(--white);
-      padding: 28px 0;
+      position: relative; overflow: hidden;
+      color: var(--white); padding: 38px 0;
+      background:
+        radial-gradient(ellipse 60% 130% at 14% 0%,   rgba(34,197,94,.26), transparent 62%),
+        radial-gradient(ellipse 55% 130% at 86% 100%, rgba(16,185,129,.20), transparent 64%),
+        linear-gradient(135deg, #073a1d 0%, #0b5730 48%, #073a1d 100%);
+      border-top: 1px solid rgba(255,255,255,.09);
+      border-bottom: 1px solid rgba(255,255,255,.09);
+    }
+    /* slow light sweep across the bar */
+    .stats-bar::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.075) 48%, transparent 58%);
+      transform: translateX(-100%);
+      animation: stat-sheen 8s ease-in-out infinite;
+    }
+    @keyframes stat-sheen {
+      0%, 62% { transform: translateX(-100%) }
+      100%    { transform: translateX(100%) }
     }
     .stats-grid {
       display: grid; grid-template-columns: repeat(4,1fr);
       text-align: center; gap: 16px;
+      position: relative; z-index: 1;
     }
+    .stat-item {
+      position: relative; padding: 8px 14px; border-radius: 14px;
+      transition: transform .28s cubic-bezier(.34,1.3,.64,1), background .28s;
+    }
+    .stat-item:hover { transform: translateY(-5px); background: rgba(255,255,255,.055) }
     .stat-item strong {
-      display: block; font-size: 2.2rem; font-weight: 900;
-      color: var(--teal);
+      display: block; font-size: clamp(1.9rem, 3.3vw, 2.6rem); font-weight: 900;
+      letter-spacing: -.02em; line-height: 1.05; margin-bottom: 7px;
+      background: linear-gradient(180deg, #bbf7d0 0%, #4ade80 55%, #22c55e 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      filter: drop-shadow(0 0 20px rgba(34,197,94,.45));
     }
-    .stat-item span { font-size: .85rem; color: rgba(255,255,255,.7); }
-    .stat-item + .stat-item { border-left: 1px solid rgba(255,255,255,.15); }
+    .stat-item span { font-size: .85rem; color: rgba(255,255,255,.78); line-height: 1.5 }
+    /* soft gradient divider instead of a hard line */
+    .stat-item + .stat-item::before {
+      content: ''; position: absolute; left: 0; top: 14%; height: 72%; width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,.3), transparent);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .stats-bar::after { animation: none; opacity: 0 }
+    }
 
     /* ─── HOW IT WORKS ──────────────────────────────────────────── */
     .how-it-works { padding: 90px 0; background: var(--white); }
@@ -905,7 +960,7 @@ fbq('track', 'PageView');
       .guarantee-inner { grid-template-columns: 1fr; padding: 36px 28px; }
       .guarantee-badge-wrap { flex-direction: row; justify-content: flex-start; }
       .stats-grid { grid-template-columns: repeat(2,1fr); }
-      .stat-item + .stat-item { border-left: none; }
+      .stat-item + .stat-item::before { display: none; }
       .steps-grid { grid-template-columns: 1fr; }
       .cat-grid { grid-template-columns: repeat(2,1fr); }
       .why-grid { grid-template-columns: 1fr; }
@@ -1201,7 +1256,7 @@ fbq('track', 'PageView');
       </ul>
       <div class="nav-ctas">
         <a href="tel:+17343065475" style="color:var(--teal);font-weight:800;font-size:.95rem;display:flex;align-items:center;gap:6px;white-space:nowrap;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z"/></svg> (734) 306-5475</a>
-        <button class="btn btn-secondary" onclick="openModal()" style="padding:9px 22px;font-size:.88rem;">Hire a Virtual Assistant</button>
+        <button class="btn btn-nav-quiz" onclick="openModal()">Take the 2-Minute Quiz</button>
       </div>
       <button class="hamburger" id="hamburgerBtn" onclick="toggleMobile()">
         <span></span><span></span><span></span>

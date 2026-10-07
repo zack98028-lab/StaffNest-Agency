@@ -179,6 +179,16 @@ fbq('track', 'PageView');
   }
   .btn:hover{background:#0a4526}
   .btn:active{transform:scale(.988)}
+  /* outlined "back to homepage" on the finish screen */
+  .btn-home{
+    width:100%; max-width:430px; margin:14px auto 0; display:block;
+    background:#fff; color:var(--navy); border:2px solid var(--navy);
+    border-radius:100px; padding:16px 34px; font-size:1rem; font-weight:800;
+    font-family:inherit; text-align:center; text-decoration:none;
+    cursor:pointer; transition:background .2s, color .2s, transform .12s;
+  }
+  .btn-home:hover{background:var(--navy); color:#fff}
+  .btn-home:active{transform:scale(.988)}
   .back{
     background:none;border:0;color:var(--muted);font-size:.92rem;font-weight:600;
     font-family:inherit;cursor:pointer;margin-top:20px;padding:8px;
@@ -441,7 +451,7 @@ fbq('track', 'PageView');
     <p class="sub">We've got everything we need. ServiceNest Staffing will give you a call within a day to go over candidate profiles, resumes and voice memos included.</p>
     <p style="font-size:1rem;color:var(--navy);font-weight:700;margin-bottom:14px">If you have any questions, call us here:</p>
     <a class="btn" href="tel:+17343065475" style="text-decoration:none;line-height:1.2;margin-top:0">(734) 306-5475</a>
-    <button class="back" onclick="location.href='index.html'">← Back to home</button>
+    <a class="btn-home" href="index.html">← Back to homepage</a>
   </section>
 
 </div>
