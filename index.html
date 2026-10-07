@@ -565,11 +565,33 @@ fbq('track', 'PageView');
 
     /* ─── TESTIMONIALS ──────────────────────────────────────────── */
     .testimonials { padding: 90px 0; background: white; }
-    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 48px; }
+
+    /* rotating review marquee — glides left, pauses on hover */
+    .testi-marquee {
+      position: relative; margin-top: 48px; overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+              mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+    }
+    .testi-track {
+      display: flex; gap: 24px; width: max-content;
+      animation: testi-scroll 38s linear infinite;
+    }
+    .testi-marquee:hover .testi-track,
+    .testi-marquee:focus-within .testi-track { animation-play-state: paused }
+    @keyframes testi-scroll {
+      from { transform: translateX(0) }
+      to   { transform: translateX(calc(-50% - 12px)) }
+    }
     .testi-card {
       background: var(--white); border-radius: 16px; padding: 28px;
       border: 1.5px solid var(--mid);
       box-shadow: 0 2px 14px rgba(5,46,22,.08);
+      flex: 0 0 358px; display: flex; flex-direction: column;
+    }
+    .testi-card blockquote { flex: 1 }
+    @media (prefers-reduced-motion: reduce) {
+      .testi-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto }
+      .testi-marquee { mask-image: none; -webkit-mask-image: none }
     }
     .stars { color: var(--gold); font-size: 1rem; letter-spacing: 2px; margin-bottom: 14px; }
     .testi-card blockquote {
@@ -886,7 +908,12 @@ fbq('track', 'PageView');
       .steps-grid { grid-template-columns: 1fr; }
       .cat-grid { grid-template-columns: repeat(2,1fr); }
       .why-grid { grid-template-columns: 1fr; }
-      .testi-grid { grid-template-columns: 1fr; }
+      .testi-card { flex: 0 0 290px; padding: 24px }
+      .testi-track { gap: 16px }
+      @keyframes testi-scroll {
+        from { transform: translateX(0) }
+        to   { transform: translateX(calc(-50% - 8px)) }
+      }
       .va-apply-inner { grid-template-columns: 1fr; }
       .footer-grid { grid-template-columns: 1fr 1fr; }
       .form-grid { grid-template-columns: 1fr; }
@@ -1643,7 +1670,8 @@ fbq('track', 'PageView');
       <h2 class="section-title">What Our Clients Say</h2>
       <p class="section-sub" style="text-align:center;margin:0 auto">Real reviews from real business owners. Verified on Google.</p>
     </div>
-    <div class="testi-grid">
+    <div class="testi-marquee">
+    <div class="testi-track">
       <div class="testi-card">
         <div class="stars">★★★★★</div>
         <blockquote>"They're quick and do things right. Super easy to work with and just make it straight forward. My VA is in training and I feel good about her."</blockquote>
@@ -1677,6 +1705,7 @@ fbq('track', 'PageView');
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </section>
@@ -2406,7 +2435,7 @@ fbq('track', 'PageView');
   if (document.querySelector('.stats-bar')) observer.observe(document.querySelector('.stats-bar'));
 
   /* ── Fade-in on scroll ── */
-  const fadeEls = document.querySelectorAll('.step-card, .cat-card, .testi-card, .why-item');
+  const fadeEls = document.querySelectorAll('.step-card, .cat-card, .why-item');
   const fadeObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -2422,6 +2451,14 @@ fbq('track', 'PageView');
     el.style.transform = 'translateY(24px)';
     fadeObserver.observe(el);
   });
+
+  /* ── Reviews marquee: clone the cards so the loop is seamless ── */
+  const testiTrack = document.querySelector('.testi-track');
+  if (testiTrack && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const clone = testiTrack.cloneNode(true);
+    Array.prototype.forEach.call(clone.children, c => c.setAttribute('aria-hidden', 'true'));
+    while (clone.firstElementChild) testiTrack.appendChild(clone.firstElementChild);
+  }
 
   /* ── Process timeline: fill the rail left-to-right once it scrolls in ── */
   const procRow = document.querySelector('.proc');
