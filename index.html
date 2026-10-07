@@ -492,14 +492,39 @@ fbq('track', 'PageView');
     }
     .stats-grid {
       display: grid; grid-template-columns: repeat(4,1fr);
-      text-align: center; gap: 16px;
+      text-align: center; gap: 18px;
       position: relative; z-index: 1;
     }
+    /* frosted cards instead of a flat row */
     .stat-item {
-      position: relative; padding: 8px 14px; border-radius: 14px;
-      transition: transform .28s cubic-bezier(.34,1.3,.64,1), background .28s;
+      position: relative; padding: 26px 18px 24px; border-radius: 18px;
+      background: linear-gradient(165deg, rgba(255,255,255,.10), rgba(255,255,255,.035));
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 8px 26px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.12);
+      overflow: hidden;
+      transition: transform .3s cubic-bezier(.34,1.3,.64,1), border-color .3s, box-shadow .3s;
     }
-    .stat-item:hover { transform: translateY(-5px); background: rgba(255,255,255,.055) }
+    /* thin accent bar that grows across the top on hover */
+    .stat-item::after {
+      content: ''; position: absolute; top: 0; left: 0; height: 2px; width: 100%;
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      transform: scaleX(0); transform-origin: left; transition: transform .35s ease;
+    }
+    .stat-item:hover {
+      transform: translateY(-7px);
+      border-color: rgba(74,222,128,.42);
+      box-shadow: 0 16px 38px rgba(0,0,0,.3), 0 0 0 1px rgba(74,222,128,.18), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .stat-item:hover::after { transform: scaleX(1) }
+    .stat-icon {
+      width: 40px; height: 40px; margin: 0 auto 14px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(74,222,128,.14);
+      border: 1px solid rgba(74,222,128,.28);
+      color: #86efac;
+    }
+    .stat-icon svg { width: 20px; height: 20px }
     .stat-item strong {
       display: block; font-size: clamp(1.9rem, 3.3vw, 2.6rem); font-weight: 900;
       letter-spacing: -.02em; line-height: 1.05; margin-bottom: 7px;
@@ -509,11 +534,6 @@ fbq('track', 'PageView');
       filter: drop-shadow(0 0 20px rgba(34,197,94,.45));
     }
     .stat-item span { font-size: .85rem; color: rgba(255,255,255,.78); line-height: 1.5 }
-    /* soft gradient divider instead of a hard line */
-    .stat-item + .stat-item::before {
-      content: ''; position: absolute; left: 0; top: 14%; height: 72%; width: 1px;
-      background: linear-gradient(180deg, transparent, rgba(255,255,255,.3), transparent);
-    }
     @media (prefers-reduced-motion: reduce) {
       .stats-bar::after { animation: none; opacity: 0 }
     }
@@ -1314,18 +1334,22 @@ fbq('track', 'PageView');
   <div class="container">
     <div class="stats-grid">
       <div class="stat-item">
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <strong>$0</strong>
         <span>staffing fee — you only pay for hours worked</span>
       </div>
       <div class="stat-item">
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
         <strong>Save 70%</strong>
         <span>compared to local staff at $20–$35/hr</span>
       </div>
       <div class="stat-item">
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <strong>4 Days</strong>
         <span>average time to get your VA placed</span>
       </div>
       <div class="stat-item">
+        <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
         <strong>6 Months</strong>
         <span>free replacement guarantee, no questions asked</span>
       </div>
