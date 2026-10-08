@@ -997,7 +997,8 @@ fbq('track', 'PageView');
       .cat-grid { grid-template-columns: repeat(2,1fr); }
       .why-grid { grid-template-columns: 1fr; }
       .testi-card { flex: 0 0 290px; padding: 24px }
-      .testi-track { gap: 16px }
+      /* only one card fits on a phone, so the same speed reads much faster — slow it right down */
+      .testi-track { gap: 16px; animation-duration: 150s }
       @keyframes testi-scroll {
         from { transform: translateX(0) }
         to   { transform: translateX(calc(-50% - 8px)) }
